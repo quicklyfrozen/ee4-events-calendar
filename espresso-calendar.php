@@ -43,8 +43,7 @@ function ee_calendar_load_pue_update() {
 			'apikey' => $api_key,
 			'lang_domain' => 'event_espresso',
 			'checkPeriod' => '24',
-			'option_key' => 'site_license_key',
-			'options_page_slug' => 'event-espresso'
+			'option_key' => 'site_license_key'
 		);
 		$check_for_updates = new PluginUpdateEngineChecker($host_server_url, $plugin_slug, $options); //initiate the class and start the plugin update engine!
 	}
@@ -216,10 +215,12 @@ function espresso_calendar_do_stuff($show_expired) {
 		$sql .= " JOIN " . EVENTS_CATEGORY_REL_TABLE . " r ON r.event_id = e.id ";
 		$sql .= " JOIN " . EVENTS_CATEGORY_TABLE . " c ON c.id = r.cat_id ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
-			$sql .= " WHERE e.is_active != false ";
-		} else {
-			$sql .= " WHERE e.is_active != 'N' ";
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+				$sql .= " WHERE e.is_active != false ";
+			} else {
+				$sql .= " WHERE e.is_active != 'N' ";
+			}
 		}
 		$sql .= " AND e.event_status != 'D' ";//Deleted
 		$sql .= " AND e.event_status != 'S' ";//Secondary/Waitlist
@@ -237,10 +238,12 @@ function espresso_calendar_do_stuff($show_expired) {
 		$type = 'all';
 		$sql = "SELECT e.*, ese.start_time, ese.end_time FROM " . EVENTS_DETAIL_TABLE . " e ";
 		$sql .= " LEFT JOIN " . EVENTS_START_END_TABLE . " ese ON ese.event_id= e.id ";
-		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
-			$sql .= " WHERE e.is_active != false ";
-		} else {
-			$sql .= " WHERE e.is_active != 'N' ";
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' ) { // if we're using ee 3.2+, is_active is true/false
+				$sql .= " WHERE e.is_active != false ";
+			} else {
+				$sql .= " WHERE e.is_active != 'N' ";
+			}
 		}
 		$sql .= " AND e.event_status != 'D' ";//Deleted
 		$sql .= " AND e.event_status != 'S' ";//Secondary/Waitlist
@@ -287,32 +290,34 @@ function espresso_calendar_do_stuff($show_expired) {
 		//var_dump($event);
 		
 		//If the version of Event Espresso is 3.2 or older, we need to use the new permalink structure. If not, then we need to default to the structure.
-		if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' ){
-			switch ($espresso_calendar['espresso_page_post']) {
-	
-				case 'P':
-					$registration_url = get_permalink($event->post_id);
-					break;
-				case 'R':
-				default:
-					//$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
-					$registration_url = espresso_reg_url($event->id, $event->slug);
-	
-					break;
-			}
-		}else{
-			
-			switch ($espresso_calendar['espresso_page_post']){
-	
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' ){
+				switch ($espresso_calendar['espresso_page_post']) {
+		
 					case 'P':
-						$registration_url = get_option('siteurl'). '/?p=' . $event->post_id;
-					break;
+						$registration_url = get_permalink($event->post_id);
+						break;
 					case 'R':
 					default:
-						$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
-					break;
-	
+						//$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+						$registration_url = espresso_reg_url($event->id, $event->slug);
+		
+						break;
 				}
+			}else{
+				
+				switch ($espresso_calendar['espresso_page_post']){
+		
+						case 'P':
+							$registration_url = get_option('siteurl'). '/?p=' . $event->post_id;
+						break;
+						case 'R':
+						default:
+							$registration_url = get_option('siteurl'). '/?page_id=' . $org_options['event_page_id'] . '&regevent_action=register&event_id=' . $event->id;
+						break;
+		
+					}
+			}
 		}
 
 		//Checkthe status of the event. If the event is expired, the link to the registration page will be deactivated.
@@ -476,8 +481,10 @@ if (!function_exists('espresso_calendar')) {
 					//Enables/disables use of jQuery UI theming.
 					//Settings: http://arshaw.com/fullcalendar/docs/display/theme/
 					<?php
-					if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
+					if ( function_exists('espresso_version') ) {
+						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) {
 						echo "theme: true,";
+						}
 					}
 					?>
 
@@ -550,13 +557,15 @@ if (!function_exists('espresso_calendar')) {
 
 						<?php
 						//Adds the themeroller styles to the links in the calendar
-						if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
-							$jaer('a.fc-event').addClass('themeroller ui-state-focus');
-							$jaer('a.fc-event div').removeClass('fc-event-skin');
-							$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
-							$jaer('.fc-view').addClass('ui-widget-content');
-							$jaer('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
-						<?php
+						if ( function_exists('espresso_version') ) {
+							if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+								$jaer('a.fc-event').addClass('themeroller ui-state-focus');
+								$jaer('a.fc-event div').removeClass('fc-event-skin');
+								$jaer('.fc-today').removeClass('fc-today ui-state-highlight').addClass('ui-state-active');
+								$jaer('.fc-view').addClass('ui-widget-content');
+								$jaer('.expired').removeClass('ui-state-focus').addClass('ui-state-default');
+							<?php
+							}
 						}
 						?>
 						var month_day = event.month + '-' + event.day;
@@ -574,7 +583,7 @@ if (!function_exists('espresso_calendar')) {
 						}
 						
 			<?php
-			if ($espresso_calendar['show_time'] == true) {
+					if ($espresso_calendar['show_time'] == true) {
 			?>				
 								if ( event.startTime != '' && event.startTime != undefined ) {
 									event.startTime = '<span class="event-start-time">' + event.startTime + '</span>';
@@ -593,11 +602,9 @@ if (!function_exists('espresso_calendar')) {
 								}
 
 			<?php
-		}
-		
-		//Hide the tooltips in IE 7
-		$using_ie7 = (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7.') !== FALSE);
-		if (isset($espresso_calendar['show_tooltips']) && $espresso_calendar['show_tooltips'] == true && $using_ie7 == false) {
+					}
+
+		if (isset($espresso_calendar['show_tooltips']) && $espresso_calendar['show_tooltips'] == true) {
 			?>
 										element.qtip({
 											content: {
@@ -619,11 +626,13 @@ if (!function_exists('espresso_calendar')) {
 													corner: 'left top'
 												},
 									<?php
-											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || ( function_exists('espresso_version') && espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
+										if ( function_exists('espresso_version') ) {
+											if ( (!empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == 'Y') || (espresso_version() >= '3.2.P' && !empty($org_options['style_settings']['enable_default_style']) && $org_options['style_settings']['enable_default_style'] == true) ) { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-shadow', //Themeroller styles
 									<?php 	} else { ?>
 												classes: 'ui-tooltip-rounded ui-tooltip-ee ui-tooltip-shadow', //Themeroller styles
-									<?php 	} ?>
+									<?php 	}
+										} ?>
 												/*
 												 * The important part: style.widget property
 
@@ -721,7 +730,7 @@ if (!function_exists('espresso_calendar')) {
 				});
 				
 				
-				var imgTimeout = total_images * 75;
+				var imgTimeout = total_images * 50;
 				
 				setTimeout(  
 					function() {  
@@ -733,73 +742,80 @@ if (!function_exists('espresso_calendar')) {
 						var thisYear = 0;
 						var prevMonth = 0;
 						var nextMonth = 0;
-						var newTop = 0;			
-									
+						var newTop = 0;
+
 						var months = new Object();
-						var monthNames = new Object();						
+						var monthNames = new Object();
 						monthNames= [<?php echo stripslashes_deep($espresso_calendar['espresso_calendar_monthNames']); ?>];						
 						for ( i=0; i<12; i++ ) {
 							months[ monthNames[i] ] = i+1;
 						}
-						
+
 						var monthYear = $jaer('.fc-header-title h2').html();
 						var monthYearArray = monthYear.split(' ');
 						thisMonth = months[ monthYearArray[0] ];
 						thisYear = monthYearArray[1];
 						prevMonth = thisMonth - 1;
-						nextMonth =  thisMonth +1;	
+						nextMonth =  thisMonth +1;
 //						alert( 'prevMonth = ' + prevMonth + '\n' + 'nextMonth = ' + nextMonth );
-						
-						$jaer('.fc-view-month .fc-widget-content').each(function(index) {							
-							setMonth = thisMonth;							
+
+						$jaer('.fc-view-month .fc-widget-content').each(function(index) {	
+							setMonth = thisMonth;
 							if ( $jaer(this).closest('tr').hasClass('fc-first') && $jaer(this).hasClass('fc-other-month') ){
 								setMonth = prevMonth;
-							} else if ( $jaer(this).closest('tr').hasClass('fc-last') && $jaer(this).hasClass('fc-other-month') ){
+							} else if ( $jaer(this).hasClass('fc-other-month') ){
 								setMonth = nextMonth;
-							}  							
+							}
 							setDay =$jaer(this).find('.fc-day-number').html();
-							setID = setMonth + '-' + setDay;
-							//alert( 'setID = ' + setID );							
+							setID = 'md-' + setMonth + '-' + setDay;
+							//alert( 'setID = ' + setID );
 							$jaer(this).find('.fc-day-content > div').attr( 'id', setID );
 						});
 						
 						$jaer('.fc-event').each( function(index){ 						
 							// determine what month and day this event is on
 							monthDay = $jaer(this).attr( 'rel' );
-//							alert( 'month Day = ' + monthDay );
+							// alert( 'month Day = ' + monthDay );
 							// find day container in calendar
-							dayCnt = $jaer('#'+monthDay);
+							dayCnt = $jaer('#md-'+monthDay);
 							dayCntHTML = dayCnt.html();
 							if ( dayCntHTML == '&nbsp;' ) {
 								dayCntHTML = '';
 								dayCnt.html( dayCntHTML );
 								dayCnt.css({ 'height' : 0 });
 							}
+
 							// grab offset for dayCnt
 							dayCntPos = dayCnt.position();
-//							alert( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
+							//alert( 'dayCntPos.top = ' + dayCntPos.top + '\n' + 'dayCntPos.left = ' + dayCntPos.left );
 							dayCntHgt = dayCnt.css( 'height' );
-							dayCntHgt = parseInt( dayCntHgt.replace( 'px', '' ));
-//							alert( 'dayCntHgt = ' + dayCntHgt );														
+							if ( dayCntHgt == undefined ){
+								dayCntHgt = '0px';
+							}
+							dayCntHgt = dayCntHgt.replace( 'px', '' );
+							dayCntHgt = parseInt( dayCntHgt );
 							newTop = dayCntPos.top + dayCntHgt;
-//							alert( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );					
-							$jaer(this).css({ 'top' : newTop });							
+							//alert( 'newTop = ' + newTop + ' = dayCntPos.top ( ' + dayCntPos.top + ' ) + dayCntHgt ( ' + dayCntHgt + ' )' );
+							$jaer(this).css({ 'top' : newTop });
 							linkHeight = parseInt( $jaer(this).find('.fc-event-inner').outerHeight() );
-//							alert( 'linkHeight = ' + linkHeight );								
+							//alert( 'linkHeight = ' + linkHeight );
 							newHeight = dayCntHgt + linkHeight + 3;
 							dayCnt.height( newHeight ).css({ 'height' : newHeight + 'px' });
-//							alert( 'newHeight = ' + newHeight );							
-						});		
-						
-											
-					
-					},  
-					imgTimeout 
-				); 		
+							//alert( 'newHeight = ' + newHeight );
+							var parentHeight = dayCnt.parents('tr').outerHeight();
+							//alert( 'parentHeight = ' + parentHeight );
+							//dayCnt.parents('tr').css({ 'background' : 'pink' });
+							if( parentHeight < newHeight ) {
+								newHeight = newHeight + 30;
+								dayCnt.parents('tr').height( newHeight ).css({ 'height' : newHeight + 'px' });
+							}
+						});
 
+					},
+					imgTimeout
+				);
 
 			});
-	
 
 </script>
 <div id='espresso_calendar'></div>
@@ -844,7 +860,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 
 		/* User-selected settings. */
 		$title = apply_filters('widget_title', $instance['title']);
-		$show_expired = $instance['show_expired'];
+		$widget_show_expired = $instance['show_expired'];
 		$category_id = $instance['category_id'];
 		$calendar_page = $instance['calendar_page'];
 		$load_espresso_calendar_scripts = true;
@@ -864,6 +880,13 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				if (function_exists('espresso_calendar_do_stuff')) {
 					if ( isset($category_id) ) {
 						$event_category_id = $category_id;
+					}
+					if ( !$widget_show_expired ) {
+						$dont_show_expired = "if( event.expired ) {
+							element.css('display','none');
+							}";
+					} else {
+						$dont_show_expired = null;
 					}
 					do_action('action_hook_espresso_calendar_do_stuff',$show_expired);
 					include_once(ESPRESSO_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
@@ -917,16 +940,23 @@ class Espresso_Calendar_Widget extends WP_Widget {
 		<?php _e('Display Single Category?', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-	<?php if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' )
-				echo apply_filters('filter_hook_espresso_help', 'display_single_category'); ?>
+	<?php
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'display_single_category');
+		} ?>
 </p>
 <p>
 	<label for="<?php echo $this->get_field_id('calendar_page'); ?>">
 		<?php _e('Calendar Page', 'event_espresso'); ?>
 	</label>
 	<input type="text" id="<?php echo $this->get_field_id('calendar_page'); ?>" name="<?php echo $this->get_field_name('calendar_page'); ?>" width="20" value="<?php echo $instance['calendar_page']; ?>" />
-	<?php if ( function_exists('espresso_version') && espresso_version() >= '3.2.P' )
-				echo apply_filters('filter_hook_espresso_help', 'calendar_page'); ?>
+	<?php
+		if ( function_exists('espresso_version') ) {
+			if ( espresso_version() >= '3.2.P' )
+				echo apply_filters('filter_hook_espresso_help', 'calendar_page');
+		}
+	?>
 </p>
 <?php
 	}
@@ -949,9 +979,11 @@ if (is_admin()) {
 }
 
 function espresso_calendar_load_admin_file() {
-	if ( function_exists('espresso_version') && espresso_version() >= '3.2' ){
-		require_once('calendar_admin.php');
-	} else {
-		require_once('calendar_admin_classic.php');
+	if ( function_exists( 'espresso_version' )) {
+		if ( espresso_version() >= '3.2' ){
+			require_once('calendar_admin.php');
+		} else {
+			require_once('calendar_admin_classic.php');
+		}
 	}
 }
