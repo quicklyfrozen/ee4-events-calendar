@@ -154,7 +154,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_no_sidebar();
 	}
 	protected function _update_settings(){
-		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
+		if(isset($this->_req_data['reset']) && $this->_req_data['reset'] == '1'){
 			$c = new EE_Calendar_Config();
 			$count = 1;
 		}else{
