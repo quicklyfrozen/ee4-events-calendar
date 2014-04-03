@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 2.2.1.DEV
+  Version: 3.0.0.alpha
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2013 Event Espresso (email : support@eventespresso.com)
@@ -49,7 +49,7 @@
  //we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
  register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
  class EE_Calendar {
-	 const activation_indicator_option_name = 'ee_espresso_activation';
+	 const activation_indicator_option_name = 'ee_espresso_calendar_activation';
 
 	/**
 	 * instance of the EE_Calendar object
@@ -109,7 +109,7 @@
 	 */
 	public function __construct() {
 		// calendar_version
-		define( 'EE_CALENDAR_VERSION', '2.2.1.DEV' );
+		define( 'EE_CALENDAR_VERSION', '3.0.0.alpha' );
 		// define the plugin directory path and URL
 		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
@@ -131,7 +131,7 @@
 	 */
 	public static function register_activation_hook(){
 		//let's just handle this on the next request, ok? right now we're just not really ready
-		add_option(EE_Calendar::activation_indicator_option_name,true);
+		update_option(EE_Calendar::activation_indicator_option_name,true);
 	}
 	/**
 	 * 	register_autoloaders
