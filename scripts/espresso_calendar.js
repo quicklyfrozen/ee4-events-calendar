@@ -1,7 +1,8 @@
 jQuery(document).ready(function($) {
 	
-	var ee_max_events_per_day = 4;
-	var ee_events_per_day = {};
+	eeCAL.max_events_per_day = 4;
+	eeCAL.events_per_day = {};
+
 	
 	// fix this one boolean
 	if ( eeCAL.time_weekends == undefined || eeCAL.time_weekends == '' ) {
@@ -106,11 +107,11 @@ jQuery(document).ready(function($) {
 		year: eeCAL.year,
 		month: eeCAL.month,
 		
-//		lazyFetching: false,
-		
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
 			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
+			eeCAL.prev_view = eeCAL.view;
+			
 			var cal_data = {
 				action: 'get_calendar_events',
 				noheader : 'true',
@@ -131,12 +132,12 @@ jQuery(document).ready(function($) {
 					$.each( response, function( index, element ){
 						
 						if ( eeCAL.view == 'month' ) {
-							if ( typeof ee_events_per_day[ element.target_date ] == 'undefined' ) {
-								ee_events_per_day[ element.target_date ] = 1;
+							if ( typeof eeCAL.events_per_day[ element.target_date ] == 'undefined' ) {
+								eeCAL.events_per_day[ element.target_date ] = 1;
 							} else {
-								ee_events_per_day[ element.target_date ] = ee_events_per_day[ element.target_date ] + 1;
+								eeCAL.events_per_day[ element.target_date ] = eeCAL.events_per_day[ element.target_date ] + 1;
 							}
-							if ( parseInt( ee_events_per_day[ element.target_date ] ) > parseInt( ee_max_events_per_day )) {
+							if ( parseInt( eeCAL.events_per_day[ element.target_date ] ) > parseInt( eeCAL.max_events_per_day )) {
 								element.className = element.className + ' ee-extra-day-events hidden';
 							}	
 						}
@@ -168,10 +169,10 @@ jQuery(document).ready(function($) {
 		eventRender: function( event, element ) {
 			
 			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
-//			 console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
-//			 console.log( event );
-//			 console.log( element );
-//			 console.log( JSON.stringify( 'event.target_date: ' + event.target_date, null, 4 ));
+//			console.log( event );
+//			console.log( element );
+//			console.log( JSON.stringify( 'event.target_date: ' + event.target_date, null, 4 ));
+//			console.log( JSON.stringify( 'eeCAL.view: ' + eeCAL.view, null, 4 ));
 
 			var event_target_date_td = $( 'td[data-date="' + event.target_date + '"]' );
 			event_target_date_td.addClass('event-day');
@@ -180,8 +181,11 @@ jQuery(document).ready(function($) {
 				if ( ! event_target_date_td.find('.events-view-more').length ) {
                         		viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>View More</a></div>').appendTo( event_target_date_td )
                         	}
+//				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
 	                    	return false 
+			} else {
+//				console.log( JSON.stringify( 'eventRender event: ' + event.title, null, 4 ));
 			}
 
 			// calculate the width for this event based on number of days x one day event width - 
@@ -271,6 +275,22 @@ jQuery(document).ready(function($) {
 			}
 			
 		},
+		viewRender  : function( view, element  ) {
+//			 console.log( ' ' );
+//			 console.log( 'viewRender ' );
+//			console.log( JSON.stringify( 'view.name: ' + view.name, null, 4 ));
+			if ( view.name != eeCAL.prev_view ) {
+//				console.log( JSON.stringify( 'eeCAL.prev_view: ' + eeCAL.prev_view, null, 4 ));
+//				console.log( JSON.stringify( 'eeCAL.refetchEvents', null, 4 ));
+				$('#espresso_calendar').fullCalendar( 'refetchEvents' );
+				eeCAL.events_per_day = {};
+			}			 		
+		},
+		viewDestroy : function( view, element  ) {
+//			console.log( ' ' );
+//			console.log( 'viewDestroy' );
+//			console.log( JSON.stringify( 'view.name: ' + view.name, null, 4 ));
+		},
 		// Triggered after an event has been placed on the calendar in its final position.
 		eventAfterRender : function( event, element, view ) {
 		},
@@ -298,7 +318,6 @@ jQuery(document).ready(function($) {
 		target_date = $(this).attr('rel');
 		target_date = $.fullCalendar.parseDate( target_date );
 		$('#espresso_calendar').fullCalendar( 'changeView', 'agendaDay' );	
-		$('#espresso_calendar').fullCalendar( 'refetchEvents' );
 		$('#espresso_calendar').fullCalendar( 'gotoDate', target_date );
 	});
 
