@@ -680,3 +680,17 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 	}
 }
 
+
+
+.events-view-more-link {
+	display: block;
+	text-align: right;
+	font-size: .85em;
+	cursor: pointer;
+	vertical-align: middle;
+}
+.events-view-more-link span {
+	vertical-align: middle;
+}
+
+
