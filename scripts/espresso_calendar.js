@@ -1,5 +1,8 @@
 jQuery(document).ready(function($) {
 	
+	var ee_max_events_per_day = 4;
+	var ee_events_per_day = {};
+	
 	// fix this one boolean
 	if ( eeCAL.time_weekends == undefined || eeCAL.time_weekends == '' ) {
 		eeCAL.time_weekends = false;
@@ -103,24 +106,41 @@ jQuery(document).ready(function($) {
 		year: eeCAL.year,
 		month: eeCAL.month,
 		
+//		lazyFetching: false,
+		
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
+			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
+			var cal_data = {
+				action: 'get_calendar_events',
+				noheader : 'true',
+				start_date: Math.round(start.getTime() / 1000),
+				end_date: Math.round(end.getTime() / 1000),
+				show_expired: eeCAL.show_expired,
+				event_category_id: eeCAL.event_category_id,
+				event_venue_id: eeCAL.event_venue_id
+			};
+//			console.log( cal_data );
 			$.ajax({
 				url: eeCAL.ajax_url,
 				dataType: 'json',
-				data: {
-					action: 'get_calendar_events',
-					noheader : 'true',
-					start_date: Math.round(start.getTime() / 1000),
-					end_date: Math.round(end.getTime() / 1000),
-					show_expired: eeCAL.show_expired,
-					event_category_id: eeCAL.event_category_id,
-					event_venue_id: eeCAL.event_venue_id
-				},
+				data: cal_data,
 				success: function( response ) {
 					// because FullCalendar won't wait for images to load fully before positioning events in the table grid...
 					// loop through response data
 					$.each( response, function( index, element ){
+						
+						if ( eeCAL.view == 'month' ) {
+							if ( typeof ee_events_per_day[ element.target_date ] == 'undefined' ) {
+								ee_events_per_day[ element.target_date ] = 1;
+							} else {
+								ee_events_per_day[ element.target_date ] = ee_events_per_day[ element.target_date ] + 1;
+							}
+							if ( parseInt( ee_events_per_day[ element.target_date ] ) > parseInt( ee_max_events_per_day )) {
+								element.className = element.className + ' ee-extra-day-events hidden';
+							}	
+						}
+						
 						// look for event thumbnail
 						var thumb = $(element.event_img_thumb).find('img');
 						// attempt to load image
@@ -142,22 +162,28 @@ jQuery(document).ready(function($) {
 		dayRender: function( date, cell ) {
 			// console.log( JSON.stringify( 'date: ' + date, null, 4 ));
 			// console.log( JSON.stringify( 'cell: ' + cell, null, 4 ));
-			// console.log( cell );
+//			 console.log( cell );
 		},
 		// Triggered while an event is being rendered.
 		eventRender: function( event, element ) {
-			// console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
-			// console.log( event );
-			// console.log( element );
+			
+			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
+//			 console.log( JSON.stringify( 'event: ' + event.title, null, 4 ));
+//			 console.log( event );
+//			 console.log( element );
+//			 console.log( JSON.stringify( 'event.target_date: ' + event.target_date, null, 4 ));
 
-			// cycle thru each day of the HTML calendar
-			$('.fc-day').each( function(){
-				// if calendar date matches event date
-				if ( $(this).attr('data-date') == event.target_date ) {
-					// mark that day as having an event on it
-					$(this).addClass('event-day');
-				}				
-			});
+			var event_target_date_td = $( 'td[data-date="' + event.target_date + '"]' );
+			event_target_date_td.addClass('event-day');
+			// if this is a month view and this event is tagged as hidden...
+			if ( eeCAL.view == 'month' && event.className.indexOf('ee-extra-day-events') != -1 ) {
+				if ( ! event_target_date_td.find('.events-view-more').length ) {
+                        		viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>View More</a></div>').appendTo( event_target_date_td )
+                        	}
+				// prevents event from being rendered
+	                    	return false 
+			}
+
 			// calculate the width for this event based on number of days x one day event width - 
 			var event_width = ( day_width * event.event_days ) - day_padding;
 			// set element to correct width
@@ -266,6 +292,14 @@ jQuery(document).ready(function($) {
 
 	$('.submit-this').on( 'change', function() {
 		$(this).closest('form').submit();
+	});
+	
+	$('#espresso_calendar').on( 'click', '.events-view-more-link', function() {
+		target_date = $(this).attr('rel');
+		target_date = $.fullCalendar.parseDate( target_date );
+		$('#espresso_calendar').fullCalendar( 'changeView', 'agendaDay' );	
+		$('#espresso_calendar').fullCalendar( 'refetchEvents' );
+		$('#espresso_calendar').fullCalendar( 'gotoDate', target_date );
 	});
 
 });
