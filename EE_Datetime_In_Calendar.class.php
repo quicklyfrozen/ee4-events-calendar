@@ -330,7 +330,7 @@ class EE_Datetime_In_Calendar {
 			'tooltip_my'=>$this->tooltip_my(),
 			'tooltip_at'=>$this->tooltip_at(),
 			'tooltip_style'=>$this->tooltip_style(),
-			'title'=> $this->_event->name() . ': ' . $this->_datetime->name(),			
+			'title'=> $this->_datetime->name() != '' ? $this->_event->name() . ': ' . $this->_datetime->name() : $this->_event->name(),			
 			'url'=>$this->_event->get_permalink(),
 		);
 	}
