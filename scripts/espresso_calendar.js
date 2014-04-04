@@ -321,4 +321,9 @@ jQuery(document).ready(function($) {
 		$('#espresso_calendar').fullCalendar( 'gotoDate', target_date );
 	});
 
+	$('.fc-button-today').on( 'click', function() {
+		eeCAL.prev_view = 'today';
+		eeCAL.events_per_day = {};
+	});
+
 });
