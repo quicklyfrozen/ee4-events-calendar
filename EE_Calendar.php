@@ -292,7 +292,7 @@
 			wp_register_style('espresso_calendar', EE_CALENDAR_URL . 'css/calendar.css'); 
 		}
 		//core calendar script
-		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE ); 
+		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.4', TRUE ); 
 		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE ); 
 
 		// get the current post
@@ -647,15 +647,14 @@
 
 			if ( $config->tooltip->show ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$description = $event->description_filtered();
+				$description = $event->short_description();
 				
 				//Supports 3.1 short descriptions
-//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 				$desciption_parts =  explode( '<!--more-->', $description);
-				if(is_array($desciption_parts)){
-					$description = array_shift($desciption_parts);
-				}
-//				}
+				$description =  is_array( $desciption_parts ) ? array_shift( $desciption_parts ) : $description;
+				$description =  '<p>' . $description . '</p>';
+				$datetime_description = $datetime->description() != '' ? '<p class="datetime-desc">' . $datetime->description() . '</p>' : '';
+				$description = $datetime_description . $description;
 				// and just in case it's still too long, or somebody forgot to use the more tag...
 				//if word count is set to 0, set no limit
 				$calendar_datetime->set_description($description);			
