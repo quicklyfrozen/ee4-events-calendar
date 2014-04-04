@@ -457,20 +457,29 @@ The Buttons and related paraphenalia
 .ui-tooltip-content p {
 	font-size: 1em;
 	line-height: 1.4;
-	padding: 10px 10px 0 10px;
+	padding: 0;
+	margin: 0 10px 10px;
+}
+.ui-tooltip-content p + p {
+	/*margin-top: */
+}
+.datetime-desc {
+	font-weight: bold;
 }
 p.time_cal_qtip {
 	padding: 10px;
 	margin: 10px;
 	border-top: 1px dashed #ccc;
 	border-bottom: 1px dashed #ccc;
+	font-weight: bold;
 }
 .qtip-close .ui-icon {
 	margin: 0 !important;
 }
-.attendee_limit_qtip, .time_cal_qtip {
-	margin: 1em 0;
-	font-weight: 400;
+p.attendee_limit_qtip {
+	margin: 0;
+	padding:0 20px 10px;
+	font-weight: bold;
 }
 .sold-out-dv, .reg-now-btn {
 	display: inline-block;
@@ -613,6 +622,10 @@ a.fc-event.themeroller.ui-widget-header span.fc-event-title, a.fc-event.themerol
 }
 .ui-tooltip-tip {
 	position: absolute;
+}
+.ui-tooltip-tip canvas {
+	position: absolute;
+	top:0px !important;
 }
 
 /* Media Query for screens smaller then 768px (iPad portrait)
