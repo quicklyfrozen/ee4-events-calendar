@@ -7,7 +7,7 @@
  * @subpackage 	Tests
  */
 
-define( 'EE_PLUGIN_DIR', __DIR__ . '/../../../event-espresso-core/' );
+define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( dirname(__FILE__ ) ) ) ) . '/event-espresso-core/');
 define( 'EECAL_TESTS_DIR', dirname( dirname( __FILE__ ) ) . '/'  );
 define( 'EECAL_PLUGIN_DIR' , dirname( dirname( dirname(__FILE__)  ) ). '/' );
 
