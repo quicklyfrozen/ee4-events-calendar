@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 3.1.0.dev
+  Version: 3.1.001.dev
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2014 Event Espresso (email : support@eventespresso.com)
@@ -109,7 +109,7 @@
 	 */
 	public function __construct() {
 		// calendar_version
-		define( 'EE_CALENDAR_VERSION', '3.1.0.dev' );
+		define( 'EE_CALENDAR_VERSION', '3.1.001.dev' );
 		// define the plugin directory path and URL
 		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
@@ -292,8 +292,8 @@
 			wp_register_style('espresso_calendar', EE_CALENDAR_URL . 'css/calendar.css');
 		}
 		//core calendar script
-		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.4', TRUE ); 
-		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE ); 
+		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.4', TRUE );
+		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE );
 
 		// get the current post
 		global $post, $is_espresso_calendar;
@@ -651,7 +651,7 @@
 			if ( $config->tooltip->show ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$description = $event->short_description();
-				
+
 				//Supports 3.1 short descriptions
 				$desciption_parts =  explode( '<!--more-->', $description);
 				$description =  is_array( $desciption_parts ) ? array_shift( $desciption_parts ) : $description;
