@@ -15,8 +15,6 @@ Class  EE_Calendar extends EE_Addon {
 	public function __construct() {
 		// register our activation hook
 		register_activation_hook( __FILE__, array( $this, 'set_activation_indicator_option' ));
-		// load_admin
-		add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $this, 'additional_admin_hooks' ));
 	}
 
 	public static function register_addon() {
@@ -31,8 +29,9 @@ Class  EE_Calendar extends EE_Addon {
 			'addon_name' 		=> 'Calendar',
 			'version' 					=> EE_CALENDAR_VERSION,
 			'min_core_version' => '4.2.0',
-			'base_path' 				=> EE_CALENDAR_PATH,
+			'plugin_dir_path' 	=> EE_CALENDAR_PATH,
 			'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
+			'admin_callback'		=> 'additional_admin_hooks',
 			'config_class' 			=> 'EE_Calendar_Config',
 			'autoloader_paths' => array(
 				'EE_Calendar' 							=> EE_CALENDAR_PATH . 'EE_Calendar.class.php',
@@ -51,10 +50,20 @@ Class  EE_Calendar extends EE_Addon {
 
 
 	/**
-	 * Until we do something better, we'll just check for migration scripts upon
-	 * plugin activation only. In the future, we'll want to do it on plugin updates too
-	 */
-	public static function set_activation_indicator_option(){
+	* get_db_update_option_name
+	* @return string
+	*/
+	public function get_db_update_option_name(){
+		return EE_Calendar::activation_indicator_option_name;
+	}
+
+
+
+	/**
+	* Until we do something better, we'll just check for migration scripts upon
+	* plugin activation only. In the future, we'll want to do it on plugin updates too
+	*/
+	public function set_activation_indicator_option(){
 		//let's just handle this on the next request, ok? right now we're just not really ready
 		update_option( EE_Calendar::activation_indicator_option_name, TRUE );
 	}
@@ -172,16 +181,20 @@ Class  EE_Calendar extends EE_Addon {
 	 */
 	public function add_to_featured_image_meta_box( $event_meta ) {
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-		);
 		$html = '<p>';
-		$html .= EEH_Form_Fields::select(
+		$html .= EEH_Form_Fields::select (
+			// question
 			__('Add image to event calendar', 'event_espresso'),
+			// answer
 			isset( $event_meta['display_thumb_in_calendar'] ) ? $event_meta['display_thumb_in_calendar'] : '',
-			$values,
+			// options
+			array(
+				array('id' => true, 'text' => __('Yes', 'event_espresso')),
+				array('id' => false, 'text' => __('No', 'event_espresso'))
+			),
+			// name
 			'show_on_calendar',
+			// css id
 			'show_on_calendar'
 		);
 		$html .= '</p>';
