@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
 /*
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
