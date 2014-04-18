@@ -42,7 +42,7 @@ function load_espresso_calendar_class() {
 	require_once ( plugin_dir_path( __FILE__ ) . 'EE_Calendar.class.php' );
 	EE_Calendar::register_addon();
 }
-add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_calendar_class' ); // array( 'EE_Calendar', 'register_addon' )
+add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_calendar_class' );
 
 // End of file espresso_calendar.php
 // Location: wp-content/plugins/espresso-calendar/espresso_calendar.php
