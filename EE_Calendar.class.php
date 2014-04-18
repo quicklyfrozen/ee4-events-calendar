@@ -29,7 +29,7 @@ Class  EE_Calendar extends EE_Addon {
 			'addon_name' 		=> 'Calendar',
 			'version' 					=> EE_CALENDAR_VERSION,
 			'min_core_version' => '4.2.0',
-			'plugin_dir_path' 	=> EE_CALENDAR_PATH,
+			'base_path' 				=> EE_CALENDAR_PATH,
 			'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
 			'admin_callback'		=> 'additional_admin_hooks',
 			'config_class' 			=> 'EE_Calendar_Config',
