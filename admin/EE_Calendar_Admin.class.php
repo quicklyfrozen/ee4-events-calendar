@@ -77,12 +77,12 @@ class EE_Calendar_Admin {
 	 */
 	public function load_pue_update() {
 
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php')) { //include the file
-			require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
+		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file
+			require(EE_THIRD_PARTY . 'pue/pue-client.php' );
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
 				'premium' => array('reg' => 'ee4-events-calendar'),
-				'prerelease' => array('beta' => 'ee4-events-calendar-pr')
+				'prerelease' => array('beta' => 'espresso-calendar-core-pr')
 			);
 			$options = array(
 				'apikey' => EE_Registry::instance()->NET_CFG->core->site_license_key,
