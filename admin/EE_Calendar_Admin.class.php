@@ -56,7 +56,7 @@ class EE_Calendar_Admin {
 		//register calendar admin page with the EE_Admin pages.
 		add_action('AHEE__EE_Admin__loaded', array($this, 'register_admin' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
-		add_action( 'action_hook_espresso_calendar_update_api', array( $this, 'load_pue_update' ));
+		add_action( 'AHEE__EE_System__brew_espresso__complete', array( $this, 'load_pue_update' ));
 		add_action( 'action_hook_espresso_featured_image_add_to_meta_box', array( $this, 'add_to_featured_image_meta_box' ));
 
 	}
