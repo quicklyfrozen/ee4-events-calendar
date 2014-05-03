@@ -30,9 +30,10 @@ dependencies:
     - mkdir -p $WP_CORE_DIR;
     - tar --strip-components=1 -zxmf /home/ubuntu/tmp/wordpress.tar.gz -C $WP_CORE_DIR;
     - mv $plugin_loc $plugin_dir;
-    #pull in event-espresso-core master branch
+    #pull in event-espresso-core $CIRCLE_BRANCH branch
+    ##note by using $CIRCLE_BRANCH the addon is being tested against the corresponding branch of event-espresso-core.  So development branch of addon will be development branch of core.
     - git clone git@github.com:eventespresso/event-espresso-core.git $event_espresso_core_dir;
-    - cd $event_espresso_core_dir; git checkout alpha;
+    - cd $event_espresso_core_dir; git checkout $CIRCLE_BRANCH;
 
     # set up testing suite
     - svn co --ignore-externals http://unit-tests.svn.wordpress.org/trunk/ $WP_TESTS_DIR;
