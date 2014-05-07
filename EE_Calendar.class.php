@@ -12,6 +12,11 @@ Class  EE_Calendar extends EE_Addon {
 
 	const activation_indicator_option_name = 'ee_espresso_calendar_activation';
 
+
+
+	/**
+	 * class constructor
+	 */
 	public function __construct() {
 		// register our activation hook
 		register_activation_hook( __FILE__, array( $this, 'set_activation_indicator_option' ));
@@ -25,26 +30,28 @@ Class  EE_Calendar extends EE_Addon {
 		define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
 		define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 		// register addon via Plugin API
-		EE_Register_Addon::register( array(
-			'addon_name' 		=> 'Calendar',
-			'version' 					=> EE_CALENDAR_VERSION,
-			'min_core_version' => '4.2.0',
-			'base_path' 				=> EE_CALENDAR_PATH,
-			'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
-			'admin_callback'		=> 'additional_admin_hooks',
-			'config_class' 			=> 'EE_Calendar_Config',
-			'autoloader_paths' => array(
-				'EE_Calendar' 							=> EE_CALENDAR_PATH . 'EE_Calendar.class.php',
-				'EE_Calendar_Config' 			=> EE_CALENDAR_PATH . 'EE_Calendar_Config.php',
-				'EE_Datetime_In_Calendar' 	=> EE_CALENDAR_PATH . 'EE_Datetime_In_Calendar.class.php',
-				'Calendar_Admin_Page' 		=> EE_CALENDAR_ADMIN . 'calendar' . DS . 'Calendar_Admin_Page.core.php',
-				'Calendar_Admin_Page_Init' 	=> EE_CALENDAR_ADMIN . 'calendar' . DS . 'Calendar_Admin_Page_Init.core.php',
-			),
-			'dms_paths' 	=> array( EE_CALENDAR_DMS_PATH ),
-			'modules' 		=> array( EE_CALENDAR_PATH . 'EED_Espresso_Calendar.module.php' ),
-			'shortcodes' 	=> array( EE_CALENDAR_PATH . 'EES_Espresso_Calendar.shortcode.php' ),
-			'widgets' 			=> array( EE_CALENDAR_PATH . 'EEW_Espresso_Calendar.widget.php' ),
-		));
+		EE_Register_Addon::register(
+			'Calendar',
+			array(
+				'version' 					=> EE_CALENDAR_VERSION,
+				'min_core_version' => '4.2.0',
+				'base_path' 				=> EE_CALENDAR_PATH,
+				'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
+				'admin_callback'		=> 'additional_admin_hooks',
+				'config_class' 			=> 'EE_Calendar_Config',
+				'autoloader_paths' => array(
+					'EE_Calendar' 							=> EE_CALENDAR_PATH . 'EE_Calendar.class.php',
+					'EE_Calendar_Config' 			=> EE_CALENDAR_PATH . 'EE_Calendar_Config.php',
+					'EE_Datetime_In_Calendar' 	=> EE_CALENDAR_PATH . 'EE_Datetime_In_Calendar.class.php',
+					'Calendar_Admin_Page' 		=> EE_CALENDAR_ADMIN . 'calendar' . DS . 'Calendar_Admin_Page.core.php',
+					'Calendar_Admin_Page_Init' 	=> EE_CALENDAR_ADMIN . 'calendar' . DS . 'Calendar_Admin_Page_Init.core.php',
+				),
+				'dms_paths' 			=> array( EE_CALENDAR_DMS_PATH ),
+				'module_paths' 		=> array( EE_CALENDAR_PATH . 'EED_Espresso_Calendar.module.php' ),
+				'shortcode_paths' 	=> array( EE_CALENDAR_PATH . 'EES_Espresso_Calendar.shortcode.php' ),
+				'widget_paths' 		=> array( EE_CALENDAR_PATH . 'EEW_Espresso_Calendar.widget.php' ),
+			)
+		);
 	}
 
 
