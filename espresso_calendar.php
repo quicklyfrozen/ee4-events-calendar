@@ -37,10 +37,12 @@
  * ------------------------------------------------------------------------
  */
 function load_espresso_calendar_class() {
-	// calendar_version
-	define( 'EE_CALENDAR_VERSION', '3.1.002.alpha' );
-	require_once ( plugin_dir_path( __FILE__ ) . 'EE_Calendar.class.php' );
-	EE_Calendar::register_addon();
+	if ( class_exists( 'EE_Addon' )) {
+		// calendar_version
+		define( 'EE_CALENDAR_VERSION', '3.1.002.alpha' );
+		require_once ( plugin_dir_path( __FILE__ ) . 'EE_Calendar.class.php' );
+		EE_Calendar::register_addon();
+	}
 }
 add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_calendar_class' );
 
