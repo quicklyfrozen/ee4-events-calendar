@@ -34,11 +34,12 @@ Class  EE_Calendar extends EE_Addon {
 			'Calendar',
 			array(
 				'version' 					=> EE_CALENDAR_VERSION,
-				'min_core_version' => '4.2.0',
+				'min_core_version' => '4.3.0',
 				'base_path' 				=> EE_CALENDAR_PATH,
 				'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_Calendar_Config',
+				'config_name' 		=> 'EE_Calendar',
 				'autoloader_paths' => array(
 					'EE_Calendar' 							=> EE_CALENDAR_PATH . 'EE_Calendar.class.php',
 					'EE_Calendar_Config' 			=> EE_CALENDAR_PATH . 'EE_Calendar_Config.php',
