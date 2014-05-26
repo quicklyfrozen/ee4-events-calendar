@@ -74,20 +74,21 @@ class EED_Espresso_Calendar extends EED_Module {
 	 *
 	 * @return EE_Calendar_Config
 	 */
-	protected static function _set_config(){
-		return EED_Espresso_Calendar::instance()->set_config( 'addons', 'EED_Espresso_Calendar', 'EE_Calendar_Config' );
+	protected function set_config(){
+		$config = EE_Registry::instance()->addons->EE_Calendar->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
+		return $config instanceof EE_Calendar_Config ? $config : NULL;
 	}
 
 
 
 	/**
-	 *    _get_config
+	 *    get_config
 	 *
 	 * @return EE_Calendar_Config
 	 */
-	protected static function _get_config(){
-		$config = EED_Espresso_Calendar::instance()->get_config( 'addons', 'EED_Espresso_Calendar', 'EE_Calendar_Config' );
-		return $config instanceof EE_Calendar_Config ? $config : EED_Espresso_Calendar::_set_config();
+	public function get_config(){
+		$config = EE_Registry::instance()->addons->EE_Calendar->config();
+		return $config instanceof EE_Calendar_Config ? $config : $this->set_config();
 	}
 
 
@@ -102,7 +103,6 @@ class EED_Espresso_Calendar extends EED_Module {
 	  * @return    void
 	  */
 	 public function run( $WP ) {
-		 EED_Espresso_Calendar::_set_config();
 		 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
 	 }
 
@@ -119,7 +119,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	 */
 	public function calendar_scripts() {
 		// get calendar options
-		$calendar_config = EED_Espresso_Calendar::_get_config();
+		$calendar_config = $this->get_config();
 		//Load tooltips styles
 		$show_tooltips = $calendar_config->tooltip->show;
 		if ( $show_tooltips ) {
@@ -181,7 +181,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				ob_start();
 
 				//@var $calendar_config EE_Calendar_Config
-				$calendar_config = EED_Espresso_Calendar::_get_config();
+				$calendar_config = $this->get_config();
 
 				//Category legend
 				if ( $calendar_config->display->enable_category_legend ){
@@ -275,7 +275,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	  */
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
-		$calendar_config = EED_Espresso_Calendar::_get_config()->to_flat_array();
+		$calendar_config = $this->get_config()->to_flat_array();
 		// merge incoming shortcode attributes with calendar config
 		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
@@ -388,7 +388,7 @@ class EED_Espresso_Calendar extends EED_Module {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
-		$config = EED_Espresso_Calendar::_get_config();
+		$config = $this->get_config();
 		if ( $config->tooltip->show ) {
 			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
 			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
