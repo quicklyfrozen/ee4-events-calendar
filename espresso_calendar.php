@@ -40,6 +40,7 @@ function load_espresso_calendar_class() {
 	if ( class_exists( 'EE_Addon' )) {
 		// calendar_version
 		define( 'EE_CALENDAR_VERSION', '3.1.002.alpha' );
+		define( 'EE_CALENDAR_PLUGIN_FILE', plugin_basename( __FILE__ ));
 		require_once ( plugin_dir_path( __FILE__ ) . 'EE_Calendar.class.php' );
 		EE_Calendar::register_addon();
 	}
