@@ -70,25 +70,12 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 	/**
-	 *    set_config
+	 *    config
 	 *
 	 * @return EE_Calendar_Config
 	 */
-	protected function set_config(){
-		$config = EE_Registry::instance()->addons->EE_Calendar->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
-		return $config instanceof EE_Calendar_Config ? $config : NULL;
-	}
-
-
-
-	/**
-	 *    get_config
-	 *
-	 * @return EE_Calendar_Config
-	 */
-	public function get_config(){
-		$config = EE_Registry::instance()->addons->EE_Calendar->config();
-		return $config instanceof EE_Calendar_Config ? $config : $this->set_config();
+	public function config(){
+		return EE_Registry::instance()->addons->EE_Calendar->config();
 	}
 
 
@@ -118,10 +105,8 @@ class EED_Espresso_Calendar extends EED_Module {
 	 *  @return 	void
 	 */
 	public function calendar_scripts() {
-		// get calendar options
-		$calendar_config = $this->get_config();
 		//Load tooltips styles
-		$show_tooltips = $calendar_config->tooltip->show;
+		$show_tooltips = $this->config()->tooltip->show;
 		if ( $show_tooltips ) {
 			// register jQuery qtip
 			wp_register_style( 'qtip', EE_CALENDAR_URL . 'css/jquery.qtip.min.css' );
@@ -180,11 +165,8 @@ class EED_Espresso_Calendar extends EED_Module {
 
 				ob_start();
 
-				//@var $calendar_config EE_Calendar_Config
-				$calendar_config = $this->get_config();
-
 				//Category legend
-				if ( $calendar_config->display->enable_category_legend ){
+				if ( $this->config()->display->enable_category_legend ){
 					echo '
 				<div id="espreso-category-legend">
 					<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
@@ -194,8 +176,8 @@ class EED_Espresso_Calendar extends EED_Module {
 						if ( $ee_term instanceof EE_Term ) {
 							/*@var $ee_term EE_Term */
 							$catcode = $ee_term->ID();
-							$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $calendar_config->display->event_background );
-							$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $calendar_config->display->event_text_color );
+							$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
+							$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
 							$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
 							if ( $use_bg ) {
 								echo '
@@ -217,7 +199,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				}
 
 				//Filter dropdowns
-				if ($calendar_config->display->enable_calendar_filters ){
+				if ($this->config()->display->enable_calendar_filters ){
 					?>
 					<!-- select box filters -->
 					<div class="ee-filter-form">
@@ -275,7 +257,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	  */
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
-		$calendar_config = $this->get_config()->to_flat_array();
+		$calendar_config = $this->config()->to_flat_array();
 		// merge incoming shortcode attributes with calendar config
 		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
@@ -387,12 +369,10 @@ class EED_Espresso_Calendar extends EED_Module {
 	public function get_calendar_events() {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
-		// get calendar options
-		$config = $this->get_config();
-		if ( $config->tooltip->show ) {
-			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
-			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
-			$tooltip_style = $config->tooltip->style;
+		if ( $this->config()->tooltip->show ) {
+			$tooltip_my = $this->config()->tooltip->pos_my_1 . $this->config()->tooltip->pos_my_2;
+			$tooltip_at = $this->config()->tooltip->pos_at_1 . $this->config()->tooltip->pos_at_2;
+			$tooltip_style = $this->config()->tooltip->style;
 		}
 
 		$today = date( 'Y-m-d' );
@@ -437,7 +417,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				continue;
 			}
 			//Get details about the category of the event
-			if ( ! $config->display->disable_categories) {
+			if ( ! $this->config()->display->disable_categories) {
 				 $categories= $event->get_all_event_categories();
 				//any term_taxonomies set for this event?
 				if ( $categories ) {
@@ -448,7 +428,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					}
 					$calendar_datetime->set_eventType($primary_cat->slug());
 //					d($calendar_datetime);
-					if ( $config->display->enable_cat_classes ) {
+					if ( $this->config()->display->enable_cat_classes ) {
 						foreach ( $categories as $category ) {
 							if ( $category instanceof EE_Term ) {
 								$calendar_datetime->add_classname( $category->slug() );
@@ -466,10 +446,10 @@ class EED_Espresso_Calendar extends EED_Module {
 			}
 
 
-			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
-			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
+			$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
+			$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
 
-			if ( $config->time->show && $startTime ) {
+			if ( $this->config()->time->show && $startTime ) {
 				$event_time_html = '<span class="time-display-block">' . $startTime;
 				$event_time_html .= $endTime ? ' - ' . $endTime : '';
 				$event_time_html .= '</span>';
@@ -480,7 +460,7 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 			// Add thumb to event
-			if ( $config->display->enable_calendar_thumbs ) {
+			if ( $this->config()->display->enable_calendar_thumbs ) {
 
 				$thumbnail_url = $event->feature_image_url('thumbnail');
 				if ( $thumbnail_url ) {
@@ -496,7 +476,7 @@ class EED_Espresso_Calendar extends EED_Module {
 //			echo $this->timer->get_elapse( __LINE__ );
 //			$this->timer->start();
 
-			if ( $config->tooltip->show ) {
+			if ( $this->config()->tooltip->show ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$description = $event->description_filtered();
 
@@ -513,12 +493,12 @@ class EED_Espresso_Calendar extends EED_Module {
 // tooltip wrapper
 				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
-				$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
+				$tooltip_html .= $this->config()->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 
 				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
-				if ( $config->display->show_attendee_limit ) {
+				if ( $this->config()->display->show_attendee_limit ) {
 					$tickets_sold = $datetime->sold();
 					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
 					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
