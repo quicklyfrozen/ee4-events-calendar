@@ -26,7 +26,6 @@ Class  EE_Calendar extends EE_Addon {
 		// define the plugin directory path and URL
 		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
-		define( 'EE_CALENDAR_PLUGIN_FILE', plugin_basename( __FILE__ ));
 		define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
 		define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 		// register addon via Plugin API
@@ -51,59 +50,15 @@ Class  EE_Calendar extends EE_Addon {
 				'module_paths' 		=> array( EE_CALENDAR_PATH . 'EED_Espresso_Calendar.module.php' ),
 				'shortcode_paths' 	=> array( EE_CALENDAR_PATH . 'EES_Espresso_Calendar.shortcode.php' ),
 				'widget_paths' 		=> array( EE_CALENDAR_PATH . 'EEW_Espresso_Calendar.widget.php' ),
+				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
+				'pue_options'			=> array(
+					'pue_plugin_slug' => 'espresso-calendar',
+					'plugin_basename' => EE_CALENDAR_PLUGIN_FILE,
+					'checkPeriod' => '24',
+					'use_wp_update' => FALSE
+				)
 			)
 		);
-	}
-
-
-
-	/**
-	* get_db_update_option_name
-	* @return string
-	*/
-	public function get_db_update_option_name(){
-		return EE_Calendar::activation_indicator_option_name;
-	}
-
-
-
-	/**
-	* Until we do something better, we'll just check for migration scripts upon
-	* plugin activation only. In the future, we'll want to do it on plugin updates too
-	*/
-	public function set_activation_indicator_option(){
-		//let's just handle this on the next request, ok? right now we're just not really ready
-		update_option( EE_Calendar::activation_indicator_option_name, TRUE );
-	}
-
-
-
-	/**
-	 * new_install - check for migration scripts
-	 * @return mixed
-	 */
-	public function new_install() {
-		//if core is also active, then get core to check for migration scripts
-		//and set maintenance mode is necessary
-		if ( get_option( EE_Calendar::activation_indicator_option_name )) {
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-			delete_option( EE_Calendar::activation_indicator_option_name );
-		}
-	}
-
-
-
-	/**
-	 * upgrade - check for migration scripts
-	 * @return mixed
-	 */
-	public function upgrade() {
-		//if core is also active, then get core to check for migration scripts
-		//and set maintenance mode is necessary
-		if ( get_option( EE_Calendar::activation_indicator_option_name )) {
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-			delete_option( EE_Calendar::activation_indicator_option_name );
-		}
 	}
 
 
@@ -118,48 +73,7 @@ Class  EE_Calendar extends EE_Addon {
 		// is admin and not in M-Mode ?
 		if ( is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
 			add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
-			add_action( 'action_hook_espresso_calendar_update_api', array( $this, 'load_pue_update' ));
 			add_action( 'action_hook_espresso_featured_image_add_to_meta_box', array( $this, 'add_to_featured_image_meta_box' ));
-		}
-	}
-
-
-
-
-
-	/**
-	 * 	load_pue_update - Update notifications
-	 *
-	 *  @return 	void
-	 */
-	public function load_pue_update() {
-		if ( ! defined( 'EVENT_ESPRESSO_PLUGINFULLPATH' )) {
-			return;
-		}
-		if ( is_readable( EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' )) {
-			//include the file
-			require( EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
-			// initiate the class and start the plugin update engine!
-			new PluginUpdateEngineChecker(
-			// host file URL
-				'http://eventespresso.com',
-				// plugin slug(s)
-				array(
-					'premium' => array('reg' => 'espresso-calendar-core'),
-					'prerelease' => array('beta' => 'espresso-calendar-core-pr')
-				),
-				// options
-				array(
-					'apikey' => EE_Registry::instance()->NET_CFG->core->site_license_key,
-					'lang_domain' => 'event_espresso',
-					'checkPeriod' => '24',
-					'option_key' => 'site_license_key',
-					'options_page_slug' => 'event_espresso',
-					'plugin_basename' => EE_CALENDAR_PLUGIN_FILE,
-					// if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
-					'use_wp_update' => FALSE,
-				)
-			);
 		}
 	}
 
