@@ -14,13 +14,6 @@ Class  EE_Calendar extends EE_Addon {
 
 
 
-	/**
-	 * class constructor
-	 */
-	public function __construct() {
-		// register our activation hook
-		register_activation_hook( __FILE__, array( $this, 'set_activation_indicator_option' ));
-	}
 
 	public static function register_addon() {
 		// define the plugin directory path and URL
