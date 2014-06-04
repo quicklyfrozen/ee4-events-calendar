@@ -8,6 +8,10 @@
  *
  * ------------------------------------------------------------------------
  */
+define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
+define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
+define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
+define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 Class  EE_Calendar extends EE_Addon {
 
 	const activation_indicator_option_name = 'ee_espresso_calendar_activation';
@@ -17,10 +21,6 @@ Class  EE_Calendar extends EE_Addon {
 
 	public static function register_addon() {
 		// define the plugin directory path and URL
-		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
-		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
-		define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
-		define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 		// register addon via Plugin API
 		EE_Register_Addon::register(
 			'Calendar',
