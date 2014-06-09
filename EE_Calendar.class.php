@@ -27,7 +27,7 @@ Class  EE_Calendar extends EE_Addon {
 			array(
 				'version' 					=> EE_CALENDAR_VERSION,
 				'min_core_version' => '4.3.0',
-				'base_path' 				=> EE_CALENDAR_PATH,
+				'main_file_path' 				=> EE_CALENDAR_PLUGIN_FILE,
 				'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_Calendar_Config',
@@ -46,7 +46,6 @@ Class  EE_Calendar extends EE_Addon {
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
 					'pue_plugin_slug' => 'espresso-calendar',
-					'plugin_basename' => EE_CALENDAR_PLUGIN_FILE,
 					'checkPeriod' => '24',
 					'use_wp_update' => FALSE
 				)

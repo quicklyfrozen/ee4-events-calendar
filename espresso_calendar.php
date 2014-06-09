@@ -38,7 +38,7 @@
  */
 
 define( 'EE_CALENDAR_VERSION', '3.1.0.alpha.004' );
-define( 'EE_CALENDAR_PLUGIN_FILE', plugin_basename( __FILE__ ));
+define( 'EE_CALENDAR_PLUGIN_FILE', __FILE__ );
 function load_espresso_calendar_class() {
 	if ( class_exists( 'EE_Addon' )) {
 		// calendar_version
