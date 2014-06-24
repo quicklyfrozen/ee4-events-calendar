@@ -179,7 +179,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		EE_Config::instance()->_update_config( 'addons', 'EED_Espresso_Calendar', $config );
+		EE_Config::instance()->update_config()( 'addons', 'EED_Espresso_Calendar', $config );
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
 
