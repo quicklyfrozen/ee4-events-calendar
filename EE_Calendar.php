@@ -648,15 +648,16 @@
 
 				if ( $config->tooltip->show ) {
 					//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-					$description = $event->description_filtered();
-
-					//Supports 3.1 short descriptions
-	//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-					$desciption_parts =  explode( '<!--more-->', $description);
-					if(is_array($desciption_parts)){
-						$description = array_shift($desciption_parts);
+					$description = $event->short_description( 55, NULL, TRUE );
+					if ( empty( $description )) {
+						$description = $event->description_filtered();
 					}
-	//				}
+					// better more tag detection (stolen from WP core)
+					if ( preg_match( '/<!--more(.*?)?-->/', $description, $matches ) ) {
+						$description = explode( $matches[0], $description, 2 );
+						$description = array_shift( $description );
+					}
+					$description = do_shortcode( $description );
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
