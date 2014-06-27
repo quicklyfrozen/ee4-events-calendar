@@ -165,23 +165,20 @@
 		}
 		// is EE running and not in M-Mode ?
 		if ( defined( 'EVENT_ESPRESSO_VERSION' )) {
-			switch ( EE_Maintenance_Mode::instance()->level() ) {
-				case 2 :
-				case 1:
-					// load admin
-					if ( is_admin() ) {
-						// ajax hooks
-						add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-						add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
-						new EE_Calendar_Admin();
-					}
-				default:
-					// calendar settings
-					$this->_set_calendar_config();
-					// add Calendar to list of shortcodes to be registered
-					add_filter( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array( $this, 'add_shortcode' ));
-					// add Calendar to list of widgets to be registered
-					add_filter( 'FHEE__EE_Config__register_widgets__widgets_to_register', array( $this, 'add_widget' ));
+			if ( EE_Maintenance_Mode::instance()->level() < 2 ) {
+				// calendar settings
+				$this->_set_calendar_config();
+				// add Calendar to list of shortcodes to be registered
+				add_filter( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array( $this, 'add_shortcode' ));
+				// add Calendar to list of widgets to be registered
+				add_filter( 'FHEE__EE_Config__register_widgets__widgets_to_register', array( $this, 'add_widget' ));
+				// load admin
+				if ( is_admin() ) {
+					// ajax hooks
+					add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
+					add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
+					new EE_Calendar_Admin();
+				}
 			}
 		}
 	}
