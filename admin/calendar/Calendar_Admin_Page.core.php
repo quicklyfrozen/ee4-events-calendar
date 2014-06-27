@@ -136,7 +136,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	 * @param $template
 	 */
 	protected function _settings_page( $template ) {
-		$this->_template_args['calendar_config'] = EE_Config::instance()->get_config( 'addons', 'EED_Espresso_Calendar', 'EE_Calendar_Config' );
+		$this->_template_args['calendar_config'] = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 		$this->_template_args['values'] = array(
 				array('id' => false, 'text' => __('No', 'event_espresso')),
 				array('id' => true, 'text' => __('Yes', 'event_espresso'))
@@ -159,7 +159,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 			$config = new EE_Calendar_Config();
 			$count = 1;
 		}else{
-			$config = EE_Config::instance()->get_config( 'addons', 'EED_Espresso_Calendar', 'EE_Calendar_Config' );
+			$config = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 			$count=0;
 			//otherwise we assume you want to allow full html
 			foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
@@ -179,7 +179,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		EE_Config::instance()->update_config( 'addons', 'EED_Espresso_Calendar', $config );
+		EE_Config::instance()->update_config( 'addons', 'EE_Calendar', $config );
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
 
