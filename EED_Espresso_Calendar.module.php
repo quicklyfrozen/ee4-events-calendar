@@ -90,7 +90,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	  * @return    void
 	  */
 	 public function run( $WP ) {
-		 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
+		 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ), 4 );
 	 }
 
 
@@ -108,38 +108,36 @@ class EED_Espresso_Calendar extends EED_Module {
 		//Load tooltips styles
 		$show_tooltips = $this->config()->tooltip->show;
 		if ( $show_tooltips ) {
-			// register jQuery qtip
-			wp_register_style( 'qtip', EE_CALENDAR_URL . 'css/jquery.qtip.min.css' );
-			wp_register_script( 'jquery-qtip', EE_CALENDAR_URL . 'scripts/jquery.qtip.js', array('jquery'), '2.1.1', TRUE);
+			// triggers loading of qtip scripts in core
+			add_filter( 'FHEE_load_qtip', '__return_true' );
 		}
 
 		// load base calendar style
-		wp_register_style('fullcalendar', EE_CALENDAR_URL . 'css/fullcalendar.css');
+		wp_register_style( 'fullcalendar', EE_CALENDAR_URL . 'css' . DS . 'fullcalendar.css' );
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
-		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
+		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css' . DS . 'calendar.css' )) {
 			//This is the url to the css file if available
-			wp_register_style('espresso_calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css');
+			wp_register_style( 'espresso_calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css' . DS . 'calendar.css' );
 		} else {
 			// EE calendar style
-			wp_register_style('espresso_calendar', EE_CALENDAR_URL . 'css/calendar.css');
+			wp_register_style( 'espresso_calendar', EE_CALENDAR_URL . 'css' . DS . 'calendar.css' );
 		}
 		//core calendar script
-		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE );
-		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE );
+		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts' . DS . 'fullcalendar.min.js', array( 'jquery' ), '1.6.2', TRUE );
+		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts' . DS . 'espresso_calendar.js', array( 'fullcalendar-min-js' ), EE_CALENDAR_VERSION, TRUE );
 
 		// get the current post
 		global $post, $is_espresso_calendar;
 		if ( isset( $post->post_content ) || $is_espresso_calendar ) {
 			 // check the post content for the short code
-			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $is_espresso_calendar ) {
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR' ) !== FALSE || $is_espresso_calendar ) {
 				if ( $show_tooltips ) {
-					wp_enqueue_style('qtip');
-					wp_enqueue_script('jquery-qtip');
-					wp_enqueue_script('jquery');
+					// triggers loading of qtip scripts in core
+					add_filter( 'FHEE_load_qtip', '__return_true' );
 				}
-				wp_enqueue_style('fullcalendar');
-				wp_enqueue_style('espresso_calendar');
-				wp_enqueue_script('espresso_calendar');
+				wp_enqueue_style( 'fullcalendar' );
+				wp_enqueue_style( 'espresso_calendar' );
+				wp_enqueue_script( 'espresso_calendar' );
 			}
 		}
 	}
@@ -168,7 +166,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				//Category legend
 				if ( $this->config()->display->enable_category_legend ){
 					echo '
-				<div id="espreso-category-legend">
+				<div id="espresso-category-legend">
 					<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
 					<ul id="ee-category-legend-ul">';
 
