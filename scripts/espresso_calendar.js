@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 		// Enables/disables use of jQuery UI theming.
 		theme: false,
 		// The day that each week begins.
-		firstDay: eeCAL.time_first_day,
+		firstDay: parseInt(eeCAL.time_first_day),
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
 		weekends: eeCAL.time_weekends,
 		// Determines the number of weeks displayed in a month view. Also determines each week's height.
