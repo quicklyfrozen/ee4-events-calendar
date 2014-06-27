@@ -158,26 +158,30 @@
 	 */
 	public function plugins_loaded() {
 		//if core is also active, then get core to check for migration scripts
-		//and set maintneance mode is necessary
+		//and set maintenance mode is necessary
 		if(get_option(EE_Calendar::activation_indicator_option_name)){
 			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 			delete_option(EE_Calendar::activation_indicator_option_name);
 		}
-
 		// is EE running and not in M-Mode ?
-		if ( defined( 'EVENT_ESPRESSO_VERSION' ) && ! EE_Maintenance_Mode::instance()->level() ) {
-			// calendar settings
-			$this->_set_calendar_config();
-			// add Calendar to list of shortcodes to be registered
-			add_filter( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array( $this, 'add_shortcode' ));
-			// add Calendar to list of widgets to be registered
-			add_filter( 'FHEE__EE_Config__register_widgets__widgets_to_register', array( $this, 'add_widget' ));
-			// load admin
-			if ( is_admin() ) {
-				// ajax hooks
-				add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-				add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
-				 new EE_Calendar_Admin();
+		if ( defined( 'EVENT_ESPRESSO_VERSION' )) {
+			switch ( EE_Maintenance_Mode::instance()->level() ) {
+				case 2 :
+				case 1:
+					// load admin
+					if ( is_admin() ) {
+						// ajax hooks
+						add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
+						add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
+						new EE_Calendar_Admin();
+					}
+				default:
+					// calendar settings
+					$this->_set_calendar_config();
+					// add Calendar to list of shortcodes to be registered
+					add_filter( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array( $this, 'add_shortcode' ));
+					// add Calendar to list of widgets to be registered
+					add_filter( 'FHEE__EE_Config__register_widgets__widgets_to_register', array( $this, 'add_widget' ));
 			}
 		}
 	}
@@ -246,7 +250,7 @@
 
 	/**
 	 * _setup_data_migration_script_hooks
-	 * Adds the calendar migraiton scripts folder to core's
+	 * Adds the calendar migration scripts folder to core's
 	 */
 	protected function _setup_data_migration_script_hooks(){
 		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_calendar_migrations'));
