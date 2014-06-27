@@ -19,7 +19,7 @@
  *
  * @package		Event Espresso
  * @subpackage	espresso-calendar
- * @author		Chris Reynolds 
+ * @author		Chris Reynolds
  * @since 2.0
  *
  * ------------------------------------------------------------------------
@@ -33,13 +33,14 @@ class EEW_Espresso_Calendar extends WP_Widget {
 		parent::__construct(
 			'ee-calendar-widget',
 			__( 'Event Espresso Calendar Widget', 'event_espresso' ),
-			 array( 
+			 array(
 			 	'description' => __( 'Displays the Espresso Calendar in a widget.', 'event_espresso' )
 			 ),
 			array(
-				'width' => 300, 
-				'height' => 350, 
-				'id_base' => 'ee-calendar-widget'
+				'width' => 300,
+				'height' => 350,
+				'id_base' => 'ee-calendar-widget',
+				'classname' => 'ee-calendar-widget'
 			)
 		);
 	}
@@ -52,23 +53,24 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	 * @see WP_Widget::form()
 	 *
 	 * @param array $instance Previously saved values from database.
+	 * @return string|void
 	 */
 	public function form( $instance ) {
 
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );		
+		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );
 
 		// Set up some default widget settings.
-		$defaults = array( 
-			'title' => 'Calendar', 
-			'show_expired' => FALSE, 
-			'category_id' => '', 
+		$defaults = array(
+			'title' => 'Calendar',
+			'show_expired' => FALSE,
+			'category_id' => '',
 			'calendar_page' => ''
 		);
-		
+
 		$instance = wp_parse_args((array) $instance, $defaults);
 
-		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );		
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
@@ -86,15 +88,15 @@ class EEW_Espresso_Calendar extends WP_Widget {
 			<label for="<?php echo $this->get_field_id('show_expired'); ?>">
 				<?php _e('Display Expired Events?', 'event_espresso'); ?>
 			</label>
-			<?php 			
-				echo EEH_Form_Fields::select( 
-					 __('Display Expired Events?', 'event_espresso'), 
-					$instance['show_expired'], 
-					$yes_no_values, 
+			<?php
+				echo EEH_Form_Fields::select(
+					 __('Display Expired Events?', 'event_espresso'),
+					$instance['show_expired'],
+					$yes_no_values,
 					$this->get_field_name('show_expired'),
 					$this->get_field_id('show_expired')
-				);			
-			?> 
+				);
+			?>
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('category_id'); ?>">
@@ -102,13 +104,13 @@ class EEW_Espresso_Calendar extends WP_Widget {
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" /><br/>
 			<span class="small-text">
-			<?php 
+			<?php
 				printf(
 					__( 'Enter the Category Slug from the %sEvent Categories%s page','event_espresso' ),
 					'<a href="http://localhost/4.1-DEV/wp-admin/admin.php?page=espresso_events&action=category_list" target="_blank">',
 					'</a>'
 				);
-			?>				
+			?>
 			</span>
 		</p>
 
@@ -146,7 +148,10 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-
+		// check for existing calendar module instance
+		if ( ! EE_Registry::instance()->modules->EED_Espresso_Calendar instanceof EED_Espresso_Calendar ) {
+			EE_Registry::instance()->modules->EED_Espresso_Calendar = new EED_Espresso_Calendar();
+		}
 		extract($args);
 		// get the current post
 		global $post, $is_espresso_calendar;
@@ -161,11 +166,11 @@ class EEW_Espresso_Calendar extends WP_Widget {
 					echo $before_title . $title . $after_title;
 				}
 				// load scripts
-				EE_Calendar::instance()->calendar_scripts();
+				 EE_Registry::instance()->modules->EED_Espresso_Calendar->calendar_scripts();
 				// settings
-				$attributes = array( 
-					'event_category_id' => $instance['category_id'], 
-					'show_expired' => $instance['show_expired'], 
+				$attributes = array(
+					'event_category_id' => $instance['category_id'],
+					'show_expired' => $instance['show_expired'],
 					'cal_view' => 'month',
 					'header_left' => 'prev',
 					'header_center' => 'title',
@@ -173,7 +178,7 @@ class EEW_Espresso_Calendar extends WP_Widget {
 					'title_format_month' => 'MMM yyyy',
 					'widget' => TRUE
 				);
-				echo EE_Calendar::instance()->display_calendar( $attributes );
+				echo EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
 				// After widget (defined by themes).
 				echo $after_widget;
 			}
