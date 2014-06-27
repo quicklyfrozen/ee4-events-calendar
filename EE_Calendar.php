@@ -651,13 +651,16 @@
 					$description = $event->short_description( 55, NULL, TRUE );
 					if ( empty( $description )) {
 						$description = $event->description_filtered();
+						// better more tag detection (stolen from WP core)
+						if ( preg_match( '/<!--more(.*?)?-->/', $description, $matches ) ) {
+							$description = explode( $matches[0], $description, 2 );
+							$description = array_shift( $description );
+							$description = wp_strip_all_tags( $description );
+						}
+						$description = do_shortcode( $description );
+					} else {
+						$description = wp_strip_all_tags( $description );
 					}
-					// better more tag detection (stolen from WP core)
-					if ( preg_match( '/<!--more(.*?)?-->/', $description, $matches ) ) {
-						$description = explode( $matches[0], $description, 2 );
-						$description = array_shift( $description );
-					}
-					$description = do_shortcode( $description );
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
