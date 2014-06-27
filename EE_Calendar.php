@@ -574,134 +574,136 @@
 
 		$calendar_datetimes_for_json = array();
 		foreach ( $datetime_objs as $datetime ) {
-			/* @var $datetime EE_Datetime */
-			$calendar_datetime = new EE_Datetime_In_Calendar($datetime);
-//	$this->timer->start();
-			$event = $datetime->event();
-			/* @var $event EE_Event */
-			if( ! $event ){
-				EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()));
-				continue;
-			}
-			//Get details about the category of the event
-			if ( ! $config->display->disable_categories) {
-//				echo "using cateogires!";
-				 $categories= $event->get_all_event_categories();
+			if ( $datetime instanceof EE_Datetime ) {
+				/* @var $datetime EE_Datetime */
+				$calendar_datetime = new EE_Datetime_In_Calendar($datetime);
+	//	$this->timer->start();
+				$event = $datetime->event();
+				/* @var $event EE_Event */
+				if( ! $event instanceof EE_Event ){
+					EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()));
+					continue;
+				}
+				//Get details about the category of the event
+				if ( ! $config->display->disable_categories) {
+	//				echo "using categories!";
+					 $categories= $event->get_all_event_categories();
 
-				//any term_taxonmies set for this event?
-//				d($primary_cat);
-				if ( $categories ) {
-//					d($primary_cat->get_extra_meta('use_color_picker',true,false));
-					$primary_cat = reset($categories);
-					if($primary_cat->get_extra_meta('use_color_picker',true,false)){
-						$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
-						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
-					}
-					$calendar_datetime->set_eventType($primary_cat->slug());
-//					d($calendar_datetime);
-					if ( $config->display->enable_cat_classes ) {
-						foreach ( $categories as $category ) {
-							$calendar_datetime->add_classname($category->slug());
+					//any term_taxonomies set for this event?
+	//				d($primary_cat);
+					if ( $categories ) {
+	//					d($primary_cat->get_extra_meta('use_color_picker',true,false));
+						$primary_cat = reset($categories);
+						if($primary_cat->get_extra_meta('use_color_picker',true,false)){
+							$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
+							$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
 						}
-					} else {
-						$calendar_datetime->add_classname($primary_cat->slug());
+						$calendar_datetime->set_eventType($primary_cat->slug());
+	//					d($calendar_datetime);
+						if ( $config->display->enable_cat_classes ) {
+							foreach ( $categories as $category ) {
+								$calendar_datetime->add_classname($category->slug());
+							}
+						} else {
+							$calendar_datetime->add_classname($primary_cat->slug());
+						}
+					}
+
+				}
+
+				if ( $datetime->is_expired() ) {
+					$calendar_datetime->set_classname('expired');
+				}
+
+
+				$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
+				$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
+
+				if ( $config->time->show && $startTime ) {
+					$event_time_html = '<span class="time-display-block">' . $startTime;
+					$event_time_html .= $endTime ? ' - ' . $endTime : '';
+					$event_time_html .= '</span>';
+				} else {
+					$event_time_html = FALSE;
+				}
+				$calendar_datetime->set_event_time($event_time_html);
+
+
+				// Add thumb to event
+				if ( $config->display->enable_calendar_thumbs ) {
+
+					$thumbnail_url = $event->feature_image_url('thumbnail');
+					if ( $thumbnail_url ) {
+						$calendar_datetime->set_event_img_thumb( '
+						<span class="thumb-wrap">
+							<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
+						</span>');
+						$calendar_datetime->add_classname('event-has-thumb');
 					}
 				}
 
-			}
+	//			$this->timer->stop();
+	//			echo $this->timer->get_elapse( __LINE__ );
+	//			$this->timer->start();
 
-			if ( $datetime->is_expired() ) {
-				$calendar_datetime->set_classname('expired');
-			}
+				if ( $config->tooltip->show ) {
+					//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
+					$description = $event->description_filtered();
+
+					//Supports 3.1 short descriptions
+	//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
+					$desciption_parts =  explode( '<!--more-->', $description);
+					if(is_array($desciption_parts)){
+						$description = array_shift($desciption_parts);
+					}
+	//				}
+					// and just in case it's still too long, or somebody forgot to use the more tag...
+					//if word count is set to 0, set no limit
+					$calendar_datetime->set_description($description);
+	// tooltip wrapper
+					$tooltip_html = '<div class="qtip_info">';
+					// show time ?
+					$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
+
+					$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
+
+					// add attendee limit if set
+					if ( $config->display->show_attendee_limit ) {
+						$tickets_sold = $datetime->sold();
+						$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
+						$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
+					}
+
+					//add link
+					$regButtonText = $event->display_ticket_selector() && ! $event->is_expired() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
+					// reg open
+					if ( $event->is_sold_out() || $datetime->sold_out() || $datetime->total_tickets_available_at_this_datetime() == 0) {
+						$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
+					} else if($event->is_cancelled()){
+						$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
+					}else{
+						$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
+					}
+
+					$tooltip_html .= '<div class="clear"></div>';
+					$tooltip_html .= '</div>';
+					$calendar_datetime->set_tooltip($tooltip_html);
 
 
-			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
-			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
-
-			if ( $config->time->show && $startTime ) {
-				$event_time_html = '<span class="time-display-block">' . $startTime;
-				$event_time_html .= $endTime ? ' - ' . $endTime : '';
-				$event_time_html .= '</span>';
-			} else {
-				$event_time_html = FALSE;
-			}
-			$calendar_datetime->set_event_time($event_time_html);
-
-
-			// Add thumb to event
-			if ( $config->display->enable_calendar_thumbs ) {
-
-				$thumbnail_url = $event->feature_image_url('thumbnail');
-				if ( $thumbnail_url ) {
-					$calendar_datetime->set_event_img_thumb( '
-					<span class="thumb-wrap">
-						<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
-					</span>');
-					$calendar_datetime->add_classname('event-has-thumb');
+					// Position my top left...
+					$calendar_datetime->set_tooltip_my($tooltip_my);
+					$calendar_datetime->set_tooltip_at($tooltip_at);
+					$calendar_datetime->set_tooltip_style( $tooltip_style );
+					$calendar_datetime->set_show_tooltips(true);
+				} else {
+					$calendar_datetime->set_show_tooltips(FALSE);
 				}
+				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
+
+	//			$this->timer->stop();
+	//			echo $this->timer->get_elapse( __LINE__ );
+
 			}
-
-//			$this->timer->stop();
-//			echo $this->timer->get_elapse( __LINE__ );
-//			$this->timer->start();
-
-			if ( $config->tooltip->show ) {
-				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$description = $event->description_filtered();
-
-				//Supports 3.1 short descriptions
-//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-				$desciption_parts =  explode( '<!--more-->', $description);
-				if(is_array($desciption_parts)){
-					$description = array_shift($desciption_parts);
-				}
-//				}
-				// and just in case it's still too long, or somebody forgot to use the more tag...
-				//if word count is set to 0, set no limit
-				$calendar_datetime->set_description($description);
-// tooltip wrapper
-				$tooltip_html = '<div class="qtip_info">';
-				// show time ?
-				$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
-
-				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
-
-				// add attendee limit if set
-				if ( $config->display->show_attendee_limit ) {
-					$tickets_sold = $datetime->sold();
-					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
-					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
-				}
-
-				//add link
-				$regButtonText = $event->display_ticket_selector() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
-				// reg open
-				if ( $event->is_sold_out() || $datetime->sold_out() || $datetime->total_tickets_available_at_this_datetime() == 0) {
-					$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
-				} else if($event->is_cancelled()){
-					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
-				}else{
-					$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
-				}
-
-				$tooltip_html .= '<div class="clear"></div>';
-				$tooltip_html .= '</div>';
-				$calendar_datetime->set_tooltip($tooltip_html);
-
-
-				// Position my top left...
-				$calendar_datetime->set_tooltip_my($tooltip_my);
-				$calendar_datetime->set_tooltip_at($tooltip_at);
-				$calendar_datetime->set_tooltip_style( $tooltip_style );
-				$calendar_datetime->set_show_tooltips(true);
-			} else {
-				$calendar_datetime->set_show_tooltips(FALSE);
-			}
-			$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
-
-//			$this->timer->stop();
-//			echo $this->timer->get_elapse( __LINE__ );
-
 		}
 
 		echo json_encode( $calendar_datetimes_for_json );
