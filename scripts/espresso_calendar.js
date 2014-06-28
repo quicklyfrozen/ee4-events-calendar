@@ -1,31 +1,32 @@
 jQuery(document).ready(function($) {
-	
+
 	// fix this one boolean
-	if ( eeCAL.time_weekends == undefined || eeCAL.time_weekends == '' ) {
+	if ( eeCAL.time_weekends === undefined || eeCAL.time_weekends === '' ) {
 		eeCAL.time_weekends = false;
 	}
-	
+
 	var calendar_width = $('#espresso_calendar').width();
+	var day_width = 0;
+	var ee_eventColor = '';
+	var ee_eventTextColor = '';
+
 	if ( eeCAL.time_weekends ) {
-		var day_width = calendar_width / 7;
+		day_width = calendar_width / 7;
 	} else {
-		var day_width = calendar_width / 5;
+		day_width = calendar_width / 5;
 	}
 	// padding and margin between event and day cell (this could be calculated via js)
 	var day_padding = 16;
-	
+
 	if ( eeCAL.display_use_pickers){
 		// Sets the background and border colors for all events on the calendar.
-		var ee_eventColor = eeCAL.display_event_background;
+		ee_eventColor = eeCAL.display_event_background;
 		// Sets the text color for all events on the calendar.
-		var ee_eventTextColor = eeCAL.display_event_text_color;
-	} else {
-		var ee_eventColor = '';
-		var ee_eventTextColor = '';
+		ee_eventTextColor = eeCAL.display_event_text_color;
 	}
 
 	$('#espresso_calendar').fullCalendar({
-		
+
 		// General Display - http://arshaw.com/fullcalendar/docs/display/
 		// Defines the buttons and title at the top of the calendar.
 		header: {
@@ -47,17 +48,17 @@ jQuery(document).ready(function($) {
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
 			// remove ui styling from tool tips
-		        $('.qtip-close .ui-icon').each( function() {
-		 		$(this).removeClass('ui-icon');
-		 		$(this).removeClass('ui-icon-close');
-		 	});	
-	    	},	 
+			$('.qtip-close .ui-icon').each( function() {
+				$(this).removeClass('ui-icon');
+				$(this).removeClass('ui-icon-close');
+			});
+		},
 		// Views - http://arshaw.com/fullcalendar/docs/views/
 		// The initial view when the calendar loads.
-		defaultView: eeCAL.cal_view,		
+		defaultView: eeCAL.cal_view,
 		//Text/Time Customization - http://arshaw.com/fullcalendar/docs/text/
 		// Determines the text that will be displayed in the header's title.
-		timeFormat:{ 
+		timeFormat:{
 			agenda: 'h:mm a{ - h:mm a}',
 			'' : ''
 		},
@@ -84,7 +85,7 @@ jQuery(document).ready(function($) {
 			week: eeCAL.button_text_week, 	// default 'week'
 			day: eeCAL.button_text_day 	// default 'day'
 		},
-		
+
 		// Sets the background and border colors for all events on the calendar.
 		eventColor: ee_eventColor,
 		// Sets the text color for all events on the calendar.
@@ -98,11 +99,11 @@ jQuery(document).ready(function($) {
 		dayNames: eeCAL.day_names,
 		//Abbreviated names of days-of-week.
 		dayNamesShort: eeCAL.day_names_short,
-		
+
 		// set initial date view
 		year: eeCAL.year,
 		month: eeCAL.month,
-		
+
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
 			$.ajax({
@@ -129,7 +130,7 @@ jQuery(document).ready(function($) {
 							$('#espresso_calendar_images').append(thumb);
 							// then hide it immediately ( also remove the id attribute so as not to conflict with image used in the actual calendar )
 							$( thumb ).hide().attr( 'id', '' );
-						});								
+						});
 					});
 					// send event data to calendar for display
 					callback( response );
@@ -153,12 +154,12 @@ jQuery(document).ready(function($) {
 			// cycle thru each day of the HTML calendar
 			$('.fc-day').each( function(){
 				// if calendar date matches event date
-				if ( $(this).attr('data-date') == event.target_date ) {
+				if ( $(this).attr('data-date') === event.target_date ) {
 					// mark that day as having an event on it
 					$(this).addClass('event-day');
-				}				
+				}
 			});
-			// calculate the width for this event based on number of days x one day event width - 
+			// calculate the width for this event based on number of days x one day event width -
 			var event_width = ( day_width * event.event_days ) - day_padding;
 			// set element to correct width
 			element.width( event_width );
@@ -177,7 +178,7 @@ jQuery(document).ready(function($) {
 				event_title.after( event.event_time );
 			}
 			// and get height of element after times are added
-			var height_with_all = element.height();			
+			var height_with_all = element.height();
 			// again, check for image ( has to happen a second time after times get added )
 			if( event.event_img_thumb && ! eeCAL.widget ){
 				// and actually find it
@@ -185,13 +186,14 @@ jQuery(document).ready(function($) {
 				// calculate it's height'
 				var thumb_height = thumb.height();
 				// so if the event actually has an image ( events without thumbnails will have a thumb_height of NULL )
-				if ( thumb_height != null ) {
+				if ( thumb_height !== null ) {
 					// calculate base height for event, which basically just subtracts the original ( but often incorrect ) image height
 					var base_evt_height = original_height + ( height_with_all - height_with_img );
+					var img_height = 0;
 					// multi day events
 					if ( event.event_days > 1 ) {
 						// can usually display the full thumbnail size becuz of their width
-						var img_height = parseInt( event.thumbnail_size_h );
+						img_height = parseInt( event.thumbnail_size_h );
 						// but in case thumbnail is still wider than multiday table cell
 						if ( parseInt( event.thumbnail_size_h ) > event_width ) {
 							// use that as the height
@@ -202,20 +204,20 @@ jQuery(document).ready(function($) {
 						// for portrait oriented images
 						var thumb_width = thumb.width();
 						if ( thumb_height > thumb_width ) {
-							var img_height = parseInt( thumb_height + day_padding );
-						} else if ( thumb_height == 0) {
-							var img_height = parseInt( day_width + day_padding );
+							img_height = parseInt( thumb_height + day_padding );
+						} else if ( thumb_height === 0) {
+							img_height = parseInt( day_width + day_padding );
 						} else {
 						// for landscape oriented images
-							var img_height = parseInt( day_width - day_padding );
+							img_height = parseInt( day_width - day_padding );
 						}
 					}
 					// set the element height to our newly calculated value
 					element.height( base_evt_height + img_height );
 				}
 			}
-			
-			if ( eeCAL.tooltip_show ) {				
+
+			if ( eeCAL.tooltip_show ) {
 				element.qtip({
 					content: {
 						text: event.description + event.tooltip,
@@ -224,7 +226,7 @@ jQuery(document).ready(function($) {
 					},
 					position: {
 						// Position my top left...
-						my: event.tooltip_my, 
+						my: event.tooltip_my,
 						// at the bottom right of...
 						at: event.tooltip_at
 					},
@@ -234,16 +236,16 @@ jQuery(document).ready(function($) {
 					},
 					hide: "unfocus",
 					style: {
-						classes: event.tooltip_style, 
+						classes: event.tooltip_style,
 						widget: true
 					}
 				});
-				
+
 			} else {
 				//This displays the title of the event when hovering
-				element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );				
+				element.attr( 'title', event.title + " - Event Times: " + event.event_time_no_tags );
 			}
-			
+
 		},
 		// Triggered after an event has been placed on the calendar in its final position.
 		eventAfterRender : function( event, element, view ) {
@@ -253,16 +255,19 @@ jQuery(document).ready(function($) {
 		},
 		// Triggered when event fetching starts/stops.
 		loading: function( bool ) {
-			if ( bool ) $('#espresso-ajax-loading').show();
-			else $('#espresso-ajax-loading').hide();
+			if ( bool ) {
+				$( '#espresso-ajax-loading' ).show();
+			} else {
+				$( '#espresso-ajax-loading' ).hide();
+			}
 		}
 
 	});
 
     $('.qtip-close .ui-icon').each( function() {
- 		$(this).removeClass('ui-icon');
- 		$(this).removeClass('ui-icon-close');
- 	});	
+		$(this).removeClass('ui-icon');
+		$(this).removeClass('ui-icon-close');
+	});
 
 	$('.submit-this').on( 'change', function() {
 		$(this).closest('form').submit();
