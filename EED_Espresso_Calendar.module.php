@@ -367,11 +367,6 @@ class EED_Espresso_Calendar extends EED_Module {
 	public function get_calendar_events() {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
-		if ( $this->config()->tooltip->show ) {
-			$tooltip_my = $this->config()->tooltip->pos_my_1 . $this->config()->tooltip->pos_my_2;
-			$tooltip_at = $this->config()->tooltip->pos_at_1 . $this->config()->tooltip->pos_at_2;
-			$tooltip_style = $this->config()->tooltip->style;
-		}
 
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
@@ -381,34 +376,38 @@ class EED_Espresso_Calendar extends EED_Module {
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
-		if($category_id_or_slug){
-			$where_params['OR*category'] = array('Event.Term_Taxonomy.Term.slug' => $category_id_or_slug,
-												'Event.Term_Taxonomy.Term.term_id'=>$category_id_or_slug);
+		if ( $category_id_or_slug ) {
+			$where_params['OR*category'] = array(
+				'Event.Term_Taxonomy.Term.slug' => $category_id_or_slug,
+				'Event.Term_Taxonomy.Term.term_id'=>$category_id_or_slug
+			);
 		}
-		if($venue_id_or_slug){
-			$where_params['OR*venue'] = array('Event.Venue.VNU_ID' => $venue_id_or_slug,
-												'Event.Venue.VNU_identifier'=>$venue_id_or_slug);
+		if ( $venue_id_or_slug ){
+			$where_params['OR*venue'] = array(
+				'Event.Venue.VNU_ID' => $venue_id_or_slug,
+				'Event.Venue.VNU_identifier'=>$venue_id_or_slug
+			);
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 
 		$where_params['DTT_EVT_start']= array('<=',$end_date);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
-		if($show_expired == 'false'){
+		if ( $show_expired == 'false' ) {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today);
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
 		/* @var $datetime_objs EE_Datetime[] */
 
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
+		//	$this->timer->stop();
+		//	echo $this->timer->get_elapse( __LINE__ );
 
 		$calendar_datetimes_for_json = array();
 		foreach ( $datetime_objs as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				/* @var $datetime EE_Datetime */
 				$calendar_datetime = new EE_Datetime_In_Calendar($datetime);
-	//	$this->timer->start();
+				//	$this->timer->start();
 				$event = $datetime->event();
 				/* @var $event EE_Event */
 				if( ! $event instanceof EE_Event ){
@@ -443,23 +442,20 @@ class EED_Espresso_Calendar extends EED_Module {
 					$calendar_datetime->set_classname('expired');
 				}
 
+				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
+				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
 
-			$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
-			$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
+				if ( $this->config()->time->show && $startTime ) {
+					$event_time_html = '<span class="time-display-block">' . $startTime;
+					$event_time_html .= $endTime ? ' - ' . $endTime : '';
+					$event_time_html .= '</span>';
+				} else {
+					$event_time_html = FALSE;
+				}
+				$calendar_datetime->set_event_time($event_time_html);
 
-			if ( $this->config()->time->show && $startTime ) {
-				$event_time_html = '<span class="time-display-block">' . $startTime;
-				$event_time_html .= $endTime ? ' - ' . $endTime : '';
-				$event_time_html .= '</span>';
-			} else {
-				$event_time_html = FALSE;
-			}
-			$calendar_datetime->set_event_time($event_time_html);
-
-
-			// Add thumb to event
-			if ( $this->config()->display->enable_calendar_thumbs ) {
-
+				// Add thumb to event
+				if ( $this->config()->display->enable_calendar_thumbs ) {
 					$thumbnail_url = $event->feature_image_url('thumbnail');
 					if ( $thumbnail_url ) {
 						$calendar_datetime->set_event_img_thumb( '
@@ -470,11 +466,11 @@ class EED_Espresso_Calendar extends EED_Module {
 					}
 				}
 
-	//			$this->timer->stop();
-	//			echo $this->timer->get_elapse( __LINE__ );
-	//			$this->timer->start();
+				// $this->timer->stop();
+				// echo $this->timer->get_elapse( __LINE__ );
+				// $this->timer->start();
 
-				if ( $config->tooltip->show ) {
+				if ( $this->config()->tooltip->show ) {
 					//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 					$description = $event->short_description( 55, NULL, TRUE );
 					if ( empty( $description )) {
@@ -492,17 +488,18 @@ class EED_Espresso_Calendar extends EED_Module {
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
-	// tooltip wrapper
+					// tooltip wrapper
 					$tooltip_html = '<div class="qtip_info">';
 					// show time ?
-					$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
-
-					$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
+					$tooltip_html .= $this->config()->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 
 					// add attendee limit if set
-					if ( $config->display->show_attendee_limit ) {
-						$tickets_sold = $datetime->sold();
-						$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
+					if ( $this->config()->display->show_attendee_limit ) {
+						if ( $datetime->total_tickets_available_at_this_datetime() == -1 ) {
+							$attendee_limit_text = __('Available Spaces: unlimited', 'event_espresso');
+						} else {
+							$attendee_limit_text = __('Registrations / Spaces: ', 'event_espresso') . $datetime->sold() . ' / ' . $datetime->sum_tickets_initially_available();
+						}
 						$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
 					}
 
@@ -513,50 +510,21 @@ class EED_Espresso_Calendar extends EED_Module {
 						$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
 					} else if($event->is_cancelled()){
 						$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
-					}else{
+					} else {
 						$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
 					}
 
-			if ( $this->config()->tooltip->show ) {
-				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
-				$description = $event->description_filtered();
-
-				//Supports 3.1 short descriptions
-//				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
-				$desciption_parts =  explode( '<!--more-->', $description);
-				if(is_array($desciption_parts)){
-					$description = array_shift($desciption_parts);
-				}
-//				}
-				// and just in case it's still too long, or somebody forgot to use the more tag...
-				//if word count is set to 0, set no limit
-				$calendar_datetime->set_description($description);
-// tooltip wrapper
-				$tooltip_html = '<div class="qtip_info">';
-				// show time ?
-				$tooltip_html .= $this->config()->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
-
-				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
-
-				// add attendee limit if set
-				if ( $this->config()->display->show_attendee_limit ) {
-					$tickets_sold = $datetime->sold();
-					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
-					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
-				}
-
 					$tooltip_html .= '<div class="clear"></div>';
 					$tooltip_html .= '</div>';
-					$calendar_datetime->set_tooltip($tooltip_html);
-
-
+					$calendar_datetime->set_tooltip( $tooltip_html );
 					// Position my top left...
-					$calendar_datetime->set_tooltip_my($tooltip_my);
-					$calendar_datetime->set_tooltip_at($tooltip_at);
-					$calendar_datetime->set_tooltip_style( $tooltip_style );
-					$calendar_datetime->set_show_tooltips(true);
+					$calendar_datetime->set_tooltip_my( $this->config()->tooltip->pos_my_1 . $this->config()->tooltip->pos_my_2 );
+					$calendar_datetime->set_tooltip_at( $this->config()->tooltip->pos_at_1 . $this->config()->tooltip->pos_at_2 );
+					$calendar_datetime->set_tooltip_style( $this->config()->tooltip->style . ' qtip-shadow' );
+					$calendar_datetime->set_show_tooltips( TRUE );
+
 				} else {
-					$calendar_datetime->set_show_tooltips(FALSE);
+					$calendar_datetime->set_show_tooltips( FALSE );
 				}
 				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 
