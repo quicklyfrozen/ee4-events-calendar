@@ -1,28 +1,12 @@
 <?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit(); }
-/* ------------------------------------------------------------------------
- *
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * EEW_Espresso_Calendar
+/**
+ *  EEW_Espresso_Calendar
  * Displays a month-based espresso_calendar in the sidebar
  *
  * @package		Event Espresso
  * @subpackage	espresso-calendar
  * @author		Chris Reynolds
  * @since 2.0
- *
- * ------------------------------------------------------------------------
  */
 class EEW_Espresso_Calendar extends WP_Widget {
 
@@ -30,6 +14,9 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	 * Register widget with WordPress.
 	 */
 	public function __construct() {
+		// load scripts
+		add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
+		// construct widget
 		parent::__construct(
 			'ee-calendar-widget',
 			__( 'Event Espresso Calendar Widget', 'event_espresso' ),
@@ -43,6 +30,16 @@ class EEW_Espresso_Calendar extends WP_Widget {
 				'classname' => 'ee-calendar-widget'
 			)
 		);
+	}
+
+
+
+	/**
+	 * parse_request
+	 */
+	public function parse_request() {
+		// triggers loading of the EED_Espresso_Calendar module
+		EE_Registry::instance()->REQ->set( 'ee', 'calendar' );
 	}
 
 
@@ -148,25 +145,26 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-		// check for existing calendar module instance
-		if ( ! EE_Registry::instance()->modules->EED_Espresso_Calendar instanceof EED_Espresso_Calendar ) {
-			EE_Registry::instance()->modules->EED_Espresso_Calendar = new EED_Espresso_Calendar();
-		}
 		extract($args);
 		// get the current post
 		global $post, $is_espresso_calendar;
 		if ( isset( $post->post_content )) {
-			 // check the post content for the short code
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') === FALSE ) {
 				$is_espresso_calendar = TRUE;
-				// Before widget (defined by themes).
-				echo $before_widget;
+				 // load scripts
+				 wp_enqueue_style( 'fullcalendar' );
+				 wp_enqueue_style( 'espresso_calendar' );
+				 wp_enqueue_script( 'espresso_calendar' );
+				 // Before widget (defined by themes).
+				 /** @var $before_widget string */
+				 echo $before_widget;
 				// Title of widget (before and after defined by themes).
-				if ( $title = apply_filters( 'widget_title', $instance['title'] )) {
+				 $title = apply_filters( 'widget_title', $instance['title'] );
+				if ( ! empty( $title )) {
+					/** @var $before_title string */
+					/** @var $after_title string */
 					echo $before_title . $title . $after_title;
 				}
-				// load scripts
-				 EE_Registry::instance()->modules->EED_Espresso_Calendar->calendar_scripts();
 				// settings
 				$attributes = array(
 					'event_category_id' => $instance['category_id'],
@@ -180,7 +178,8 @@ class EEW_Espresso_Calendar extends WP_Widget {
 				);
 				echo EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
 				// After widget (defined by themes).
-				echo $after_widget;
+				 /** @var $after_widget string */
+				 echo $after_widget;
 			}
 		}
 	}
