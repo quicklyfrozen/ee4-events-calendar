@@ -176,6 +176,9 @@ class EEW_Espresso_Calendar extends WP_Widget {
 					'title_format_month' => 'MMM yyyy',
 					'widget' => TRUE
 				);
+				 if ( ! EE_Registry::instance()->modules->EED_Espresso_Calendar instanceof EED_Espresso_Calendar ) {
+					 EE_Registry::instance()->modules->EED_Espresso_Calendar = new EED_Espresso_Calendar();
+				 }
 				echo EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
 				// After widget (defined by themes).
 				 /** @var $after_widget string */
