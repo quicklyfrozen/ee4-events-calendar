@@ -73,6 +73,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array, using 'calendar' as the key, so that we can retrieve it
 		EE_Registry::instance()->REQ->set( 'ee', 'calendar' );
+		EE_Registry::instance()->load_helper('Qtip_Loader');
 	}
 
 

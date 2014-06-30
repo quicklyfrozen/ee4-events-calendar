@@ -91,6 +91,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	  */
 	 public function run( $WP ) {
 		 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
+		 EE_Registry::instance()->load_helper('Qtip_Loader');
 	 }
 
 
@@ -108,7 +109,6 @@ class EED_Espresso_Calendar extends EED_Module {
 		//Load tooltips styles
 		$show_tooltips = $this->config()->tooltip->show;
 		if ( $show_tooltips ) {
-			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
 
@@ -132,7 +132,6 @@ class EED_Espresso_Calendar extends EED_Module {
 			 // check the post content for the short code
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR' ) !== FALSE || $is_espresso_calendar ) {
 				if ( $show_tooltips ) {
-					EE_Registry::instance()->load_helper('Qtip_Loader');
 					EEH_Qtip_Loader::instance()->register_and_enqueue();
 				}
 				wp_enqueue_style( 'fullcalendar' );
