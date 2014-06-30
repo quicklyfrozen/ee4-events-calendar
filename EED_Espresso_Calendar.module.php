@@ -90,8 +90,12 @@ class EED_Espresso_Calendar extends EED_Module {
 	  * @return    void
 	  */
 	 public function run( $WP ) {
-		 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
-		 EE_Registry::instance()->load_helper('Qtip_Loader');
+		 if ( ! has_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ))) {
+			 add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
+		 }
+		 if ( $this->config()->tooltip->show ) {
+			 add_filter('FHEE_load_qtip', '__return_true' );
+		 }
 	 }
 
 
@@ -106,12 +110,10 @@ class EED_Espresso_Calendar extends EED_Module {
 	 *  @return 	void
 	 */
 	public function calendar_scripts() {
-		//Load tooltips styles
-		$show_tooltips = $this->config()->tooltip->show;
-		if ( $show_tooltips ) {
-			EEH_Qtip_Loader::instance()->register_and_enqueue();
+		static $scripts_loaded = FALSE;
+		if ( $scripts_loaded ) {
+			return;
 		}
-
 		// load base calendar style
 		wp_register_style( 'fullcalendar', EE_CALENDAR_URL . 'css' . DS . 'fullcalendar.css' );
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
@@ -131,12 +133,10 @@ class EED_Espresso_Calendar extends EED_Module {
 		if ( isset( $post->post_content ) || $is_espresso_calendar ) {
 			 // check the post content for the short code
 			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR' ) !== FALSE || $is_espresso_calendar ) {
-				if ( $show_tooltips ) {
-					EEH_Qtip_Loader::instance()->register_and_enqueue();
-				}
 				wp_enqueue_style( 'fullcalendar' );
 				wp_enqueue_style( 'espresso_calendar' );
 				wp_enqueue_script( 'espresso_calendar' );
+				 $scripts_loaded = TRUE;
 			}
 		}
 	}
