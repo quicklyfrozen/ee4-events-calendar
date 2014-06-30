@@ -107,7 +107,7 @@ class EEW_Espresso_Calendar extends WP_Widget {
 			<?php
 				printf(
 					__( 'Enter the Category Slug from the %sEvent Categories%s page','event_espresso' ),
-					'<a href="http://localhost/4.1-DEV/wp-admin/admin.php?page=espresso_events&action=category_list" target="_blank">',
+					'<a href="' . admin_url( 'admin.php?page=espresso_events&action=category_list' ) . '" target="_blank">',
 					'</a>'
 				);
 			?>
