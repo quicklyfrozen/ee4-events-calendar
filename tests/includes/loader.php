@@ -8,4 +8,4 @@
  */
 
 // Bootstrap EE
-require EECAL_PLUGIN_DIR . 'EE_Calendar.php';
+require EECAL_PLUGIN_DIR . 'EE_Calendar.class.php';
