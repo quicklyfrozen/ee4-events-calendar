@@ -19,14 +19,13 @@
  *
  * @package			Event Espresso
  * @subpackage		espresso-calendar
- * @author			Seth Shoultes, Chris Reynolds, Brent Christensen 
+ * @author			Seth Shoultes, Chris Reynolds, Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Calendar  extends EES_Shortcode {
 
-	
-	
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -70,32 +69,36 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		add_action( 'wp_enqueue_scripts', array( EE_Calendar::instance(), 'calendar_scripts' ));
+		// this will trigger the EED_Espresso_Calendar module's run() method during the pre_get_posts hook point,
+		// this allows us to initialize things, enqueue assets, etc,
+		// as well, this saves an instantiation of the module in an array, using 'calendar' as the key, so that we can retrieve it
+		EE_Registry::instance()->REQ->set( 'ee', 'calendar' );
 	}
 
 
 
 	/**
-	 * 	process_shortcode
-	 * 	
-	 * 	[ESPRESSO_CALENDAR]
-	 * 	[ESPRESSO_CALENDAR show_expired="true"]
-	 * 	[ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
+	 *    process_shortcode
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *    [ESPRESSO_CALENDAR]
+	 *    [ESPRESSO_CALENDAR show_expired="true"]
+	 *    [ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
+	 *
+	 * @access    public
+	 * @param array $attributes
+	 * @return    void
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		$defaults = array( 
-			'show_expired' => 'true', 
-			'cal_view' => 'month', 
+		$defaults = array(
+			'show_expired' => 'true',
+			'cal_view' => 'month',
 			'widget' => FALSE
 		);
-		// make sure $atts is an array
+		// make sure $attributes is an array
 		$attributes = array_merge( $defaults, (array)$attributes );
-		return EE_Calendar::instance()->display_calendar( $attributes );
+		return EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
 	}
-	
+
 
 }
 // End of file EES_Espresso_Calendar.shortcode.php

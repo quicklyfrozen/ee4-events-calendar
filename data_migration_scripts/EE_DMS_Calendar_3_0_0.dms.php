@@ -1,13 +1,13 @@
 <?php
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
- * mostly just 
+ * mostly just
  * -adds QGQ_order to teh question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load 
+//instead of construction, because it only gets constructed on first page load
 //(all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CALENDAR_DMS_PATH.'3_0_0_stages/*');
 $class_to_filepath = array();
