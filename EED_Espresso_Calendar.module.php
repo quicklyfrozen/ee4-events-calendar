@@ -32,6 +32,15 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 
+	/**
+	 * @return EED_Espresso_Calendar
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
+
 	 /**
 	  * 	set_hooks - for hooking into EE Core, other modules, etc
 	  *
@@ -41,6 +50,8 @@ class EED_Espresso_Calendar extends EED_Module {
 	 public static function set_hooks() {
 		 EE_Config::register_route( 'calendar', 'EED_Espresso_Calendar', 'run' );
 	 }
+
+
 
 	 /**
 	  * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc

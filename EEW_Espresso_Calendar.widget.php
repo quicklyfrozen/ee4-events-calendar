@@ -14,8 +14,8 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	 * Register widget with WordPress.
 	 */
 	public function __construct() {
-		// load scripts
-		add_action( 'parse_request', array( $this, 'parse_request' ), 10 );
+		// run calendar module
+		add_action( 'init', array( $this, 'init' ));
 		// construct widget
 		parent::__construct(
 			'ee-calendar-widget',
@@ -37,9 +37,11 @@ class EEW_Espresso_Calendar extends WP_Widget {
 	/**
 	 * parse_request
 	 */
-	public function parse_request() {
-		// triggers loading of the EED_Espresso_Calendar module
-		EE_Registry::instance()->REQ->set( 'ee', 'calendar' );
+	public function init() {
+		if ( is_active_widget( FALSE, FALSE, $this->id_base, TRUE ) ) {
+			global $wp;
+			EED_Espresso_Calendar::instance()->run( $wp );
+		}
 	}
 
 
