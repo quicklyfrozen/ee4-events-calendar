@@ -45,7 +45,7 @@ Class  EE_Calendar extends EE_Addon {
 				'widget_paths' 		=> array( EE_CALENDAR_PATH . 'EEW_Espresso_Calendar.widget.php' ),
 				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
-					'pue_plugin_slug' => 'espresso-calendar',
+					'pue_plugin_slug' => 'espresso-calendar-core',
 					'checkPeriod' => '24',
 					'use_wp_update' => FALSE
 				)
