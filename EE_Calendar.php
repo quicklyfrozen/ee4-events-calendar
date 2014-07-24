@@ -372,6 +372,7 @@ if ( ! class_exists( 'EE_Calendar') && ! class_exists( 'EE_Calendar_Config')) {
 						}
 						//echo '<li class="has-sub" style="border-left:solid 1px #000;"><a href="?event_category_id">'.__('All', 'event_espresso').'</a></li>';
 						echo '</ul></div>';
+						echo '<div style="clear:both"></div>';
 					}
 
 					//Filter dropdowns
