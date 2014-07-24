@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 3.0.1.rc.001
+  Version: 3.0.1.rc.002
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2014 Event Espresso (email : support@eventespresso.com)
@@ -36,18 +36,23 @@
  *
  */
 if ( ! class_exists( 'EE_Calendar') && ! class_exists( 'EE_Calendar_Config')) {
+
 	//if ee4 core is active, run the calendar
 	add_action( 'AHEE__EE_System__load_espresso_addons', array( 'EE_Calendar', 'instance' ));
 	//we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
 	register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
-	/*
-	 * EE_Calendar
+
+	/**
 	 *
-	 * @package			Event Espresso
-	 * @subpackage		espresso-calendar
-	 * @author			Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson
+	 * Class EE_Calendar
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	espresso-calendar
+	 * @author 				Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson
+	 *
 	 */
 	class EE_Calendar {
+
 		const activation_indicator_option_name = 'ee_espresso_calendar_activation';
 
 		/**
@@ -108,7 +113,7 @@ if ( ! class_exists( 'EE_Calendar') && ! class_exists( 'EE_Calendar_Config')) {
 		 */
 		public function __construct() {
 			// calendar_version
-			define( 'EE_CALENDAR_VERSION', '3.0.1.rc.001' );
+			define( 'EE_CALENDAR_VERSION', '3.0.1.rc.002' );
 			// define the plugin directory path and URL
 			define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 			define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
