@@ -42,7 +42,8 @@ define( 'EE_CALENDAR_PLUGIN_FILE', __FILE__ );
 function load_espresso_calendar_class() {
 	// check for duplicate copy of Calendar addon
 	if ( class_exists( 'EE_Calendar' ) || class_exists( 'EE_Calendar_Config' )) {
-		throw new EE_Error( sprintf( __( 'It appears there are multiple copies of the Event Espresso Calendar installed on your server.%sPlease remove (delete) all copies except for this version: "%s"', 'event_espresso' ), '<br />', EE_CALENDAR_VERSION ));
+		EE_Error::add_error( sprintf( __( 'It appears there are multiple copies of the Event Espresso Calendar installed on your server.%sPlease remove (delete) all copies except for this version: "%s"', 'event_espresso' ), '<br />', EE_CALENDAR_VERSION ));
+		return;
 	}
 	if ( class_exists( 'EE_Addon' )) {
 		// calendar_version
