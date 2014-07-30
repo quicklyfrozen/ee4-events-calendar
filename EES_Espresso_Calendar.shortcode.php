@@ -96,7 +96,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		);
 		// make sure $attributes is an array
 		$attributes = array_merge( $defaults, (array)$attributes );
-		return EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
+		return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
 	}
 
 
