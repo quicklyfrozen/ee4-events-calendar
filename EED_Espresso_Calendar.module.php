@@ -149,29 +149,29 @@ class EED_Espresso_Calendar extends EED_Module {
 				wp_enqueue_script( 'espresso_calendar' );
 				 $scripts_loaded = TRUE;
 			}
+			}
 		}
-	}
 
 
 
-	/**
-	 * Gets the HTML for the calendar filters area
-	 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
-	 * which we might want in here. (But using the config object directly might be nice,
-	 * because it's well-defined... however, unfortunately settings in it might be overridden
-	 * by shortcode attributes, which you can access in this array, if you know their key)
-	 * @return string
-	 */
-	private function _get_filter_html($ee_calendar_js_options = array()){
-		$output_filter = '';
-		if ( ! $ee_calendar_js_options['widget'] ) {
-			// Query for Select box filters
-			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
-			$venues = EEM_Venue::instance()->get_all();
+		/**
+		 * Gets the HTML for the calendar filters area
+		 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
+		 * which we might want in here. (But using the config object directly might be nice,
+		 * because it's well-defined... however, unfortunately settings in it might be overridden
+		 * by shortcode attributes, which you can access in this array, if you know their key)
+		 * @return string
+		 */
+		private function _get_filter_html($ee_calendar_js_options = array()){
+			$output_filter = '';
+			if ( ! $ee_calendar_js_options['widget'] ) {
+				// Query for Select box filters
+				$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
+				$venues = EEM_Venue::instance()->get_all();
 
-			if ( ! empty( $venues ) || !empty( $ee_terms )){
+				if ( ! empty( $venues ) || !empty( $ee_terms )){
 
-				ob_start();
+					ob_start();
 
 				//Category legend
 				if ( $this->config()->display->enable_category_legend ){
@@ -245,21 +245,70 @@ class EED_Espresso_Calendar extends EED_Module {
 					</form>
 					</div>
 					<?php
+					}
+					$output_filter = ob_get_contents();
+					ob_end_clean();
 				}
-				$output_filter = ob_get_contents();
-				ob_end_clean();
 			}
+
+			return $output_filter;
 		}
 
-		return $output_filter;
-	}
 
 
+		/**
+		 * 	display_calendar
+		 *
+		 *  @access 	public
+		 *  @return 	void
+		 */
+		public function display_calendar( $ee_calendar_js_options ) {
+			// get calendar options
+			$calendar_config = EE_Calendar::get_calendar_config()->to_flat_array();
+			// merge incoming shortcode attributes with calendar config
+			$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
+			//if the user has changed the filters, those should override whatever the admin specified in the shortcode
+			$js_option_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : NULL;
+			$js_option_event_venue_id = isset( $ee_calendar_js_options['event_venue_id'] ) ? $ee_calendar_js_options['event_venue_id'] : NULL;
+			// setup an array with overridden values in it
+			$overrides = array(
+				'event_category_id' => isset( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $js_option_event_category_id,
+				'event_venue_id'=> isset( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : $js_option_event_venue_id,
+				'month'=> isset( $_REQUEST['month'] ) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'],
+				'year'=> isset( $_REQUEST['year'] ) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'],
+			);
+			// merge overrides into options
+			$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
+			// set and format month param
+			if ( ! is_int( $ee_calendar_js_options['month'] ) && strtotime( $ee_calendar_js_options['month'] )) {
+				$ee_calendar_js_options['month'] = date('n', strtotime( $ee_calendar_js_options['month'] ));
+			}
+			// weed out any attempts to use month=potato or something similar
+			$ee_calendar_js_options['month'] = is_int( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
+			// fullcalendar uses 0-based value for month
+			$ee_calendar_js_options['month']--;
+			// set and format year param
+			$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_int( $ee_calendar_js_options['year'] ) ? date('Y', strtotime( $ee_calendar_js_options['year'] )) : date('Y');
+			// add calendar filters
+			$output_filter = $this->_get_filter_html( $ee_calendar_js_options );
+			// grab some request vars
+			$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) && ! empty( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : '';
+			// i18n some strings
+			$ee_calendar_js_options['month_names'] = array(
+				__('January', 'event_espresso'),
+				__('February', 'event_espresso'),
+				__('March', 'event_espresso'),
+				__('April', 'event_espresso'),
+				__('May', 'event_espresso'),
+				__('June', 'event_espresso'),
+				__('July', 'event_espresso'),
+				__('August', 'event_espresso'),
+				__('September', 'event_espresso'),
+				__('October', 'event_espresso'),
+				__('November', 'event_espresso'),
+				__('December', 'event_espresso')
+			);
 
-	 /**
-	  *    display_calendar
-	  *
-	  * @access    	public
 	  * @param 	$ee_calendar_js_options
 	  * @return    	string
 	  */
@@ -318,14 +367,14 @@ class EED_Espresso_Calendar extends EED_Module {
 				__('May', 'event_espresso'),
 				__('Jun', 'event_espresso'),
 				__('Jul', 'event_espresso'),
-				 __('Aug', 'event_espresso'),
+				__('Aug', 'event_espresso'),
 				__('Sep', 'event_espresso'),
 				__('Oct', 'event_espresso'),
 				__('Nov', 'event_espresso'),
 				__('Dec', 'event_espresso')
 			);
 
-		$ee_calendar_js_options['day_names'] = array(
+			$ee_calendar_js_options['day_names'] = array(
 				__('Sunday', 'event_espresso'),
 				__('Monday', 'event_espresso'),
 				__('Tuesday', 'event_espresso'),
@@ -335,7 +384,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				__('Saturday', 	'event_espresso')
 			);
 
-		$ee_calendar_js_options['day_names_short'] = array(
+			$ee_calendar_js_options['day_names_short'] = array(
 				__('Sun', 'event_espresso'),
 				__('Mon', 'event_espresso'),
 				__('Tue', 'event_espresso'),
@@ -346,25 +395,25 @@ class EED_Espresso_Calendar extends EED_Module {
 			);
 
 
-		// Get current page protocol
-		$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
-		// Output admin-ajax.php URL with same protocol as current page
-		$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-//		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
+			// Get current page protocol
+			$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
+			// Output admin-ajax.php URL with same protocol as current page
+			$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
+			//		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 
-		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
+			$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 
-		$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
-		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
-		$html .= '
+			$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
+			$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
+			$html .= '
 	<div id="espresso_calendar" class="'. $calendar_class . '"></div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
-		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
-		return $html;
+			$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
+			return $html;
 
-	}
+		}
 
 
 
@@ -443,14 +492,14 @@ class EED_Espresso_Calendar extends EED_Module {
 							}
 						} else {
 							$calendar_datetime->add_classname($primary_cat->slug());
+							}
 						}
+
 					}
 
-				}
-
-				if ( $datetime->is_expired() ) {
-					$calendar_datetime->set_classname('expired');
-				}
+					if ( $datetime->is_expired() ) {
+						$calendar_datetime->set_classname('expired');
+					}
 
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
@@ -472,9 +521,9 @@ class EED_Espresso_Calendar extends EED_Module {
 						<span class="thumb-wrap">
 							<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
 						</span>');
-						$calendar_datetime->add_classname('event-has-thumb');
+							$calendar_datetime->add_classname('event-has-thumb');
+						}
 					}
-				}
 
 				// $this->timer->stop();
 				// echo $this->timer->get_elapse( __LINE__ );
@@ -538,16 +587,16 @@ class EED_Espresso_Calendar extends EED_Module {
 				}
 				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 
-	//			$this->timer->stop();
-	//			echo $this->timer->get_elapse( __LINE__ );
+					//			$this->timer->stop();
+					//			echo $this->timer->get_elapse( __LINE__ );
 
+				}
 			}
+
+			echo json_encode( $calendar_datetimes_for_json );
+			die();
+
 		}
-
-		echo json_encode( $calendar_datetimes_for_json );
-		die();
-
-	}
 
 
 
