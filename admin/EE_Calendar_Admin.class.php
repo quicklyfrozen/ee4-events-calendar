@@ -56,7 +56,7 @@ class EE_Calendar_Admin {
 		//register calendar admin page with the EE_Admin pages.
 		add_action('AHEE__EE_Admin__loaded', array($this, 'register_admin' ) );
 		add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
-		add_action( 'action_hook_espresso_calendar_update_api', array( $this, 'load_pue_update' ));
+		add_action( 'AHEE__EE_System__brew_espresso__complete', array( $this, 'load_pue_update' ));
 		add_action( 'action_hook_espresso_featured_image_add_to_meta_box', array( $this, 'add_to_featured_image_meta_box' ));
 
 	}
@@ -77,12 +77,12 @@ class EE_Calendar_Admin {
 	 */
 	public function load_pue_update() {
 
-		if (file_exists(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php')) { //include the file
-			require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
+		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file
+			require(EE_THIRD_PARTY . 'pue/pue-client.php' );
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
 				'premium' => array('reg' => 'ee4-events-calendar'),
-				'prerelease' => array('beta' => 'ee4-events-calendar-pr')
+				'prerelease' => array('beta' => 'espresso-calendar-core-pr')
 			);
 			$options = array(
 				'apikey' => EE_Registry::instance()->NET_CFG->core->site_license_key,
