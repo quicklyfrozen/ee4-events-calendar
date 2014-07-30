@@ -149,169 +149,120 @@ class EED_Espresso_Calendar extends EED_Module {
 				wp_enqueue_script( 'espresso_calendar' );
 				 $scripts_loaded = TRUE;
 			}
-			}
 		}
+	}
 
 
 
-		/**
-		 * Gets the HTML for the calendar filters area
-		 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
-		 * which we might want in here. (But using the config object directly might be nice,
-		 * because it's well-defined... however, unfortunately settings in it might be overridden
-		 * by shortcode attributes, which you can access in this array, if you know their key)
-		 * @return string
-		 */
-		private function _get_filter_html($ee_calendar_js_options = array()){
-			$output_filter = '';
-			if ( ! $ee_calendar_js_options['widget'] ) {
-				// Query for Select box filters
-				$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
-				$venues = EEM_Venue::instance()->get_all();
+	/**
+	 * Gets the HTML for the calendar filters area
+	 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
+	 * which we might want in here. (But using the config object directly might be nice,
+	 * because it's well-defined... however, unfortunately settings in it might be overridden
+	 * by shortcode attributes, which you can access in this array, if you know their key)
+	 * @return string
+	 */
+	private function _get_filter_html($ee_calendar_js_options = array()){
+		$output_filter = '';
+		if ( ! $ee_calendar_js_options['widget'] ) {
+			// Query for Select box filters
+			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
+			$venues = EEM_Venue::instance()->get_all();
 
-				if ( ! empty( $venues ) || !empty( $ee_terms )){
+			if ( ! empty( $venues ) || !empty( $ee_terms )){
 
-					ob_start();
+				ob_start();
 
-				//Category legend
-				if ( $this->config()->display->enable_category_legend ){
-					echo '
-				<div id="espresso-category-legend">
-					<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
-					<ul id="ee-category-legend-ul">';
+			//Category legend
+			if ( $this->config()->display->enable_category_legend ){
+				echo '
+			<div id="espresso-category-legend">
+				<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
+				<ul id="ee-category-legend-ul">';
 
-					foreach ( $ee_terms as $ee_term ) {
-						if ( $ee_term instanceof EE_Term ) {
-							/*@var $ee_term EE_Term */
-							$catcode = $ee_term->ID();
-							$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
-							$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
-							$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
-							if ( $use_bg ) {
-								echo '
-								<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
-									<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
-								</li>';
-							} else {
-								echo '
-								<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
-									<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
-								</li>';
-							}
+				foreach ( $ee_terms as $ee_term ) {
+					if ( $ee_term instanceof EE_Term ) {
+						/*@var $ee_term EE_Term */
+						$catcode = $ee_term->ID();
+						$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
+						$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
+						$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
+						if ( $use_bg ) {
+							echo '
+							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
+							</li>';
+						} else {
+							echo '
+							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
+							</li>';
 						}
 					}
-					echo '</ul>
-					</div>
-					<div class="clear"></div>
-					';
 				}
-
-				//Filter dropdowns
-				if ($this->config()->display->enable_calendar_filters ){
-					?>
-					<!-- select box filters -->
-					<div class="ee-filter-form">
-					<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-					<?php if ( ! empty( $ee_terms )) { ?>
-						<label for="ee-category-submit"></label>
-						<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
-						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
-						<?php
-							foreach( $ee_terms as $term ) {
-								if ( $term instanceof EE_Term ) {
-									$selected = in_array( $ee_calendar_js_options['event_category_id'], array( $term->slug(), $term->ID() )) ? 'selected="selected"' : '';
-									echo '<option ' . $selected . ' value="' . $term->slug() . '">' . $term->name() . '</option>';
-								}
-							}
-						?>
-						</select>
-					<?php }?>
-
-					<?php if ( ! empty( $venues )) { ?>
-						<label for="ee-venue-submit"></label>
-						<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
-						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
-						<?php
-							foreach ( $venues as $venue ) {
-								if ( $venue instanceof EE_Venue ) {
-									$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
-									echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
-								}
-							}?>
-						</select>
-					<?php }?>
-					</form>
-					</div>
-					<?php
-					}
-					$output_filter = ob_get_contents();
-					ob_end_clean();
-				}
+				echo '</ul>
+				</div>
+				<div class="clear"></div>
+				';
 			}
 
-			return $output_filter;
+			//Filter dropdowns
+			if ($this->config()->display->enable_calendar_filters ){
+				?>
+				<!-- select box filters -->
+				<div class="ee-filter-form">
+				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+				<?php if ( ! empty( $ee_terms )) { ?>
+					<label for="ee-category-submit"></label>
+					<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
+					<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<?php
+						foreach( $ee_terms as $term ) {
+							if ( $term instanceof EE_Term ) {
+								$selected = in_array( $ee_calendar_js_options['event_category_id'], array( $term->slug(), $term->ID() )) ? 'selected="selected"' : '';
+								echo '<option ' . $selected . ' value="' . $term->slug() . '">' . $term->name() . '</option>';
+							}
+						}
+					?>
+					</select>
+				<?php }?>
+
+				<?php if ( ! empty( $venues )) { ?>
+					<label for="ee-venue-submit"></label>
+					<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
+					<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<?php
+						foreach ( $venues as $venue ) {
+							if ( $venue instanceof EE_Venue ) {
+								$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
+								echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
+							}
+						}?>
+					</select>
+				<?php }?>
+				</form>
+				</div>
+				<?php
+				}
+				$output_filter = ob_get_contents();
+				ob_end_clean();
+			}
 		}
 
+		return $output_filter;
+	}
 
 
-		/**
-		 * 	display_calendar
-		 *
-		 *  @access 	public
-		 *  @return 	void
-		 */
-		public function display_calendar( $ee_calendar_js_options ) {
-			// get calendar options
-			$calendar_config = EE_Calendar::get_calendar_config()->to_flat_array();
-			// merge incoming shortcode attributes with calendar config
-			$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
-			//if the user has changed the filters, those should override whatever the admin specified in the shortcode
-			$js_option_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : NULL;
-			$js_option_event_venue_id = isset( $ee_calendar_js_options['event_venue_id'] ) ? $ee_calendar_js_options['event_venue_id'] : NULL;
-			// setup an array with overridden values in it
-			$overrides = array(
-				'event_category_id' => isset( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $js_option_event_category_id,
-				'event_venue_id'=> isset( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : $js_option_event_venue_id,
-				'month'=> isset( $_REQUEST['month'] ) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'],
-				'year'=> isset( $_REQUEST['year'] ) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'],
-			);
-			// merge overrides into options
-			$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
-			// set and format month param
-			if ( ! is_int( $ee_calendar_js_options['month'] ) && strtotime( $ee_calendar_js_options['month'] )) {
-				$ee_calendar_js_options['month'] = date('n', strtotime( $ee_calendar_js_options['month'] ));
-			}
-			// weed out any attempts to use month=potato or something similar
-			$ee_calendar_js_options['month'] = is_int( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
-			// fullcalendar uses 0-based value for month
-			$ee_calendar_js_options['month']--;
-			// set and format year param
-			$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_int( $ee_calendar_js_options['year'] ) ? date('Y', strtotime( $ee_calendar_js_options['year'] )) : date('Y');
-			// add calendar filters
-			$output_filter = $this->_get_filter_html( $ee_calendar_js_options );
-			// grab some request vars
-			$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) && ! empty( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : '';
-			// i18n some strings
-			$ee_calendar_js_options['month_names'] = array(
-				__('January', 'event_espresso'),
-				__('February', 'event_espresso'),
-				__('March', 'event_espresso'),
-				__('April', 'event_espresso'),
-				__('May', 'event_espresso'),
-				__('June', 'event_espresso'),
-				__('July', 'event_espresso'),
-				__('August', 'event_espresso'),
-				__('September', 'event_espresso'),
-				__('October', 'event_espresso'),
-				__('November', 'event_espresso'),
-				__('December', 'event_espresso')
-			);
 
-	  * @param 	$ee_calendar_js_options
-	  * @return    	string
-	  */
+	/**
+	 *    display_calendar
+	 *
+	 * @access    public
+	 * @param $ee_calendar_js_options
+	 * @return    string
+	 */
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
 		$calendar_config = $this->config()->to_flat_array();
