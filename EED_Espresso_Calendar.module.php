@@ -173,78 +173,78 @@ class EED_Espresso_Calendar extends EED_Module {
 
 				ob_start();
 
-				//Category legend
-				if ( $this->config()->display->enable_category_legend ){
-					echo '
-				<div id="espresso-category-legend">
-					<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
-					<ul id="ee-category-legend-ul">';
+			//Category legend
+			if ( $this->config()->display->enable_category_legend ){
+				echo '
+			<div id="espresso-category-legend">
+				<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
+				<ul id="ee-category-legend-ul">';
 
-					foreach ( $ee_terms as $ee_term ) {
-						if ( $ee_term instanceof EE_Term ) {
-							/*@var $ee_term EE_Term */
-							$catcode = $ee_term->ID();
-							$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
-							$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
-							$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
-							if ( $use_bg ) {
-								echo '
-								<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
-									<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
-								</li>';
-							} else {
-								echo '
-								<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
-									<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
-								</li>';
-							}
+				foreach ( $ee_terms as $ee_term ) {
+					if ( $ee_term instanceof EE_Term ) {
+						/*@var $ee_term EE_Term */
+						$catcode = $ee_term->ID();
+						$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
+						$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
+						$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
+						if ( $use_bg ) {
+							echo '
+							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
+							</li>';
+						} else {
+							echo '
+							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
+							</li>';
 						}
 					}
-					echo '</ul>
-					</div>
-					<div class="clear"></div>
-					';
 				}
+				echo '</ul>
+				</div>
+				<div class="clear"></div>
+				';
+			}
 
-				//Filter dropdowns
-				if ($this->config()->display->enable_calendar_filters ){
-					?>
-					<!-- select box filters -->
-					<div class="ee-filter-form">
-					<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
-					<?php if ( ! empty( $ee_terms )) { ?>
-						<label for="ee-category-submit"></label>
-						<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
-						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
-						<?php
-							foreach( $ee_terms as $term ) {
-								if ( $term instanceof EE_Term ) {
-									$selected = in_array( $ee_calendar_js_options['event_category_id'], array( $term->slug(), $term->ID() )) ? 'selected="selected"' : '';
-									echo '<option ' . $selected . ' value="' . $term->slug() . '">' . $term->name() . '</option>';
-								}
-							}
-						?>
-						</select>
-					<?php }?>
-
-					<?php if ( ! empty( $venues )) { ?>
-						<label for="ee-venue-submit"></label>
-						<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
-						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
-						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
-						<?php
-							foreach ( $venues as $venue ) {
-								if ( $venue instanceof EE_Venue ) {
-									$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
-									echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
-								}
-							}?>
-						</select>
-					<?php }?>
-					</form>
-					</div>
+			//Filter dropdowns
+			if ($this->config()->display->enable_calendar_filters ){
+				?>
+				<!-- select box filters -->
+				<div class="ee-filter-form">
+				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+				<?php if ( ! empty( $ee_terms )) { ?>
+					<label for="ee-category-submit"></label>
+					<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
+					<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 					<?php
+						foreach( $ee_terms as $term ) {
+							if ( $term instanceof EE_Term ) {
+								$selected = in_array( $ee_calendar_js_options['event_category_id'], array( $term->slug(), $term->ID() )) ? 'selected="selected"' : '';
+								echo '<option ' . $selected . ' value="' . $term->slug() . '">' . $term->name() . '</option>';
+							}
+						}
+					?>
+					</select>
+				<?php }?>
+
+				<?php if ( ! empty( $venues )) { ?>
+					<label for="ee-venue-submit"></label>
+					<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
+					<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+					<?php
+						foreach ( $venues as $venue ) {
+							if ( $venue instanceof EE_Venue ) {
+								$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
+								echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
+							}
+						}?>
+					</select>
+				<?php }?>
+				</form>
+				</div>
+				<?php
 				}
 				$output_filter = ob_get_contents();
 				ob_end_clean();
@@ -256,13 +256,13 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 
-	 /**
-	  *    display_calendar
-	  *
-	  * @access    	public
-	  * @param 	$ee_calendar_js_options
-	  * @return    	string
-	  */
+	/**
+	 *    display_calendar
+	 *
+	 * @access    public
+	 * @param $ee_calendar_js_options
+	 * @return    string
+	 */
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
 		$calendar_config = $this->config()->to_flat_array();
@@ -318,14 +318,14 @@ class EED_Espresso_Calendar extends EED_Module {
 				__('May', 'event_espresso'),
 				__('Jun', 'event_espresso'),
 				__('Jul', 'event_espresso'),
-				 __('Aug', 'event_espresso'),
+				__('Aug', 'event_espresso'),
 				__('Sep', 'event_espresso'),
 				__('Oct', 'event_espresso'),
 				__('Nov', 'event_espresso'),
 				__('Dec', 'event_espresso')
 			);
 
-		$ee_calendar_js_options['day_names'] = array(
+			$ee_calendar_js_options['day_names'] = array(
 				__('Sunday', 'event_espresso'),
 				__('Monday', 'event_espresso'),
 				__('Tuesday', 'event_espresso'),
@@ -335,7 +335,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				__('Saturday', 	'event_espresso')
 			);
 
-		$ee_calendar_js_options['day_names_short'] = array(
+			$ee_calendar_js_options['day_names_short'] = array(
 				__('Sun', 'event_espresso'),
 				__('Mon', 'event_espresso'),
 				__('Tue', 'event_espresso'),
@@ -346,25 +346,25 @@ class EED_Espresso_Calendar extends EED_Module {
 			);
 
 
-		// Get current page protocol
-		$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
-		// Output admin-ajax.php URL with same protocol as current page
-		$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-//		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
+			// Get current page protocol
+			$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
+			// Output admin-ajax.php URL with same protocol as current page
+			$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
+			//		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 
-		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
+			$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 
-		$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
-		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
-		$html .= '
+			$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
+			$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
+			$html .= '
 	<div id="espresso_calendar" class="'. $calendar_class . '"></div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
-		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
-		return $html;
+			$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
+			return $html;
 
-	}
+		}
 
 
 
@@ -443,14 +443,14 @@ class EED_Espresso_Calendar extends EED_Module {
 							}
 						} else {
 							$calendar_datetime->add_classname($primary_cat->slug());
+							}
 						}
+
 					}
 
-				}
-
-				if ( $datetime->is_expired() ) {
-					$calendar_datetime->set_classname('expired');
-				}
+					if ( $datetime->is_expired() ) {
+						$calendar_datetime->set_classname('expired');
+					}
 
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
@@ -472,9 +472,9 @@ class EED_Espresso_Calendar extends EED_Module {
 						<span class="thumb-wrap">
 							<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
 						</span>');
-						$calendar_datetime->add_classname('event-has-thumb');
+							$calendar_datetime->add_classname('event-has-thumb');
+						}
 					}
-				}
 
 				// $this->timer->stop();
 				// echo $this->timer->get_elapse( __LINE__ );
@@ -538,16 +538,16 @@ class EED_Espresso_Calendar extends EED_Module {
 				}
 				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 
-	//			$this->timer->stop();
-	//			echo $this->timer->get_elapse( __LINE__ );
+					//			$this->timer->stop();
+					//			echo $this->timer->get_elapse( __LINE__ );
 
+				}
 			}
+
+			echo json_encode( $calendar_datetimes_for_json );
+			die();
+
 		}
-
-		echo json_encode( $calendar_datetimes_for_json );
-		die();
-
-	}
 
 
 

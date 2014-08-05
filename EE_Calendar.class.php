@@ -8,6 +8,7 @@
  *
  * ------------------------------------------------------------------------
  */
+define( 'EE_CALENDAR_BASENAME', plugin_basename( EE_CALENDAR_PLUGIN_FILE ));
 define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
 define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
@@ -80,7 +81,7 @@ Class  EE_Calendar extends EE_Addon {
 	 * @return array
 	 */
 	public function plugin_actions( $links, $file ) {
-		if ( $file == EE_CALENDAR_PLUGIN_FILE ) {
+		if ( $file == EE_CALENDAR_BASENAME ) {
 			// before other links
 			array_unshift( $links, '<a href="admin.php?page=espresso_calendar">' . __('Settings') . '</a>' );
 		}

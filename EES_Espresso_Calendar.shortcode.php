@@ -72,7 +72,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		// this will trigger the EED_Espresso_Calendar module's run() method during the pre_get_posts hook point,
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array, using 'calendar' as the key, so that we can retrieve it
-		EE_Registry::instance()->REQ->set( 'ee', 'calendar' );
+		add_action( 'pre_get_posts', array( EED_Espresso_Calendar::instance(), 'run' ));
 	}
 
 
@@ -96,7 +96,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		);
 		// make sure $attributes is an array
 		$attributes = array_merge( $defaults, (array)$attributes );
-		return EE_Registry::instance()->modules->EED_Espresso_Calendar->display_calendar( $attributes );
+		return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
 	}
 
 
