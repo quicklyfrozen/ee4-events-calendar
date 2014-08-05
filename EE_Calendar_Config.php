@@ -1,61 +1,75 @@
 <?php
-if ( ! class_exists( 'EE_Calendar_Config')) {
-	/*
-	 * Settings for the calendar
+if ( ! class_exists( 'EE_Calendar_Config' )) {
+	/**
+	 *
+	 * Class EE_Calendar_Config
+	 *
+	 * settings for the calendar
+	 *
+	 * @package  			Event Espresso
+	 * @subpackage 	core
+ 	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
 	 */
 	class EE_Calendar_Config extends EE_Config_Base{
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Header
 		 */
 		public $header;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Button_Text
 		 */
 		public $button_text;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Tooltip
 		 */
 		public $tooltip;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Title_Format
 		 */
 		public $title_format;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Column_Format
 		 */
 		public $column_format;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Time
 		 */
 		public $time;
+
 		/**
-		 *
 		 * @var EE_Calendar_Config_Display
 		 */
 		public $display;
+
 		/**
-		 *
 		 * @var boolean
 		 */
 		public $widget;
+
 		/**
-		 *
 		 * @var string
 		 */
 		public $month;
+
 		/**
-		 *
 		 * @var int
 		 */
 		public $year;
 
 
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config
+		 */
 		public function __construct(){
 			$this->header = new EE_Calendar_Config_Header();
 			$this->button_text = new EE_Calendar_Config_Button_Text();
@@ -69,11 +83,15 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			$this->year = date('Y');
 		}
 
+
+
 		/**
+		 * 	to_flat_array
 		 *
-		 * @return array one dimensional. All nested config classes properties are
-		 * 'flatened'. Eg, $this->tooltip->show becomes array key 'tooltip_show' in the newly
-		 * formed array
+		 * All nested config classes properties are 'flattened'.
+		 * Eg, $this->tooltip->show becomes array key 'tooltip_show' in the newly formed array
+		 *
+		 * @return array
 		 */
 		public function to_flat_array(){
 			$flattened_vars = array();
@@ -91,12 +109,33 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			return $flattened_vars;
 		}
 	}
+
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Time
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Time extends EE_Config_Base{
+
 		public $first_day;
 		public $weekends;
 		public $week_mode;
 		public $format;
 		public $show;
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Time
+		 */
 		public function __construct() {
 			$this->first_day = '0';
 			$this->weekends = true;
@@ -105,17 +144,56 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			$this->show = true;
 		}
 	}
+
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Header
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Header  extends EE_Config_Base{
+
 		public $left;
 		public $center;
 		public $right;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Header
+		 */
 		public function __construct(){
 			$this->left = 'prev, today';
 			$this->center = 'title';
 			$this->right = 'month, agendaWeek, agendaDay, next';
 		}
 	}
+
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Button_Text
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Button_Text  extends EE_Config_Base{
+
 		public $prev;
 		public $next;
 		public $prev_year;
@@ -124,6 +202,13 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 		public $month;
 		public $week;
 		public $day;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Button_Text
+		 */
 		public function __construct(){
 			$this->prev = '&lsaquo;';
 			$this->next = '&rsaquo;';
@@ -135,13 +220,36 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			$this->day = 'day';
 		}
 	}
+
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Tooltip
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
+
 		public $pos_my_1;
 		public $pos_my_2;
 		public $pos_at_1;
 		public $pos_at_2;
 		public $style;
 		public $show;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Tooltip
+		 */
 		public function __construct(){
 			$this->show = true;
 			$this->pos_my_1 = 'bottom';
@@ -151,10 +259,33 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			$this->style = 'qtip-light';
 		}
 	}
+
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Title_Format
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Title_Format extends EE_Config_Base{
+
 		public $month;
 		public $week;
 		public $day;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Title_Format
+		 */
 		public function __construct() {
 			$this->month = 'MMMM yyyy';
 			$this->week = 'MMM dS[ yyyy] - {[ MMM] dS yyyy}';
@@ -162,20 +293,56 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 		}
 	}
 
+
+
+
+
+	/**
+	 *
+	 * Class EE_Calendar_Config_Column_Format
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
+	 */
 	class EE_Calendar_Config_Column_Format extends EE_Config_Base{
+
 		public $month;
 		public $week;
 		public $day;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Column_Format
+		 */
 		public function __construct() {
 			$this->month = 'ddd';
 			$this->week = 'ddd M/d';
 			$this->day = 'dddd M/d';
 		}
 	}
+	// contains config info relating to frontend display of teh calendar
+
+
+
+
+
 	/**
-	 * contains config info relating to frontend display of teh calendar
+	 *
+	 * Class EE_Calendar_Config_Display
+	 *
+	 * @package 			Event Espresso
+	 * @subpackage 	core
+	 * @author 				Michael Nelson
+	 * @since 				3.1.0
+	 *
 	 */
 	class EE_Calendar_Config_Display extends EE_Config_Base{
+
 		public $calendar_height;
 		public $enable_calendar_thumbs;
 		public $enable_calendar_filters;
@@ -185,8 +352,14 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 		public $event_text_color;
 		public $enable_cat_classes;
 		public $disable_categories;
-
 		public $show_attendee_limit;
+
+
+
+		/**
+		 * 	__construct
+		 * @return EE_Calendar_Config_Display
+		 */
 		public function __construct(){
 			$this->calendar_height = '';
 			$this->enable_calendar_thumbs = false;
@@ -199,5 +372,8 @@ if ( ! class_exists( 'EE_Calendar_Config')) {
 			$this->disable_categories = false;
 			$this->show_attendee_limit = false;
 		}
+
+
+
 	}
 }

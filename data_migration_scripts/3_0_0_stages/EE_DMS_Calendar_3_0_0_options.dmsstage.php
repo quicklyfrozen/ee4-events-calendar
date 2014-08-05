@@ -6,6 +6,13 @@
 class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 
 	function _migration_step($num_items=50){
+		//get teh calendar's config
+		if(isset(EE_Config::instance()->addons->EE_Calendar) && EE_Config::instance()->addons->EE_Calendar instanceof EE_Calendar_Config){
+			$c = EE_Config::instance()->addons->EE_Calendar;
+		}else{
+			$c = new EE_Calendar_Config();
+			EE_Config::instance()->addons->EE_Calendar = $c;
+		}
 
 		$items_actually_migrated = 0;
 		$old_org_options = get_option('espresso_calendar_options');
@@ -13,15 +20,22 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 		if( ! $old_org_options){
 			$old_org_options = get_option('espresso_calendar_settings');
 		}
+
 		foreach($this->_org_options_we_know_how_to_migrate as $option_name){
 			//only bother migrating if there's a setting to migrate. Otherwise we'll just use the default
 			if(isset($old_org_options[$option_name])){
-				$this->_handle_org_option($option_name, $old_org_options[$option_name]);
+				$this->_handle_org_option($option_name, $old_org_options[$option_name], $c);
 			}
 			$items_actually_migrated++;
 		}
-
-		EE_Config::instance()->update_espresso_config(false,false);
+//		d($c);
+		$success = EE_Config::instance()->update_config('addons','EE_Calendar',$c);
+		if( ! $success ){
+			$this->add_error(EE_Error::get_notices());
+		}
+//		d($success);
+//		d($c);
+//		die;
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 			$this->set_completed();
 		}
@@ -37,16 +51,16 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 		parent::__construct();
 	}
 
-	private function _handle_org_option($option_name,$value){
-		if(isset(EE_Config::instance()->addons['calendar']) && EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config){
-			$c = EE_Config::instance()->addons['calendar'];
-		}else{
-			$c = new EE_Calendar_Config();
-			EE_Config::instance()->addons['calendar'] = $c;
-		}
+	/**
+	 *
+	 * @param type $option_name
+	 * @param type $value
+	 * @param EE_Calendar_Config $c
+	 */
+	private function _handle_org_option($option_name,$value,$c){
 		/* @var $c EE_Calendar_Config */
 		switch($option_name){
-			
+
 			case 'header_left':	$c->header->left = $value;break;
 			case 'header_center':$c->header->center = $value;break;
 			case 'header_right': $c->header->right = $value;break;
@@ -62,7 +76,7 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 
 			case 'firstDay': $c->time->first_day = intval($value); break;
 			case 'weekends': $c->time->weekends = $value; break;
-			case 'weekMode': $c->time->week_mode = $value; break; 
+			case 'weekMode': $c->time->week_mode = $value; break;
 			case 'espresso_calendar_height': $c->display->calendar_height = $value; break;
 			case 'enable_calendar_thumbs': $c->display->enable_calendar_thumbs = $value; break;
 			case 'enable_calendar_filters': $c->display->enable_calendar_filters = $value;break;
@@ -84,8 +98,8 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 			case 'disable_categories': $c->display->disable_categories = $value;break;
 			case 'show_attendee_limit': $c->display->show_attendee_limit = $value;break;
 
-			case 'titleFormat_month': $c->title_format->month = $value;break; 
-			case 'titleFormat_week': $c->title_format->week = $value;break; 
+			case 'titleFormat_month': $c->title_format->month = $value;break;
+			case 'titleFormat_week': $c->title_format->week = $value;break;
 			case 'titleFormat_day': $c->title_format->day = $value;break;
 
 			case 'columnFormat_month': $c->column_format->month = $value;break;
@@ -95,7 +109,7 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}
 	}
-	
+
 	protected $_org_options_we_know_how_to_migrate = array(
 'header_left',
 'header_center',
@@ -112,7 +126,7 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 
 'firstDay',
 'weekends',
-'weekMode', 
+'weekMode',
 'espresso_calendar_height',
 'enable_calendar_thumbs',
 'enable_calendar_filters',
@@ -135,8 +149,8 @@ class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 'disable_categories',
 'show_attendee_limit',
 
-'titleFormat_month', 
-'titleFormat_week', 
+'titleFormat_month',
+'titleFormat_week',
 'titleFormat_day',
 
 'columnFormat_month',
