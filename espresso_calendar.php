@@ -2,8 +2,8 @@
 /*
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
-  Description: A full calendar addon for Event Espresso. Includes month, week, and day views. Requires EE 4.3.0+
-  Version: 3.1.1.p
+  Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
+  Version: 3.1.1.p ( requires EE 4.3.0.p + )
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2014 Event Espresso (email : support@eventespresso.com)
