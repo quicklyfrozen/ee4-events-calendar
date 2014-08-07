@@ -421,7 +421,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				$event = $datetime->event();
 				/* @var $event EE_Event */
 				if( ! $event instanceof EE_Event ){
-					EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()));
+					EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()), __FILE__, __FUNCTION__, __LINE__ );
 					continue;
 				}
 				//Get details about the category of the event
