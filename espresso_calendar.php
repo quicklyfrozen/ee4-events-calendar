@@ -63,7 +63,7 @@ function espresso_calendar_activation_error() {
 		sprintf( __( 'Event Espresso Calendar could not be activated. Please ensure that Event Espresso version %s or higher is running', 'event_espresso'), EE_CORE_VERSION_REQUIRED ),
 		__FILE__, __FUNCTION__, __LINE__
 	);
-	deactivate_plugins( plugin_basename( EE_CALENDAR_PLUGIN_FILE ));
+	EE_System::deactivate_plugin( EE_CALENDAR_PLUGIN_FILE );
 }
 // End of file espresso_calendar.php
 // Location: wp-content/plugins/espresso-calendar/espresso_calendar.php
