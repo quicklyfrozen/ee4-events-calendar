@@ -398,7 +398,23 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Venue.VNU_identifier'=>$venue_id_or_slug
 			);
 		}
-		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
+
+		// EVENT STATUS
+		// to remove specific event statuses from the just the calendar, create a filter in your functions.php file like the following:
+//		function espresso_remove_sold_out_events_from_calendar( $public_event_stati ) {
+//			unset( $public_event_stati[ EEM_Event::sold_out ] );
+//			return $public_event_stati;
+//		}
+//		add_filter( 'AFEE__EED_Espresso_Calendar__get_calendar_events__public_event_stati', 'espresso_remove_sold_out_events_from_calendar', 10, 1 );
+		// to remove Cancelled events from the entire frontend, copy the following filter to your functions.php file
+		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__cancelled__Public', '__return_false' );
+		// to remove Postponed events from the entire frontend, copy the following filter to your functions.php file
+		// add_filter( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', '__return_false' );
+		// to remove Sold Out events from the entire frontend, copy the following filter to your functions.php file
+		//	add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
+
+		// where post_status is public ( publish, cancelled, postponed, sold_out )
+		$where_params['Event.status'] = array( 'IN', apply_filters( 'AFEE__EED_Espresso_Calendar__get_calendar_events__public_event_stati', EEM_Event::instance()->public_event_stati() ));
 
 		$where_params['DTT_EVT_start']= array('<=',$end_date);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
