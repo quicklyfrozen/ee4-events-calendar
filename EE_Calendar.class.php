@@ -1,4 +1,11 @@
 <?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allowed'); }
+
+define( 'EE_CALENDAR_BASENAME', plugin_basename( EE_CALENDAR_PLUGIN_FILE ));
+define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
+define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
+define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
+define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
+
 /**
  * Class  EE_Calendar
  *
@@ -8,18 +15,18 @@
  *
  * ------------------------------------------------------------------------
  */
-define( 'EE_CALENDAR_BASENAME', plugin_basename( EE_CALENDAR_PLUGIN_FILE ));
-define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
-define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
-define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
-define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 Class  EE_Calendar extends EE_Addon {
 
+	/**
+	 * @var string activation_indicator_option_name
+	 */
 	const activation_indicator_option_name = 'ee_espresso_calendar_activation';
 
 
 
-
+	/**
+	 * register_addon
+	 */
 	public static function register_addon() {
 		// define the plugin directory path and URL
 		// register addon via Plugin API
@@ -28,7 +35,7 @@ Class  EE_Calendar extends EE_Addon {
 			array(
 				'version' 					=> EE_CALENDAR_VERSION,
 				'min_core_version' => '4.3.0',
-				'main_file_path' 				=> EE_CALENDAR_PLUGIN_FILE,
+				'main_file_path' 		=> EE_CALENDAR_PLUGIN_FILE,
 				'admin_path' 			=> EE_CALENDAR_ADMIN . 'calendar' . DS,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_Calendar_Config',
