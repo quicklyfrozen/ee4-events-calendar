@@ -414,7 +414,15 @@ class EED_Espresso_Calendar extends EED_Module {
 		//	add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
 
 		// where post_status is public ( publish, cancelled, postponed, sold_out )
-		$where_params['Event.status'] = array( 'IN', apply_filters( 'AFEE__EED_Espresso_Calendar__get_calendar_events__public_event_stati', get_post_stati( array( 'public' => TRUE ))));
+		if ( method_exists( EEM_Event::instance(), 'public_event_stati' )) {
+			$public_event_stati = EEM_Event::instance()->public_event_stati();
+		} else {
+			$public_event_stati = get_post_stati( array( 'public' => TRUE ));
+			foreach ( EEM_Event::instance()->get_custom_post_statuses() as $custom_post_status ) {
+				$public_event_stati[] = strtolower( str_replace( ' ', '_', $custom_post_status ));
+			}
+		}
+		$where_params['Event.status'] = array( 'IN', apply_filters( 'AFEE__EED_Espresso_Calendar__get_calendar_events__public_event_stati', $public_event_stati ));
 
 		$where_params['DTT_EVT_start']= array('<=',$end_date);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
