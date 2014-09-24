@@ -93,9 +93,9 @@
 				</th>
 				<td>
 					<?php _e('Month', 'event_espresso'); ?>:&nbsp;
-					<input type="text" class="medium-text" name="calendar[column_format][day]" id="columnFormat_month" value="<?php echo htmlentities($calendar_config->column_format->month) ?>"><br />
+					<input type="text" class="medium-text" name="calendar[column_format][month]" id="columnFormat_month" value="<?php echo htmlentities($calendar_config->column_format->month) ?>"><br />
 					<?php _e('Week', 'event_espresso'); ?>:&nbsp;
-					<input type="text" class="medium-text" name="calendar[column_format][day]" id="columnFormat_week" value="<?php echo htmlentities($calendar_config->column_format->week) ?>"><br />
+					<input type="text" class="medium-text" name="calendar[column_format][week]" id="columnFormat_week" value="<?php echo htmlentities($calendar_config->column_format->week) ?>"><br />
 					<?php _e('Day', 'event_espresso'); ?>:&nbsp;&nbsp;&nbsp;&nbsp;
 					<input type="text" class="medium-text" name="calendar[column_format][day]" id="columnFormat_day" value="<?php echo htmlentities($calendar_config->column_format->day) ?>"><br />
 					<span class="description">
