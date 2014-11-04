@@ -92,7 +92,9 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		$defaults = array(
 			'show_expired' => 'true',
 			'cal_view' => 'month',
-			'widget' => FALSE
+			'widget' => FALSE,
+			'month' => date( 'n' ),
+			'year' => date( 'Y' ),
 		);
 		// make sure $attributes is an array
 		$attributes = array_merge( $defaults, (array)$attributes );
