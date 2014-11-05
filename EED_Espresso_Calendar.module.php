@@ -285,11 +285,11 @@ class EED_Espresso_Calendar extends EED_Module {
 			$ee_calendar_js_options['month'] = date('n', strtotime( $ee_calendar_js_options['month'] ));
 		}
 		// weed out any attempts to use month=potato or something similar
-		$ee_calendar_js_options['month'] = is_int( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
+		$ee_calendar_js_options['month'] = is_numeric( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
 		// fullcalendar uses 0-based value for month
 		$ee_calendar_js_options['month']--;
 		// set and format year param
-		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_int( $ee_calendar_js_options['year'] ) ? date('Y', strtotime( $ee_calendar_js_options['year'] )) : date('Y');
+		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_numeric( $ee_calendar_js_options['year'] ) ? $ee_calendar_js_options['year'] : date('Y');
 		// add calendar filters
 		$output_filter = $this->_get_filter_html( $ee_calendar_js_options );
 		// grab some request vars
