@@ -42,6 +42,9 @@ class EE_Datetime_In_Calendar {
 	protected $_tooltip_at = null;
 	protected $_tooltip_style = null;
 	protected $_show_tooltips = null;
+
+
+
 	public function __construct(EE_Datetime $datetime) {
 		$this->_datetime = $datetime;
 		$this->_event = $datetime->event();
@@ -50,6 +53,7 @@ class EE_Datetime_In_Calendar {
 	public function get($variable_name){
 		return $this->$variable_name;
 	}
+
 	public function set($variable_name,$value){
 		return $this->$variable_name = $value;
 	}
@@ -320,13 +324,13 @@ class EE_Datetime_In_Calendar {
 			'id'=>$this->_event->ID(),
 			'show_tooltips'=>$this->show_tooltips(),
 			'start'=>$this->_datetime->start_date('c'),
+			'target_date'=>$this->_datetime->start_date('Y-m-d'),
 			'textColor'=>$this->textColor(),
 			'tooltip'=>$this->tooltip(),
 			'tooltip_my'=>$this->tooltip_my(),
 			'tooltip_at'=>$this->tooltip_at(),
 			'tooltip_style'=>$this->tooltip_style(),
-			'title'=>$this->_event->name(),
-			
+			'title'=> $this->_datetime->name() != '' ? $this->_event->name() . ': ' . $this->_datetime->name() : $this->_event->name(),			
 			'url'=>$this->_event->get_permalink(),
 		);
 	}

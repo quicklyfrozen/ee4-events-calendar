@@ -1,15 +1,16 @@
 <div class="wrap">
-	<h4><?php _e('Directions:', 'event_espresso'); ?></h4>
 	<p>
-		<?php _e(' Add [ESPRESSO_CALENDAR] to any page or post to display a calendar of Event Espresso events. Use [ESPRESSO_CALENDAR event_category_id="your_category_identifier"] to show events of a certain category (also creates a CSS using the category_identifier as the class name.) Use [ESPRESSO_CALENDAR show_expired="true"] to show expired events, can also be used inconjunction with the category ID.', 'event_espresso'); ?>
-	</p>
-	<h4><?php _e('Examples Shortcodes:', 'event_espresso'); ?></h4>
-	<p>
-		[ESPRESSO_CALENDAR]<br />
-		[ESPRESSO_CALENDAR show_expired="true"]<br />
-		[ESPRESSO_CALENDAR event_category_id="your_category_identifier"]<br />
-		[ESPRESSO_CALENDAR event_category_id="your_category_identifier" show_expired="true"]<br />
-		[ESPRESSO_CALENDAR cal_view="month"] (Available parameters: month, basicWeek, basicDay, agendaWeek, agendaDay)
-	</p>
+        <?php _e('The calendar shortcodes allow you to display the calendar on a WordPress page or post. Unless otherwise specified, the calendar will show all events by month and exclude expired events.', 'event_espresso'); ?>
+    </p>
+	<ul>
+		<li><?php _e('<strong>Show a calendar with all of your events</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR]</li>
+		<li><?php _e('<strong>Show events on the calendar and include expired events</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR show_expired="true"]</li>
+		<li><?php _e('<strong>Show events from a specific category on the calendar</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR event_category_id="your_category_id"]</li>
+		<li><?php _e('<strong>Show events from a specific category on the calendar and include expired events</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR event_category_id="your_category_id" show_expired="true"]</li>
+		<li><?php _e('<strong>Show events on the calendar by month</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR cal_view="month"]</li>
+		<li><?php _e('<strong>Show events on the calendar by a regular week</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR cal_view="basicWeek"]</li>
+		<li><?php _e('<strong>Show events on the calendar by a regular day</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR cal_view="basicDay"]</li>
+		<li><?php _e('<strong>Show events on the calendar by an agenda week</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR cal_view="agendaWeek"]</li>
+		<li><?php _e('<strong>Show events on the calendar by an agenda day</strong>', 'event_espresso'); ?><br />[ESPRESSO_CALENDAR cal_view="agendaDay"]</li>
+	</ul>
 </div>
-<!-- / .padding -->
