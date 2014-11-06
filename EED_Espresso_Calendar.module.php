@@ -190,12 +190,12 @@ class EED_Espresso_Calendar extends EED_Module {
 						if ( $use_bg ) {
 							echo '
 							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
-								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span>
 							</li>';
 						} else {
 							echo '
 							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
-								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span>
 							</li>';
 						}
 					}
