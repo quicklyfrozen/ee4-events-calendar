@@ -176,7 +176,9 @@ class EEW_Espresso_Calendar extends WP_Widget {
 					'header_center' => 'title',
 					'header_right' =>'next',
 					'title_format_month' => 'MMM yyyy',
-					'widget' => TRUE
+					'widget' => TRUE,
+					'month' => apply_filters( 'FHEE__EE_Calendar__widget_start_month', date( 'n' ) ),
+					'year' => apply_filters( 'FHEE__EE_Calendar__widget_start_year', date( 'Y' ) ),
 				);
 				 if ( ! EE_Registry::instance()->modules->EED_Espresso_Calendar instanceof EED_Espresso_Calendar ) {
 					 EE_Registry::instance()->modules->EED_Espresso_Calendar = new EED_Espresso_Calendar();
