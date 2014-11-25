@@ -110,7 +110,7 @@ jQuery(document).ready(function($) {
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
 			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
-			eeCAL.prev_view = eeCAL.view;
+			//eeCAL.prev_view = eeCAL.view;
 			
 			var cal_data = {
 				action: 'get_calendar_events',
@@ -184,7 +184,7 @@ jQuery(document).ready(function($) {
 //				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
 	                    	return false 
-			} else {
+//			} else {
 //				console.log( JSON.stringify( 'eventRender event: ' + event.title, null, 4 ));
 			}
 
