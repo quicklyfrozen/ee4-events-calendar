@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 	
-	eeCAL.max_events_per_day = 4;
+	eeCAL.max_events_per_day = parseInt(eeCAL.max_events_per_day);
 	eeCAL.events_per_day = {};
 
 	// fix this one boolean
@@ -183,7 +183,7 @@ jQuery(document).ready(function($) {
                         	}
 //				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
-	                    	return false 
+				return false 
 //			} else {
 //				console.log( JSON.stringify( 'eventRender event: ' + event.title, null, 4 ));
 			}
