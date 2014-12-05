@@ -18,7 +18,7 @@
 class EE_Calendar_Tests extends EE_UnitTestCase {
 
 	function test_EE_Calendar_instance() {
-		$EECAL = EE_Calendar::instance();
-		$this->assertTrue( $EECAL instanceof EE_Calendar );
+		$EE_Calendar = new EE_Calendar();
+		$this->assertTrue( $EE_Calendar instanceof EE_Calendar );
 	}
 }
