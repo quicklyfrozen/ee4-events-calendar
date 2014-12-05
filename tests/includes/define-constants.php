@@ -10,6 +10,9 @@
 define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( dirname(__FILE__ ) ) ) ) . '/event-espresso-core/');
 define( 'EECAL_TESTS_DIR', dirname( dirname( __FILE__ ) ) . '/'  );
 define( 'EECAL_PLUGIN_DIR' , dirname( dirname( dirname(__FILE__)  ) ). '/' );
+if ( ! defined( 'EE_CALENDAR_PLUGIN_FILE' )) {
+	define( 'EE_CALENDAR_PLUGIN_FILE', EECAL_PLUGIN_DIR . 'espresso_calendar.php' );
+}
 
 if ( ! defined( 'EE_TESTS_DIR' ) ) {
 	define( 'EE_TESTS_DIR', EE_PLUGIN_DIR .  'tests/' );
@@ -46,3 +49,4 @@ if ( file_exists( WP_ROOT_DIR . '/wp-tests-config.php' ) ) {
 } else {
 	die( "wp-tests-config.php could not be found.\n" );
 }
+
