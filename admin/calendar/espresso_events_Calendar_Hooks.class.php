@@ -83,10 +83,14 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$use_color_picker = false;
 		$default_background_color = '#eeeeee';
 		$default_text_color = '#444444';
+		$category_color_priority = 10;
+		$skip_category_color = false;
 		if($category){
 			$use_color_picker = $category->get_extra_meta('use_color_picker',true,false);
 			$background_color = $category->get_extra_meta('background_color', true,$default_background_color);
 			$text_color = $category->get_extra_meta('text_color',true,$default_text_color);
+			$category_color_priority = $category->get_extra_meta('category_color_priority', true, $category_color_priority);
+			$skip_category_color = $category->get_extra_meta('skip_category_color', true, false);
 		}else{
 			$background_color = $default_background_color;
 			$text_color = $default_text_color;
@@ -97,6 +101,8 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$template_args['text_color'] = $text_color;
 		$template_args['default_background_color'] = $default_background_color;
 		$template_args['default_text_color'] = $default_text_color;
+		$template_args['skip_category_color'] = $skip_category_color;
+		$template_args['category_color_priority'] = $category_color_priority;
 		EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'category_color_for_calendar.template.php', $template_args );
 	}
 
@@ -113,7 +119,8 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 			$category->update_extra_meta('use_color_picker' , intval($this->_req_data['use-color-picker-for-calendar']));
 			$category->update_extra_meta('background_color', wp_strip_all_tags($this->_req_data['category-background-color-for-calendar']));
 			$category->update_extra_meta('text_color', wp_strip_all_tags($this->_req_data['category-text-color-for-calendar']));
-
+			$category->update_extra_meta('category_color_priority', intval($this->_req_data['category-color-priority-for-calendar']));
+			$category->update_extra_meta('skip_category_color', intval($this->_req_data['skip-category-color-for-calendar']));
 		}
 	}
 
