@@ -101,7 +101,6 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$template_args['text_color'] = $text_color;
 		$template_args['default_background_color'] = $default_background_color;
 		$template_args['default_text_color'] = $default_text_color;
-		$template_args['skip_category_color'] = $skip_category_color;
 		$template_args['category_color_priority'] = $category_color_priority;
 		EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'category_color_for_calendar.template.php', $template_args );
 	}
@@ -120,7 +119,6 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 			$category->update_extra_meta('background_color', wp_strip_all_tags($this->_req_data['category-background-color-for-calendar']));
 			$category->update_extra_meta('text_color', wp_strip_all_tags($this->_req_data['category-text-color-for-calendar']));
 			$category->update_extra_meta('category_color_priority', intval($this->_req_data['category-color-priority-for-calendar']));
-			$category->update_extra_meta('skip_category_color', intval($this->_req_data['skip-category-color-for-calendar']));
 		}
 	}
 
