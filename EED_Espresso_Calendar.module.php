@@ -453,6 +453,10 @@ class EED_Espresso_Calendar extends EED_Module {
 					 $categories= $event->get_all_event_categories();
 					//any term_taxonomies set for this event?
 					if ( $categories ) {
+						
+						//Sort categories based on color prioirty
+						usort($categories, 'asort_by_cat_color_priority');
+						
 						$primary_cat = reset( $categories );
 						if($primary_cat->get_extra_meta('use_color_picker',true,false)){
 							$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
@@ -573,7 +577,17 @@ class EED_Espresso_Calendar extends EED_Module {
 
 		}
 
-
+	/**
+	 *    Sorts the $categories based on color priority
+	 *
+	 * @access    private
+	 * @param $categories
+	 * @return    boolean
+	 */
+	private function asort_by_cat_color_priority($a, $b)
+	{
+		return $a->get_extra_meta('category_color_priority',TRUE ,NULL ) < $b->get_extra_meta('category_color_priority',TRUE , NULL);
+	}
 
 	/**
 	 *		@ override magic methods
@@ -586,6 +600,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	public function __clone() { return FALSE; }
 	public function __wakeup() { return FALSE; }
 	public function __destruct() { return FALSE; }
+
 
  }
 // End of file EED_Espresso_Calendar.module.php
