@@ -311,7 +311,7 @@ class EE_Datetime_In_Calendar {
 	 */
 	function to_array_for_json(){
 		return array(
-			'allDay'=>$this->_datetime->length('days', true) > 1 ? true : false,
+			'allDay'=>false,
 			'className'=>$this->classname(),
 			'color'=>$this->color(),
 			'end'=>$this->_datetime->end_date('c'),
