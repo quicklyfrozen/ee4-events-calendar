@@ -455,8 +455,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					if ( $categories ) {
 						
 						//Sort categories based on color prioirty
-						usort($categories, 'asort_by_cat_color_priority');
-						
+						usort($categories, array( $this, 'asort_by_cat_color_priority' ) );
 						$primary_cat = reset( $categories );
 						if($primary_cat->get_extra_meta('use_color_picker',true,false)){
 							$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
