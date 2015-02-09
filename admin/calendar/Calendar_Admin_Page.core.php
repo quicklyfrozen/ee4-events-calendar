@@ -1,11 +1,8 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
-	exit('NO direct script access allowed');
-
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allowed'); }
 /**
  * Event Espresso
  *
- * Event Registration and Management Plugin for Wordpress
+ * Event Registration and Management Plugin for WordPress
  *
  * @package		Event Espresso
  * @author		Event Espresso
@@ -18,7 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Calendar_Admin_Page
  *
- * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without phpdoc comments have inline docs with parent class.
+ * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without PHP doc comments have inline docs with parent class.
  *
  *
  * @package		Calendar_Admin_Page (calendar addon)
@@ -134,8 +131,12 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * _settings_page
+	 * @param $template
+	 */
 	protected function _settings_page( $template ) {
-		$this->_template_args['calendar_config'] = EE_Config::instance()->addons['calendar'];
+		$this->_template_args['calendar_config'] = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 		$this->_template_args['values'] = array(
 				array('id' => false, 'text' => __('No', 'event_espresso')),
 				array('id' => true, 'text' => __('Yes', 'event_espresso'))
@@ -155,36 +156,35 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	}
 	protected function _update_settings(){
 		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
-			$c = new EE_Calendar_Config();
+			$config = new EE_Calendar_Config();
 			$count = 1;
 		}else{
-			$c = EE_Config::instance()->addons['calendar'];
+			$config = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 			$count=0;
 			//otherwise we assume you want to allow full html
 			foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
 				if(is_array($top_level_value)){
 					foreach($top_level_value as $second_level_key => $second_level_value){
-						if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
-							&& $second_level_value != $c->$top_level_key->$second_level_key){
-							$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
+						if(property_exists($config,$top_level_key) && property_exists($config->$top_level_key, $second_level_key)
+							&& $second_level_value != $config->$top_level_key->$second_level_key){
+							$config->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
 							$count++;
 						}
 					}
 				}else{
-					if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
-						$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
+					if(property_exists($config, $top_level_key) && $top_level_value != $config->$top_level_key){
+						$config->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
 						$count++;
 					}
 				}
 			}
 		}
-		EE_Config::instance()->addons['calendar'] = $c;
-		EE_Config::instance()->update_espresso_config();
+		EE_Config::instance()->update_config( 'addons', 'EE_Calendar', $config );
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
 
 	/**
-	 * resets the calend data and redirects to where they came from
+	 * resets the calendar data and redirects to where they came from
 	 */
 //	protected function _reset_settings(){
 //		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
@@ -265,7 +265,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				return $value;
 			default:
 				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
-				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name));
+				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name), __FILE__, __FUNCTION__, __LINE__ );
 				return NULL;
 
 		}
