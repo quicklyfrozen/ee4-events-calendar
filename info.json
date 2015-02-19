@@ -12,5 +12,7 @@
 	],
 	"github" : true,
 	"awsbucket" : "",
-	"awsregion" : ""
+	"awsregion" : "",
+	"srcBuildFolderName" : "eea-calendar",
+	"textDomain" : "event_espresso"
 }
