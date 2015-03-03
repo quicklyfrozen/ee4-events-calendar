@@ -382,7 +382,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		$month = date('m' );
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
-		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$end_datetime = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
@@ -398,6 +398,18 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Venue.VNU_identifier'=>$venue_id_or_slug
 			);
 		}
+
+		//setup start date and end date in a timestamp with the correct offset for the site.
+		$start_date = new DateTime( "now" );
+		$start_date->setTimestamp( strtotime( $start_datetime ) );
+		$start_datetime = $start_date->format('U') + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+
+		$end_date = new DateTime( "now" );
+		$end_date->setTimestamp( strtotime( $end_datetime ) );
+		$end_datetime = $end_date->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+
+		$today = new DateTime( date('Y-m-d' ) );
+		$today = $today->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 
 		// EVENT STATUS
 		// to remove specific event statuses from the just the calendar, create a filter in your functions.php file like the following:
@@ -424,10 +436,10 @@ class EED_Espresso_Calendar extends EED_Module {
 		}
 		$where_params['Event.status'] = array( 'IN', apply_filters( 'AFEE__EED_Espresso_Calendar__get_calendar_events__public_event_stati', $public_event_stati ));
 
-		$where_params['DTT_EVT_start']= array('<=',$end_date);
+		$where_params['DTT_EVT_start']= array('<=',$end_datetime);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
 		if ( $show_expired == 'false' ) {
-			$where_params['DTT_EVT_end*3'] = array('>=',$today);
+			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
