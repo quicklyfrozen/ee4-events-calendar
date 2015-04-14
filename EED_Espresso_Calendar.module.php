@@ -400,16 +400,19 @@ class EED_Espresso_Calendar extends EED_Module {
 		}
 
 		//setup start date and end date in a timestamp with the correct offset for the site.
+
+		//this accounts for whether we're working with the new datetime paradigm introduce in EE 4.7 or not.
+		$use_offset = ! method_exists( 'EEM_Datetime', 'current_time_for_query' );
 		$start_date = new DateTime( "now" );
 		$start_date->setTimestamp( strtotime( $start_datetime ) );
-		$start_datetime = $start_date->format('U') + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$start_datetime = $use_offset ? $start_date->format('U') + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $start_date->format('U');
 
 		$end_date = new DateTime( "now" );
 		$end_date->setTimestamp( strtotime( $end_datetime ) );
-		$end_datetime = $end_date->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$end_datetime = $use_offset ? $end_date->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $end_date->format( 'U' );
 
 		$today = new DateTime( date('Y-m-d' ) );
-		$today = $today->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$today = $use_offset ? $today->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $today->format( 'U' );
 
 		// EVENT STATUS
 		// to remove specific event statuses from the just the calendar, create a filter in your functions.php file like the following:
