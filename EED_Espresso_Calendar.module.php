@@ -378,7 +378,6 @@ class EED_Espresso_Calendar extends EED_Module {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 
-		$today = date( 'Y-m-d' );
 		$month = date('m' );
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
@@ -405,14 +404,14 @@ class EED_Espresso_Calendar extends EED_Module {
 		$use_offset = ! method_exists( 'EEM_Datetime', 'current_time_for_query' );
 		$start_date = new DateTime( "now" );
 		$start_date->setTimestamp( strtotime( $start_datetime ) );
-		$start_datetime = $use_offset ? $start_date->format('U') + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $start_date->format('U');
+		$start_datetime = $use_offset ? (int)$start_date->format('U') + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $start_date->format('U');
 
 		$end_date = new DateTime( "now" );
 		$end_date->setTimestamp( strtotime( $end_datetime ) );
-		$end_datetime = $use_offset ? $end_date->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $end_date->format( 'U' );
+		$end_datetime = $use_offset ? (int)$end_date->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $end_date->format( 'U' );
 
 		$today = new DateTime( date('Y-m-d' ) );
-		$today = $use_offset ? $today->format( 'U' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $today->format( 'U' );
+		$today = $use_offset ? (int)$today->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) : $today->format( 'U' );
 
 		// EVENT STATUS
 		// to remove specific event statuses from the just the calendar, create a filter in your functions.php file like the following:
