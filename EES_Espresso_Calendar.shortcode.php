@@ -95,6 +95,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			'widget' => FALSE,
 			'month' => date( 'n' ),
 			'year' => date( 'Y' ),
+			'max_events_per_day' => NULL,
 		);
 		// make sure $attributes is an array
 		$attributes = array_merge( $defaults, (array)$attributes );
