@@ -11,6 +11,9 @@
 		"src/readme.txt"
 	],
 	"github" : true,
+	"demoee" : true,
 	"awsbucket" : "",
-	"awsregion" : ""
+	"awsregion" : "",
+	"srcBuildFolderName" : "eea-calendar",
+	"textDomain" : "event_espresso"
 }
