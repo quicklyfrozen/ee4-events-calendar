@@ -547,7 +547,7 @@ class EED_Espresso_Calendar extends EED_Module {
 							$attendee_limit_text = __('Available Spaces: unlimited', 'event_espresso');
 						} else {
 							$attendee_limit_text = __('Registrations / Spaces: ', 'event_espresso') . $datetime->sold() . ' / ';
-							$attendee_limit_text .= ( apply_filters( 'FHEE__EE_Calendar__tooltip_datetime_available_spaces', false ) == true ? $datetime->total_tickets_available_at_this_datetime() : $datetime->sum_tickets_initially_available() ) ;
+							$attendee_limit_text .= apply_filters( 'FHEE__EE_Calendar__tooltip_datetime_available_spaces', $datetime->sum_tickets_initially_available(), $datetime );
 						}
 						$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
 					}
