@@ -238,7 +238,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 					<?php
 						foreach ( $venues as $venue ) {
-							if ( $venue instanceof EE_Venue ) {
+							if ( $venue instanceof EE_Venue && $venue->status() == 'publish' ) {
 								$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
 								echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
 							}
