@@ -166,8 +166,11 @@ class EED_Espresso_Calendar extends EED_Module {
 		$output_filter = '';
 		if ( ! $ee_calendar_js_options['widget'] ) {
 			// Query for Select box filters
-			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
-			$venues = EEM_Venue::instance()->get_all();
+			$ee_terms = EEM_Term::instance()->get_all( array( 
+				'order_by' => array( 'name' => 'ASC' ),
+				array( 'Term_Taxonomy.taxonomy' => 'espresso_event_categories',
+			) ) );
+			$venues = EEM_Venue::instance()->get_all( array( 'order_by' => array( 'VNU_name' => 'ASC' ) ) );
 
 			if ( ! empty( $venues ) || !empty( $ee_terms )){
 
@@ -235,7 +238,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 					<?php
 						foreach ( $venues as $venue ) {
-							if ( $venue instanceof EE_Venue ) {
+							if ( $venue instanceof EE_Venue && $venue->status() == 'publish' ) {
 								$selected = in_array( $ee_calendar_js_options['event_venue_id'], array( $venue->identifier(), $venue->ID() )) ? ' selected="selected"' : '';
 								echo '<option' . $selected . ' value="' . $venue->identifier() . '">' . stripslashes( $venue->name() ) . '</option>';
 							}
@@ -546,7 +549,8 @@ class EED_Espresso_Calendar extends EED_Module {
 						if ( $datetime->total_tickets_available_at_this_datetime() == -1 ) {
 							$attendee_limit_text = __('Available Spaces: unlimited', 'event_espresso');
 						} else {
-							$attendee_limit_text = __('Registrations / Spaces: ', 'event_espresso') . $datetime->sold() . ' / ' . $datetime->sum_tickets_initially_available();
+							$attendee_limit_text = __('Registrations / Spaces: ', 'event_espresso') . $datetime->sold() . ' / ';
+							$attendee_limit_text .= apply_filters( 'FHEE__EE_Calendar__tooltip_datetime_available_spaces', $datetime->total_tickets_available_at_this_datetime(), $datetime );
 						}
 						$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
 					}
