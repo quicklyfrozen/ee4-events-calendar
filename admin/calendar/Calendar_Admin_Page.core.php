@@ -161,8 +161,11 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		}else{
 			$config = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 			$count=0;
+                        //WP adds slashes by default, so remove them. 
+                        //see https://wordpress.org/support/topic/does-wordpress-escapeadd-slashes-to-_request-fields-in-a-plugin
+                        $calendar_req_data = stripslashes_deep( $this->_req_data[ 'calendar'] );
 			//otherwise we assume you want to allow full html
-			foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
+			foreach( $calendar_req_data as $top_level_key => $top_level_value){
 				if(is_array($top_level_value)){
 					foreach($top_level_value as $second_level_key => $second_level_value){
 						if(property_exists($config,$top_level_key) && property_exists($config->$top_level_key, $second_level_key)
