@@ -447,7 +447,15 @@ class EED_Espresso_Calendar extends EED_Module {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
-		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
+		$datetime_objs = EEM_Datetime::instance()->get_all( 
+                        apply_filters( 'FHEE__EED_Espresso_Calendar__get_calendar_events__query_params', 
+                                array( $where_params, 'order_by'=>array( 'DTT_EVT_start'=>'ASC' ) ),
+                                $category_id_or_slug,
+                                $venue_id_or_slug,
+                                $public_event_stati,
+                                $start_date,
+                                $end_date,
+                                $show_expired ) );
 		/* @var $datetime_objs EE_Datetime[] */
 
 		//	$this->timer->stop();
