@@ -23,7 +23,7 @@
  Prettify the fonts (especially) in webkit browsers
  ---------------------------------------------------------------------------------------------------- */
 
-* {
+#espresso_calendar * {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 }
