@@ -69,6 +69,10 @@ Specific Theme Fixes: This section will use !important much more than it should.
 	text-align: left; /* flounder theme */
 }
 
+#espresso_calendar a {
+    max-width: none; /* enfold theme */
+}
+
 /*
 Calendar Specific Styles
 ---------------------------------------------------------------------------------------------------- */
@@ -353,7 +357,7 @@ The Buttons and related paraphenalia
  color: #999;
 }
 #espresso_calendar td {
-	padding: 0!important; /* ticket #4161 */
+	padding: 0 !important; /* ticket #4161 */
 }
 #espresso_calendar .fc-grid .fc-day-number {
 	padding: 0 .5em;
@@ -580,7 +584,7 @@ a.reg-now-btn {
 	min-height: 15px;
 }
 .widget_ee-calendar-widget a.fc-event-skin div:hover {
-	background-position:6px 0px!important;
+	background-position:6px 0px !important;
 }
 .widget_ee-calendar-widget .fc-header h2 {
 	font-weight: normal;
