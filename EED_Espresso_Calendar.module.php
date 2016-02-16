@@ -190,15 +190,16 @@ class EED_Espresso_Calendar extends EED_Module {
 						$bg = $ee_term->get_extra_meta( 'background_color',TRUE, $this->config()->display->event_background );
 						$fontcolor =$ee_term->get_extra_meta( 'text_color',TRUE, $this->config()->display->event_text_color );
 						$use_bg = $ee_term->get_extra_meta( 'use_color_picker', TRUE );
+						$caturl = esc_url( add_query_arg( 'event_category_id', $ee_term->slug() ) );
 						if ( $use_bg ) {
 							echo '
 							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
-								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span>
+								<span class="ee-category"><a href="'. $caturl .'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span>
 							</li>';
 						} else {
 							echo '
 							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
-								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span>
+								<span class="ee-category"><a href="'. $caturl .'">'.$ee_term->name().'</a></span>
 							</li>';
 						}
 					}
