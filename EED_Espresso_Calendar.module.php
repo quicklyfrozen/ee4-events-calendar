@@ -49,6 +49,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	  */
 	 public static function set_hooks() {
 		 EE_Config::register_route( 'calendar', 'EED_Espresso_Calendar', 'run' );
+		 EE_Config::register_route( 'calendar', 'EED_Espresso_Calendar', 'calendar_iframe', 'ee_iframe' );
 	 }
 
 
@@ -63,6 +64,9 @@ class EED_Espresso_Calendar extends EED_Module {
 		 // ajax hooks
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
+		 //add button for iframe code to event editor.
+		 add_filter( 'get_sample_permalink_html', array( 'EED_Ticket_Selector', 'iframe_code_button' ), 10, 4 );
+		 add_action( 'admin_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets_admin' ), 10 );
 	 }
 
 
@@ -166,7 +170,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		$output_filter = '';
 		if ( ! $ee_calendar_js_options['widget'] ) {
 			// Query for Select box filters
-			$ee_terms = EEM_Term::instance()->get_all( array( 
+			$ee_terms = EEM_Term::instance()->get_all( array(
 				'order_by' => array( 'name' => 'ASC' ),
 				array( 'Term_Taxonomy.taxonomy' => 'espresso_event_categories',
 			) ) );
@@ -447,8 +451,8 @@ class EED_Espresso_Calendar extends EED_Module {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
-		$datetime_objs = EEM_Datetime::instance()->get_all( 
-                        apply_filters( 'FHEE__EED_Espresso_Calendar__get_calendar_events__query_params', 
+		$datetime_objs = EEM_Datetime::instance()->get_all(
+                        apply_filters( 'FHEE__EED_Espresso_Calendar__get_calendar_events__query_params',
                                 array( $where_params, 'order_by'=>array( 'DTT_EVT_start'=>'ASC' ) ),
                                 $category_id_or_slug,
                                 $venue_id_or_slug,
@@ -588,16 +592,105 @@ class EED_Espresso_Calendar extends EED_Module {
 				}
 				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 
-					//			$this->timer->stop();
-					//			echo $this->timer->get_elapse( __LINE__ );
+				//			$this->timer->stop();
+				//			echo $this->timer->get_elapse( __LINE__ );
 
-				}
 			}
-
-			echo json_encode( $calendar_datetimes_for_json );
-			die();
-
 		}
+
+		echo json_encode( $calendar_datetimes_for_json );
+		die();
+
+	}
+
+
+
+	/**
+	 * ticket_selector_iframe
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public function calendar_iframe() {
+		/** @type EEM_Event $EEM_Event */
+		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
+		$event = $EEM_Event->get_one_by_ID(
+		EE_Registry::instance()->REQ->get( 'event', 0 )
+		);
+		EE_Registry::instance()->REQ->set_espresso_page( true );
+		$template_args['ticket_selector'] = EED_Ticket_Selector::display_ticket_selector( $event );
+		$template_args['css'] = apply_filters(
+		'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',
+		array(
+		TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_embed.css?ver=' . EVENT_ESPRESSO_VERSION,
+		TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css?ver=' . EVENT_ESPRESSO_VERSION,
+		includes_url( 'css/dashicons.min.css?ver=' . $GLOBALS['wp_version'] ),
+		EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
+		)
+		);
+		EE_Registry::$i18n_js_strings['ticket_selector_iframe'] = true;
+		EE_Registry::$i18n_js_strings['EEDTicketSelectorMsg'] = __(
+		'Please choose at least one ticket before continuing.',
+		'event_espresso'
+		);
+		$template_args['eei18n'] = apply_filters(
+		'FHEE__EED_Ticket_Selector__ticket_selector_iframe__eei18n_js_strings',
+		EE_Registry::localize_i18n_js_strings()
+		);
+		$template_args['js'] = apply_filters(
+		'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+		array(
+		includes_url( 'js/jquery/jquery.js?ver=' . $GLOBALS['wp_version'] ),
+		EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
+		TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_iframe_embed.js?ver=' . EVENT_ESPRESSO_VERSION
+		)
+		);
+		EE_Registry::instance()->load_helper( 'Template' );
+		$template_args['notices'] = EEH_Template::display_template(
+		EE_TEMPLATES . 'espresso-ajax-notices.template.php',
+		array(),
+		true
+		);
+		EEH_Template::display_template(
+		TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart_iframe.template.php',
+		$template_args
+		);
+		exit;
+	}
+
+
+
+	/**
+	 * Adds an iframe embed code button to the Event editor.
+	 *
+	 * @param string $permalink_string The current html string for the permalink section.
+	 * @param int    $id               The post id for the event.
+	 * @param string $new_title        The for the event
+	 * @param string $new_slug         The slug for the event.
+	 *
+	 * @return string The new html string for the permalink area.
+	 */
+	public static function iframe_code_button( $permalink_string, $id, $new_title, $new_slug ) {
+		//make sure this is ONLY when editing and the event id has been set.
+		if ( ! empty( $id ) ) {
+			$post = get_post( $id );
+			//if NOT event then let's get out.
+			if ( $post->post_type !== 'espresso_events' ) {
+				return $permalink_string;
+			}
+			$ticket_selector_url = add_query_arg( array( 'ticket_selector' => 'iframe', 'event' => $id ), site_url() );
+			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">'
+								 . __( 'Embed', 'event_espresso' )
+								 . '</a> ';
+			$permalink_string .= '
+<div id="js-ts-iframe" style="display:none">
+	<div style="width:100%; height: 500px;">
+		<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>
+	</div>
+</div>';
+		}
+		return $permalink_string;
+	}
 
 
 
