@@ -1,4 +1,5 @@
 <div class="wrap">
+	<?php do_action( 'AHEE__calendar_usage_info__template__start' ); ?>
 	<p>
         <?php _e('The calendar shortcodes allow you to display the calendar on a WordPress page or post. Unless otherwise specified, the calendar will show all events by month and exclude expired events.', 'event_espresso'); ?>
     </p>
@@ -15,4 +16,6 @@
 		<li><strong><?php _e('Show events on the calendar by an agenda week', 'event_espresso'); ?></strong><br />[ESPRESSO_CALENDAR cal_view=agendaWeek]</li>
 		<li><strong><?php _e('Show events on the calendar by an agenda day', 'event_espresso'); ?></strong><br />[ESPRESSO_CALENDAR cal_view=agendaDay]</li>
 	</ul>
+	<?php do_action('AHEE__calendar_usage_info__template__end'); ?>
+
 </div>
