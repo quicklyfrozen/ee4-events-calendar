@@ -107,6 +107,11 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee-calendar-admin-js');
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_localize_script('ee-calendar-admin-js','ee_calendar',array('confirm_reset_text'=>  __("Are you sure you want to reset ALL your Event Espresso Calendar Information? This cannot be undone.", 'event_espresso')));
+		\EventEspresso\core\libraries\iframe_display\Iframe::embedButtonAssets();
+		\EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
+			'copy and paste the following into any other site\'s content to display the event calendar:',
+			'event_espresso'
+		);
 	}
 
 	public function admin_init() {}
@@ -161,7 +166,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		}else{
 			$config = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 			$count=0;
-                        //WP adds slashes by default, so remove them. 
+                        //WP adds slashes by default, so remove them.
                         //see https://wordpress.org/support/topic/does-wordpress-escapeadd-slashes-to-_request-fields-in-a-plugin
                         $calendar_req_data = stripslashes_deep( $this->_req_data[ 'calendar'] );
 			//otherwise we assume you want to allow full html
