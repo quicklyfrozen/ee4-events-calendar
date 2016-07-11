@@ -444,7 +444,7 @@ class EED_Espresso_Calendar extends EED_Module {
 
 		$where_params['DTT_EVT_start']= array('<=',$end_datetime);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
-		if ( $show_expired == 'false' ) {
+		if ( $show_expired == 'false' || $show_expired == false ) {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
