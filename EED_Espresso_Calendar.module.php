@@ -474,6 +474,8 @@ class EED_Espresso_Calendar extends EED_Module {
 					EE_Error::add_error(sprintf(__("Datetime data for datetime with ID %d has no associated event!", "event_espresso"),$datetime->ID()), __FILE__, __FUNCTION__, __LINE__ );
 					continue;
 				}
+				//Check for password protected post content
+				$pswrd_required = post_password_required( $event->ID() );
 				//Get details about the category of the event
 				if ( ! $this->config()->display->disable_categories) {
 					 $categories= $event->get_all_event_categories();
@@ -505,7 +507,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
 
-				if ( $this->config()->time->show && $startTime ) {
+				if ( $this->config()->time->show && $startTime && ! $pswrd_required ) {
 					$event_time_html = '<span class="time-display-block">' . $startTime;
 					$event_time_html .= $endTime ? ' - ' . $endTime : '';
 					$event_time_html .= '</span>';
@@ -545,16 +547,17 @@ class EED_Espresso_Calendar extends EED_Module {
 					} else {
 						$description = wp_strip_all_tags( $description );
 					}
+					$description = ! $pswrd_required ? $description : '';
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
 					// tooltip wrapper
 					$tooltip_html = '<div class="qtip_info">';
 					// show time ?
-					$tooltip_html .= $this->config()->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
+					$tooltip_html .= $this->config()->time->show && $startTime && ! $pswrd_required ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 
 					// add attendee limit if set
-					if ( $this->config()->display->show_attendee_limit ) {
+					if ( $this->config()->display->show_attendee_limit && ! $pswrd_required ) {
 						if ( $datetime->total_tickets_available_at_this_datetime() == -1 ) {
 							$attendee_limit_text = __('Available Spaces: unlimited', 'event_espresso');
 						} else {
