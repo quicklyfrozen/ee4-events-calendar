@@ -299,6 +299,8 @@ class EED_Espresso_Calendar extends EED_Module {
 		// grab some request vars
 		$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) && ! empty( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : '';
 		// i18n some strings
+		$ee_calendar_js_options['view_more_text'] = __('View More', 'event_espresso');
+
 		$ee_calendar_js_options['month_names'] = array(
 			__('January', 'event_espresso'),
 			__('February', 'event_espresso'),

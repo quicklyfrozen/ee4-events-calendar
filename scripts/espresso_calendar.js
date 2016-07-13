@@ -179,7 +179,7 @@ jQuery(document).ready(function($) {
 			// if this is a month view and this event is tagged as hidden...
 			if ( eeCAL.view == 'month' && event.className.indexOf('ee-extra-day-events') != -1 ) {
 				if ( ! event_target_date_td.find('.events-view-more').length ) {
-                        		viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>View More</a></div>').appendTo( event_target_date_td )
+                        		viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>' + eeCAL.view_more_text + '</a></div>').appendTo( event_target_date_td )
                         	}
 //				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
