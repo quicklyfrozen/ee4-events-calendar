@@ -309,7 +309,10 @@ class EE_Datetime_In_Calendar {
 	 * 
 	 * @return array which can be used for converting to json
 	 */
-	function to_array_for_json(){
+	function to_array_for_json() {
+		$title = $this->_datetime->name() != ''
+			? $this->_event->name() . ': ' . $this->_datetime->name()
+			: $this->_event->name();
 		return array(
 			'allDay'=>false,
 			'className'=>$this->classname(),
@@ -320,7 +323,11 @@ class EE_Datetime_In_Calendar {
 			'event_time_no_tags'=>$this->event_time_no_tags(),
 			'event_img_thumb'=>$this->event_img_thumb(),
 			'eventType'=>$this->eventType(),
-			'description'=>$this->description(),
+			'description'=>apply_filters(
+				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__description', 
+				$this->description(), 
+				$this 
+			),
 			'id'=>$this->_event->ID(),
 			'show_tooltips'=>$this->show_tooltips(),
 			'start'=>$this->_datetime->start_date('c'),
@@ -330,7 +337,11 @@ class EE_Datetime_In_Calendar {
 			'tooltip_my'=>$this->tooltip_my(),
 			'tooltip_at'=>$this->tooltip_at(),
 			'tooltip_style'=>$this->tooltip_style(),
-			'title'=> $this->_datetime->name() != '' ? $this->_event->name() . ': ' . $this->_datetime->name() : $this->_event->name(),			
+			'title'=>apply_filters( 
+				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__title', 
+				$title,
+				$this
+			),			
 			'url'=>$this->_event->get_permalink(),
 		);
 	}
