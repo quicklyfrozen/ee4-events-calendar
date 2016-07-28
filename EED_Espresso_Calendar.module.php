@@ -36,6 +36,11 @@ class EED_Espresso_Calendar extends EED_Module {
 	 */
 	private $_output_filter = '';
 
+	/**
+	 * @var array $_js_options
+	 */
+	private $_js_options = array();
+
 
 
 	/**
@@ -96,7 +101,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		EE_Psr4AutoloaderInit::psr4_loader()->addNamespace( 'EventEspressoCalendar', EE_CALENDAR_PATH );
 		$calendar_iframe = new \EventEspressoCalendar\CalendarIframe();
 		$this->config()->tooltip->show = false;
-		$calendar_iframe->addLocalizedVars(
+        $calendar_iframe->addLocalizedVars(
 			$this->get_calendar_js_options(\EED_Espresso_Calendar::getCalendarDefaults() ),
 			'eeCAL'
 		);
@@ -328,128 +333,135 @@ class EED_Espresso_Calendar extends EED_Module {
 	 * @return    string
 	 */
 	public function get_calendar_js_options( $ee_calendar_js_options ) {
-		// get calendar options
-		$calendar_config = $this->config()->to_flat_array();
-		// merge incoming shortcode attributes with calendar config
-		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
-		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
-		$js_option_event_category_id = isset( $ee_calendar_js_options['event_category_id'] )
-			? $ee_calendar_js_options['event_category_id']
-			: null;
-		$js_option_event_venue_id = isset( $ee_calendar_js_options['event_venue_id'] )
-			? $ee_calendar_js_options['event_venue_id']
-			: null;
-		// setup an array with overridden values in it
-		$overrides = array(
-			'event_category_id' => isset( $_REQUEST['event_category_id'] )
-				? sanitize_key( $_REQUEST['event_category_id'] )
-				: $js_option_event_category_id,
-			'event_venue_id'    => isset( $_REQUEST['event_venue_id'] )
-				? sanitize_key( $_REQUEST['event_venue_id'] )
-				: $js_option_event_venue_id,
-			'month'             => isset( $_REQUEST['month'] )
-				? sanitize_text_field( $_REQUEST['month'] )
-				: $ee_calendar_js_options['month'],
-			'year'              => isset( $_REQUEST['year'] )
-				? sanitize_text_field( $_REQUEST['year'] )
-				: $ee_calendar_js_options['year'],
-		);
-		// merge overrides into options
-		$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
-		// set and format month param
-		if ( ! is_int( $ee_calendar_js_options['month'] ) && strtotime( $ee_calendar_js_options['month'] ) ) {
-			$ee_calendar_js_options['month'] = date( 'n', strtotime( $ee_calendar_js_options['month'] ) );
-		}
-		// weed out any attempts to use month=potato or something similar
-		$ee_calendar_js_options['month'] = is_numeric( $ee_calendar_js_options['month'] )
-										   && $ee_calendar_js_options['month'] > 0
-										   && $ee_calendar_js_options['month'] < 13
-											? $ee_calendar_js_options['month']
-											: date( 'n' );
-		// fullcalendar uses 0-based value for month
-		$ee_calendar_js_options['month']--;
-		// set and format year param
-		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] )
-										  && is_numeric( $ee_calendar_js_options['year'] )
-											? $ee_calendar_js_options['year']
-											: date( 'Y' );
-		// add calendar filters
-		$this->_output_filter = $this->_get_filter_html( $ee_calendar_js_options );
-		// grab some request vars
-		$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] )
-									&& ! empty( $ee_calendar_js_options['event_category_id'] )
-										? $ee_calendar_js_options['event_category_id']
-										: '';
-		// i18n some strings
-		$ee_calendar_js_options['view_more_text'] = __('View More', 'event_espresso');
-
-		$ee_calendar_js_options['month_names'] = array(
-		__( 'January', 'event_espresso' ),
-		__( 'February', 'event_espresso' ),
-		__( 'March', 'event_espresso' ),
-		__( 'April', 'event_espresso' ),
-		__( 'May', 'event_espresso' ),
-		__( 'June', 'event_espresso' ),
-		__( 'July', 'event_espresso' ),
-		__( 'August', 'event_espresso' ),
-		__( 'September', 'event_espresso' ),
-		__( 'October', 'event_espresso' ),
-		__( 'November', 'event_espresso' ),
-		__( 'December', 'event_espresso' )
-		);
-		$ee_calendar_js_options['month_names_short'] = array(
-		__( 'Jan', 'event_espresso' ),
-		__( 'Feb', 'event_espresso' ),
-		__( 'Mar', 'event_espresso' ),
-		__( 'Apr', 'event_espresso' ),
-		__( 'May', 'event_espresso' ),
-		__( 'Jun', 'event_espresso' ),
-		__( 'Jul', 'event_espresso' ),
-		__( 'Aug', 'event_espresso' ),
-		__( 'Sep', 'event_espresso' ),
-		__( 'Oct', 'event_espresso' ),
-		__( 'Nov', 'event_espresso' ),
-		__( 'Dec', 'event_espresso' )
-		);
-		$ee_calendar_js_options['day_names'] = array(
-		__( 'Sunday', 'event_espresso' ),
-		__( 'Monday', 'event_espresso' ),
-		__( 'Tuesday', 'event_espresso' ),
-		__( 'Wednesday', 'event_espresso' ),
-		__( 'Thursday', 'event_espresso' ),
-		__( 'Friday', 'event_espresso' ),
-		__( 'Saturday', 'event_espresso' )
-		);
-		$ee_calendar_js_options['day_names_short'] = array(
-		__( 'Sun', 'event_espresso' ),
-		__( 'Mon', 'event_espresso' ),
-		__( 'Tue', 'event_espresso' ),
-		__( 'Wed', 'event_espresso' ),
-		__( 'Thu', 'event_espresso' ),
-		__( 'Fri', 'event_espresso' ),
-		__( 'Sat', 'event_espresso' )
-		);
-		// Get current page protocol
-		$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
-		// Output admin-ajax.php URL with same protocol as current page
-		$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
-		// \EEH_Debug_Tools::printr( $ee_calendar_js_options, '$ee_calendar_js_options', __FILE__, __LINE__ );
-		return $ee_calendar_js_options;
+        if (empty($this->_js_options)){
+            // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+            // get calendar options
+            $calendar_config = $this->config()->to_flat_array();
+            // merge incoming shortcode attributes with calendar config
+            $ee_calendar_js_options = array_merge($calendar_config, $ee_calendar_js_options);
+            //if the user has changed the filters, those should override whatever the admin specified in the shortcode
+            $js_option_event_category_id = isset($ee_calendar_js_options['event_category_id'])
+                    ? $ee_calendar_js_options['event_category_id']
+                    : null;
+            $js_option_event_venue_id = isset($ee_calendar_js_options['event_venue_id'])
+                    ? $ee_calendar_js_options['event_venue_id']
+                    : null;
+            // setup an array with overridden values in it
+            $overrides = array(
+                    'event_category_id' => isset($_REQUEST['event_category_id'])
+                            ? sanitize_key($_REQUEST['event_category_id'])
+                            : $js_option_event_category_id,
+                    'event_venue_id'    => isset($_REQUEST['event_venue_id'])
+                            ? sanitize_key($_REQUEST['event_venue_id'])
+                            : $js_option_event_venue_id,
+                    'month'             => isset($_REQUEST['month'])
+                            ? sanitize_text_field($_REQUEST['month'])
+                            : $ee_calendar_js_options['month'],
+                    'year'              => isset($_REQUEST['year'])
+                            ? sanitize_text_field($_REQUEST['year'])
+                            : $ee_calendar_js_options['year'],
+            );
+            // merge overrides into options
+            $ee_calendar_js_options = array_merge($ee_calendar_js_options, $overrides);
+            // set and format month param
+            if ( ! is_int($ee_calendar_js_options['month']) && strtotime($ee_calendar_js_options['month'])) {
+                $ee_calendar_js_options['month'] = date('n', strtotime($ee_calendar_js_options['month']));
+            }
+            // weed out any attempts to use month=potato or something similar
+            $ee_calendar_js_options['month'] = is_numeric($ee_calendar_js_options['month'])
+                                               && $ee_calendar_js_options['month'] > 0
+                                               && $ee_calendar_js_options['month'] < 13
+                    ? $ee_calendar_js_options['month']
+                    : date('n');
+            // fullcalendar uses 0-based value for month
+            $ee_calendar_js_options['month']--;
+            // set and format year param
+            $ee_calendar_js_options['year'] = isset($ee_calendar_js_options['year'])
+                                              && is_numeric($ee_calendar_js_options['year'])
+                    ? $ee_calendar_js_options['year']
+                    : date('Y');
+            // add calendar filters
+            $this->_output_filter = $this->_get_filter_html($ee_calendar_js_options);
+            // grab some request vars
+            $this->_event_category_id = isset($ee_calendar_js_options['event_category_id'])
+                                        && ! empty($ee_calendar_js_options['event_category_id'])
+                    ? $ee_calendar_js_options['event_category_id']
+                    : '';
+            // i18n some strings
+            $ee_calendar_js_options['view_more_text'] = __('View More', 'event_espresso');
+            $ee_calendar_js_options['month_names'] = array(
+                    __('January', 'event_espresso'),
+                    __('February', 'event_espresso'),
+                    __('March', 'event_espresso'),
+                    __('April', 'event_espresso'),
+                    __('May', 'event_espresso'),
+                    __('June', 'event_espresso'),
+                    __('July', 'event_espresso'),
+                    __('August', 'event_espresso'),
+                    __('September', 'event_espresso'),
+                    __('October', 'event_espresso'),
+                    __('November', 'event_espresso'),
+                    __('December', 'event_espresso')
+            );
+            $ee_calendar_js_options['month_names_short'] = array(
+                    __('Jan', 'event_espresso'),
+                    __('Feb', 'event_espresso'),
+                    __('Mar', 'event_espresso'),
+                    __('Apr', 'event_espresso'),
+                    __('May', 'event_espresso'),
+                    __('Jun', 'event_espresso'),
+                    __('Jul', 'event_espresso'),
+                    __('Aug', 'event_espresso'),
+                    __('Sep', 'event_espresso'),
+                    __('Oct', 'event_espresso'),
+                    __('Nov', 'event_espresso'),
+                    __('Dec', 'event_espresso')
+            );
+            $ee_calendar_js_options['day_names'] = array(
+                    __('Sunday', 'event_espresso'),
+                    __('Monday', 'event_espresso'),
+                    __('Tuesday', 'event_espresso'),
+                    __('Wednesday', 'event_espresso'),
+                    __('Thursday', 'event_espresso'),
+                    __('Friday', 'event_espresso'),
+                    __('Saturday', 'event_espresso')
+            );
+            $ee_calendar_js_options['day_names_short'] = array(
+                    __('Sun', 'event_espresso'),
+                    __('Mon', 'event_espresso'),
+                    __('Tue', 'event_espresso'),
+                    __('Wed', 'event_espresso'),
+                    __('Thu', 'event_espresso'),
+                    __('Fri', 'event_espresso'),
+                    __('Sat', 'event_espresso')
+            );
+            // Get current page protocol
+            $protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
+            // Output admin-ajax.php URL with same protocol as current page
+            $ee_calendar_js_options['ajax_url'] = admin_url('admin-ajax.php', $protocol);
+            $this->_js_options = $ee_calendar_js_options;
+        }
+		return $this->_js_options;
 	}
 
 
 
-	/**
-	 *    display_calendar
-	 *
-	 * @access    public
-	 * @param $ee_calendar_js_options
-	 * @return    string
-	 */
-	public function display_calendar( $ee_calendar_js_options ) {
-		$ee_calendar_js_options = $this->get_calendar_js_options( $ee_calendar_js_options );
-		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
-		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
+    /**
+     *    display_calendar
+     *
+     * @access public
+     * @param array $ee_calendar_js_options
+     * @param bool $localize_vars
+     * @return string
+     */
+	public function display_calendar(array $ee_calendar_js_options, $localize_vars = true ) {
+        if ($localize_vars){
+            $this->get_calendar_js_options($ee_calendar_js_options);
+            wp_localize_script('espresso_calendar', 'eeCAL', $this->_js_options);
+        }
+        $calendar_class = isset($this->_js_options['widget']) && $this->_js_options['widget']
+                ? 'calendar_widget'
+                : 'calendar_fullsize';
 		$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $this->_output_filter );
 		$html .= '
