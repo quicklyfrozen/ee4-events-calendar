@@ -31,10 +31,10 @@ class EED_Espresso_Calendar extends EED_Module {
 	private $_event_category_id = 0;
 
 	/**
-	 * @var  array $_output_filter
+	 * @var  string $_output_filter
 	 * @access 	private
 	 */
-	private $_output_filter = array();
+	private $_output_filter = '';
 
 
 
@@ -101,6 +101,24 @@ class EED_Espresso_Calendar extends EED_Module {
 			'eeCAL'
 		);
 		$calendar_iframe->display();
+	}
+
+
+
+	/**
+	 *    _get_calendar_events
+	 *
+	 * @return string
+	 */
+	public static function getCalendarDefaults(){
+        return array(
+                'show_expired'       => 'true',
+                'cal_view'           => 'month',
+                'widget'             => false,
+                'month'              => date('n'),
+                'year'               => date('Y'),
+                'max_events_per_day' => null,
+        );
 	}
 
 
@@ -316,23 +334,23 @@ class EED_Espresso_Calendar extends EED_Module {
 		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
 		$js_option_event_category_id = isset( $ee_calendar_js_options['event_category_id'] )
-			? $ee_calendar_js_options['event_category_id'] 
+			? $ee_calendar_js_options['event_category_id']
 			: null;
 		$js_option_event_venue_id = isset( $ee_calendar_js_options['event_venue_id'] )
-			? $ee_calendar_js_options['event_venue_id'] 
+			? $ee_calendar_js_options['event_venue_id']
 			: null;
 		// setup an array with overridden values in it
 		$overrides = array(
-			'event_category_id' => isset( $_REQUEST['event_category_id'] ) 
+			'event_category_id' => isset( $_REQUEST['event_category_id'] )
 				? sanitize_key( $_REQUEST['event_category_id'] )
 				: $js_option_event_category_id,
-			'event_venue_id'    => isset( $_REQUEST['event_venue_id'] ) 
+			'event_venue_id'    => isset( $_REQUEST['event_venue_id'] )
 				? sanitize_key( $_REQUEST['event_venue_id'] )
 				: $js_option_event_venue_id,
-			'month'             => isset( $_REQUEST['month'] ) 
+			'month'             => isset( $_REQUEST['month'] )
 				? sanitize_text_field( $_REQUEST['month'] )
 				: $ee_calendar_js_options['month'],
-			'year'              => isset( $_REQUEST['year'] ) 
+			'year'              => isset( $_REQUEST['year'] )
 				? sanitize_text_field( $_REQUEST['year'] )
 				: $ee_calendar_js_options['year'],
 		);
@@ -345,22 +363,22 @@ class EED_Espresso_Calendar extends EED_Module {
 		// weed out any attempts to use month=potato or something similar
 		$ee_calendar_js_options['month'] = is_numeric( $ee_calendar_js_options['month'] )
 										   && $ee_calendar_js_options['month'] > 0
-										   && $ee_calendar_js_options['month'] < 13 
+										   && $ee_calendar_js_options['month'] < 13
 											? $ee_calendar_js_options['month']
 											: date( 'n' );
 		// fullcalendar uses 0-based value for month
 		$ee_calendar_js_options['month']--;
 		// set and format year param
 		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] )
-										  && is_numeric( $ee_calendar_js_options['year'] ) 
-											? $ee_calendar_js_options['year'] 
+										  && is_numeric( $ee_calendar_js_options['year'] )
+											? $ee_calendar_js_options['year']
 											: date( 'Y' );
 		// add calendar filters
 		$this->_output_filter = $this->_get_filter_html( $ee_calendar_js_options );
 		// grab some request vars
 		$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] )
 									&& ! empty( $ee_calendar_js_options['event_category_id'] )
-										? $ee_calendar_js_options['event_category_id'] 
+										? $ee_calendar_js_options['event_category_id']
 										: '';
 		// i18n some strings
 		$ee_calendar_js_options['view_more_text'] = __('View More', 'event_espresso');
@@ -455,20 +473,20 @@ class EED_Espresso_Calendar extends EED_Module {
 		remove_shortcode('LISTATTENDEES');
 		$month = date( 'm' );
 		$year = date( 'Y' );
-		$start_datetime = isset( $_REQUEST['start_date'] ) 
+		$start_datetime = isset( $_REQUEST['start_date'] )
 			? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] ) )
 			: date( 'Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ) );
 		$end_datetime = isset( $_REQUEST['end_date'] )
 			? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] ) )
 			: date( 'Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ) );
-		$show_expired = isset( $_REQUEST['show_expired'] ) 
-			? sanitize_key( $_REQUEST['show_expired'] ) 
+		$show_expired = isset( $_REQUEST['show_expired'] )
+			? sanitize_key( $_REQUEST['show_expired'] )
 			: 'true';
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
-			? sanitize_key( $_REQUEST['event_category_id'] ) 
+			? sanitize_key( $_REQUEST['event_category_id'] )
 			: $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] )
-			? sanitize_key( $_REQUEST['event_venue_id'] ) 
+			? sanitize_key( $_REQUEST['event_venue_id'] )
 			: null;
 		if ( $category_id_or_slug ) {
 			$where_params['OR*category'] = array(
@@ -488,19 +506,19 @@ class EED_Espresso_Calendar extends EED_Module {
 		$use_offset = ! method_exists( 'EEM_Datetime', 'current_time_for_query' );
 		$start_date = new DateTime( "now" );
 		$start_date->setTimestamp( strtotime( $start_datetime ) );
-		$start_datetime = $use_offset 
-			? (int)$start_date->format('U') + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) 
+		$start_datetime = $use_offset
+			? (int)$start_date->format('U') + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
 			: $start_date->format('U');
 
 		$end_date = new DateTime( "now" );
 		$end_date->setTimestamp( strtotime( $end_datetime ) );
-		$end_datetime = $use_offset 
-			? (int)$end_date->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) 
+		$end_datetime = $use_offset
+			? (int)$end_date->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
 			: $end_date->format( 'U' );
 
 		$today = new DateTime( date('Y-m-d' ) );
-		$today = $use_offset 
-			? (int)$today->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) 
+		$today = $use_offset
+			? (int)$today->format( 'U' ) + (int)( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
 			: $today->format( 'U' );
 
 		// EVENT STATUS
@@ -671,13 +689,13 @@ class EED_Espresso_Calendar extends EED_Module {
 					}
 
 					//add link
-					$regButtonText = $event->display_ticket_selector() && ! $event->is_expired() 
-						?  __('Register Now', 'event_espresso') 
+					$regButtonText = $event->display_ticket_selector() && ! $event->is_expired()
+						?  __('Register Now', 'event_espresso')
 						:  __('View Details', 'event_espresso');
 					// reg open
 					if (
-						$event->is_sold_out() 
-						|| $datetime->sold_out() 
+						$event->is_sold_out()
+						|| $datetime->sold_out()
 						|| $datetime->total_tickets_available_at_this_datetime() === 0
 					) {
 						$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
@@ -692,10 +710,10 @@ class EED_Espresso_Calendar extends EED_Module {
 					$calendar_datetime->set_tooltip( $tooltip_html );
 					// Position my top left...
 					$calendar_datetime->set_tooltip_my(
-						$this->config()->tooltip->pos_my_1 . $this->config()->tooltip->pos_my_2 
+						$this->config()->tooltip->pos_my_1 . $this->config()->tooltip->pos_my_2
 					);
 					$calendar_datetime->set_tooltip_at(
-						$this->config()->tooltip->pos_at_1 . $this->config()->tooltip->pos_at_2 
+						$this->config()->tooltip->pos_at_1 . $this->config()->tooltip->pos_at_2
 					);
 					$calendar_datetime->set_tooltip_style( $this->config()->tooltip->style . ' qtip-shadow' );
 					$calendar_datetime->set_show_tooltips( TRUE );
