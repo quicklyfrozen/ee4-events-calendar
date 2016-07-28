@@ -78,27 +78,19 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 
 
 	/**
-	 *    process_shortcode
-	 *
-	 *    [ESPRESSO_CALENDAR]
-	 *    [ESPRESSO_CALENDAR show_expired="true"]
-	 *    [ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
-	 *
-	 * @access    public
-	 * @param array $attributes
-	 * @return    void
+     * process_shortcode
+     *
+     * [ESPRESSO_CALENDAR]
+     * [ESPRESSO_CALENDAR show_expired="true"]
+     * [ESPRESSO_CALENDAR event_category_id="your_category_identifier"]
+     *
+     * @access    public
+     * @param array $attributes
+     * @return string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		$defaults = array(
-			'show_expired' => 'true',
-			'cal_view' => 'month',
-			'widget' => FALSE,
-			'month' => date( 'n' ),
-			'year' => date( 'Y' ),
-			'max_events_per_day' => NULL,
-		);
-		// make sure $attributes is an array
-		$attributes = array_merge( $defaults, (array)$attributes );
+        // make sure $attributes is an array
+		$attributes = array_merge(\EED_Espresso_Calendar::getCalendarDefaults(), (array)$attributes );
 		return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
 	}
 
