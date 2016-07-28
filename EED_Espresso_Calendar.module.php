@@ -76,10 +76,10 @@ class EED_Espresso_Calendar extends EED_Module {
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 // iframe embed buttons
-		 EventEspresso\core\libraries\iframe_display\Iframe::addActionIframeEmbedButton(
+		 EventEspresso\core\libraries\iframe_display\Iframe::addFilterIframeEmbedButton(
 			 'Espresso Calendar',
 			 'calendar',
-			 'AHEE__admin_list_wrapper_template__after_list_table'
+			 'FHEE__Iframe__addEventListIframeEmbedButton__html'
 		 );
 		 EventEspresso\core\libraries\iframe_display\Iframe::addActionIframeEmbedButton(
 			 'Espresso Calendar',
