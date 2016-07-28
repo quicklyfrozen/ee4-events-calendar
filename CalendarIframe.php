@@ -1,7 +1,6 @@
 <?php
 namespace EventEspressoCalendar;
 
-use EventEspresso\core\Factory;
 use EventEspresso\core\libraries\iframe_display\Iframe;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -43,14 +42,6 @@ class CalendarIframe extends Iframe{
 	 * @throws \EE_Error
 	 */
 	public function display() {
-		/** @var Iframe $iframe */
-		// $iframe = Factory::create(
-		// 	'Iframe',
-		// 	array(
-		// 		'title'   => __( 'Calendar', 'event_espresso' ),
-		// 		'content' => \EED_Espresso_Calendar::instance()->display_calendar( array() )
-		// 	)
-		// );
         $this->addStylesheets(
 			apply_filters(
 				'FHEE__CalendarIframe__display__css',
@@ -69,15 +60,6 @@ class CalendarIframe extends Iframe{
 				)
 			)
 		);
-		// $iframe->addLocalizedVars(
-		// 	array(
-		// 		'calendar_iframe' => true,
-		// 		'CalendarIframeMsg'   => __(
-		// 			'Please choose at least one ticket before continuing.',
-		// 			'event_espresso'
-		// 		),
-		// 	)
-		// );
 		parent::display();
 	}
 
