@@ -32,9 +32,7 @@ class EE_DMS_Calendar_3_0_0 extends EE_Data_Migration_Script_Base{
 		$core_version_string = $version_array['Core'];
 		$calendar_version_string = isset($version_array['Calendar']) ? $version_array['Calendar'] : '0.0.0';
 		//find if the ee3 table for calendar data exists or not
-		global $wpdb;
-		$table_name = $wpdb->prefix."events_category_detail";
-		if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+		if( ! EEH_Activation::table_exists("events_category_detail") ) {
 			//ee3 category tables don't exist still
 			$an_ee3_table_exists = false;
 		}else{

@@ -363,6 +363,8 @@ class EED_Espresso_Calendar extends EED_Module {
 										? $ee_calendar_js_options['event_category_id'] 
 										: '';
 		// i18n some strings
+		$ee_calendar_js_options['view_more_text'] = __('View More', 'event_espresso');
+
 		$ee_calendar_js_options['month_names'] = array(
 		__( 'January', 'event_espresso' ),
 		__( 'February', 'event_espresso' ),
@@ -533,7 +535,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		);
 		$where_params['DTT_EVT_start']= array('<=',$end_datetime);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
-		if ( $show_expired === 'false' ) {
+		if ( $show_expired == 'false' || $show_expired == false ) {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
@@ -573,6 +575,8 @@ class EED_Espresso_Calendar extends EED_Module {
 					);
 					continue;
 				}
+				//Check for password protected post content
+				$pswrd_required = post_password_required( $event->ID() );
 				//Get details about the category of the event
 				if ( ! $this->config()->display->disable_categories) {
 					 $categories= $event->get_all_event_categories();
@@ -604,7 +608,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
 
-				if ( $startTime && $this->config()->time->show ) {
+				if ( ! $pswrd_required && $startTime && $this->config()->time->show ) {
 					$event_time_html = '<span class="time-display-block">' . $startTime;
 					$event_time_html .= $endTime ? ' - ' . $endTime : '';
 					$event_time_html .= '</span>';
@@ -644,19 +648,20 @@ class EED_Espresso_Calendar extends EED_Module {
 					} else {
 						$description = wp_strip_all_tags( $description );
 					}
+					$description = ! $pswrd_required ? $description : '';
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
 					// tooltip wrapper
 					$tooltip_html = '<div class="qtip_info">';
 					// show time ?
-					$tooltip_html .= $this->config()->time->show && $startTime 
-						? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' 
+					$tooltip_html .= ! $pswrd_required && $startTime && $this->config()->time->show
+						? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>'
 						: '';
 
 					// add attendee limit if set
-					if ( $this->config()->display->show_attendee_limit ) {
-						if ( $datetime->total_tickets_available_at_this_datetime() === -1 ) {
+					if ( ! $pswrd_required && $this->config()->display->show_attendee_limit ) {
+						if ( $datetime->total_tickets_available_at_this_datetime() == -1 ) {
 							$attendee_limit_text = __('Available Spaces: unlimited', 'event_espresso');
 						} else {
 							$attendee_limit_text = __('Registrations / Spaces: ', 'event_espresso') . $datetime->sold() . ' / ';
