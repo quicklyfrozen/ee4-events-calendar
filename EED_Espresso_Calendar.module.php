@@ -97,7 +97,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		$calendar_iframe = new \EventEspressoCalendar\CalendarIframe();
 		$this->config()->tooltip->show = false;
 		$calendar_iframe->addLocalizedVars(
-			$this->get_calendar_js_options( array() ),
+			$this->get_calendar_js_options(\EED_Espresso_Calendar::getCalendarDefaults() ),
 			'eeCAL'
 		);
 		$calendar_iframe->display();
