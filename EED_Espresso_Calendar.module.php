@@ -747,17 +747,6 @@ class EED_Espresso_Calendar extends EED_Module {
 	}
 
 
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __set($a,$b) { return FALSE; }
-	public function __get($a) { return FALSE; }
-	public function __isset($a) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() {}
-	public function __wakeup() {}
-	public function __destruct() {}
 
  }
 // End of file EED_Espresso_Calendar.module.php
