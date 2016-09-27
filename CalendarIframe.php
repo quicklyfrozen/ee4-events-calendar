@@ -20,12 +20,19 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class CalendarIframe extends Iframe{
 
-	/**
-	 * CalendarIframe constructor.
-	 *
-	 * @throws \EE_Error
-	 */
-	public function __construct() {
+
+
+    /**
+     * CalendarIframe constructor.
+     *
+     * @param array $ee_calendar_js_options
+     * @throws \EE_Error
+     */
+	public function __construct($ee_calendar_js_options = array()) {
+        $this->addLocalizedVars(
+            array('espresso_calendar' => $ee_calendar_js_options),
+            'eeCAL'
+        );
         parent::__construct(
 			__( 'Calendar', 'event_espresso' ),
             \EED_Espresso_Calendar::instance()->display_calendar( array(), false )
