@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\libraries\iframe_display\IframeEmbedButton;
+<?php
+use EventEspressoCalendar\CalendarIframe;
+use EventEspressoCalendar\CalendarIframeEmbedButton;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /*
@@ -77,17 +79,8 @@ class EED_Espresso_Calendar extends EED_Module {
 		 // ajax hooks
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
-		 // iframe embed buttons
-		 IframeEmbedButton::addFilterIframeEmbedButton(
-		     __('Events Calendar', 'event_espresso'),
-			 'calendar',
-			 'FHEE__Iframe__addEventListIframeEmbedButton__html'
-		 );
-		 IframeEmbedButton::addActionIframeEmbedButton(
-             __('Events Calendar', 'event_espresso'),
-             'calendar',
-			 'AHEE__calendar_usage_info__template__end'
-		 );
+         EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspressoCalendar', EE_CALENDAR_PATH);
+         CalendarIframeEmbedButton::addEmbedButton();
 	 }
 
 
@@ -102,7 +95,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	public function calendar_iframe() {
 		EE_Psr4AutoloaderInit::psr4_loader()->addNamespace( 'EventEspressoCalendar', EE_CALENDAR_PATH );
         $this->config()->tooltip->show = false;
-        $calendar_iframe = new \EventEspressoCalendar\CalendarIframe(
+        $calendar_iframe = new CalendarIframe(
             $this->get_calendar_js_options(
                 \EED_Espresso_Calendar::getCalendarDefaults()
             )
