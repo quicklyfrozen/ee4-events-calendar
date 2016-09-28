@@ -117,7 +117,10 @@ class Calendar_Admin_Page extends EE_Admin_Page {
                 'event_espresso'),
             )
         );
-        CalendarIframeEmbedButton::loadScriptsAndStyles();
+        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_calendar') {
+            $iframe_embed_button = new CalendarIframeEmbedButton();
+            $iframe_embed_button->loadScriptsAndStyles();
+        }
 	}
 
 	public function admin_init() {}
@@ -162,9 +165,19 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _usage() {
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php', array(), TRUE );
+        $iframe_embed_button = new CalendarIframeEmbedButton();
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php',
+            array(
+                'iframe_embed_buttons_section' => $iframe_embed_button->addCalendarUsageIframeEmbedButtonSection()
+            ),
+            true
+        );
 		$this->display_admin_page_with_no_sidebar();
 	}
+
+
+
 	protected function _update_settings(){
 		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
 			$config = new EE_Calendar_Config();

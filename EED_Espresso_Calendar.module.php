@@ -45,9 +45,14 @@ class EED_Espresso_Calendar extends EED_Module {
 	 */
 	private $_js_options = array();
 
+    /**
+     * @var EventEspressoCalendar\CalendarIframeEmbedButton $iframe_embed_button
+     */
+    private static $iframe_embed_button;
 
 
-	/**
+
+    /**
 	 * @return EED_Espresso_Calendar
 	 */
 	public static function instance() {
@@ -56,7 +61,20 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 
-	 /**
+    /**
+     * @return EventEspressoCalendar\CalendarIframeEmbedButton
+     */
+    public static function getIframeEmbedButton()
+    {
+        if ( ! self::$iframe_embed_button instanceof CalendarIframeEmbedButton) {
+            self::$iframe_embed_button = new CalendarIframeEmbedButton();
+        }
+        return self::$iframe_embed_button;
+    }
+
+
+
+    /**
 	  * 	set_hooks - for hooking into EE Core, other modules, etc
 	  *
 	  *  @access 	public
@@ -79,9 +97,9 @@ class EED_Espresso_Calendar extends EED_Module {
 		 // ajax hooks
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
-         EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspressoCalendar', EE_CALENDAR_PATH);
-         CalendarIframeEmbedButton::addEmbedButton();
-	 }
+         $iframe_embed_button = \EED_Espresso_Calendar::getIframeEmbedButton();
+         $iframe_embed_button->addEmbedButton();
+     }
 
 
 
@@ -93,7 +111,6 @@ class EED_Espresso_Calendar extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function calendar_iframe() {
-		EE_Psr4AutoloaderInit::psr4_loader()->addNamespace( 'EventEspressoCalendar', EE_CALENDAR_PATH );
         $this->config()->tooltip->show = false;
         $calendar_iframe = new CalendarIframe(
             $this->get_calendar_js_options(
