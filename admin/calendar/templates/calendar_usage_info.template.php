@@ -1,3 +1,7 @@
+<?php
+/** @var string $iframe_embed_buttons_section */
+?>
+
 <div class="wrap">
 	<?php do_action( 'AHEE__calendar_usage_info__template__start' ); ?>
 	<p>
@@ -16,6 +20,9 @@
 		<li><strong><?php _e('Show events on the calendar by an agenda week', 'event_espresso'); ?></strong><br />[ESPRESSO_CALENDAR cal_view=agendaWeek]</li>
 		<li><strong><?php _e('Show events on the calendar by an agenda day', 'event_espresso'); ?></strong><br />[ESPRESSO_CALENDAR cal_view=agendaDay]</li>
 	</ul>
-	<?php do_action('AHEE__calendar_usage_info__template__end'); ?>
+    <?php
+    echo $iframe_embed_buttons_section;
+    do_action('AHEE__calendar_usage_info__template__end');
+    ?>
 
 </div>
