@@ -36,7 +36,7 @@
  *
  * ------------------------------------------------------------------------
  */
-define( 'EE_CORE_VERSION_REQUIRED', '4.3.0.p' );
+define( 'EE_CORE_VERSION_REQUIRED', '4.9.14.rc.000' );
 define( 'EE_CALENDAR_VERSION', '3.2.8.rc.000' );
 define( 'EE_CALENDAR_PLUGIN_FILE', __FILE__ );
 function load_espresso_calendar_class() {
