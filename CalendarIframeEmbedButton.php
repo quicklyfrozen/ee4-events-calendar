@@ -18,23 +18,23 @@ defined('ABSPATH') || exit;
 class CalendarIframeEmbedButton extends IframeEmbedButton
 {
 
-    /**
-     * @return string
-     */
-    public function embedButton()
-    {
-        return $this->embedButtonHtml(
-            esc_html__('Events Calendar', 'event_espresso'),
-            'calendar'
-        );
-    }
+	/**
+	 * CalendarIframeEmbedButton constructor.
+	 */
+	public function __construct() {
+		parent::__construct(
+			esc_html__( 'Events Calendar', 'event_espresso' ),
+			'calendar',
+			esc_html__( 'Calendar', 'event_espresso' ),
+			'calendar'
+		);
+	}
+
 
     public function addEmbedButton()
     {
         // iframe embed buttons
         $this->addFilterIframeEmbedButton(
-            __('Events Calendar', 'event_espresso'),
-            'calendar',
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__addIframeEmbedButtonsSection__embed_buttons'
         );
     }
@@ -43,11 +43,11 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
 
     public function loadScriptsAndStyles()
     {
-        $this->embedButtonAssets();
-        \EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
-            'copy and paste the following into any other site\'s content to display the event calendar:',
-            'event_espresso'
-        );
+	    \EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
+		    'copy and paste the following into any other site\'s content to display the event calendar:',
+		    'event_espresso'
+	    );
+	    $this->embedButtonAssets();
     }
 
 
@@ -59,7 +59,7 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
     public function addCalendarUsageIframeEmbedButtonSection()
     {
         return $this->addIframeEmbedButtonsSection(
-            array('calendar' => $this->embedButton())
+            array('calendar' => $this->embedButtonHtml())
         );
     }
 
