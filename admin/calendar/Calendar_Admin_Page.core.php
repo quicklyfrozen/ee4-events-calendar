@@ -117,10 +117,10 @@ class Calendar_Admin_Page extends EE_Admin_Page {
                 'event_espresso'),
             )
         );
-        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_calendar') {
-            $iframe_embed_button = new CalendarIframeEmbedButton();
-            $iframe_embed_button->loadScriptsAndStyles();
-        }
+	}
+	public function load_scripts_styles_usage() {
+        $iframe_embed_button = new CalendarIframeEmbedButton();
+        $iframe_embed_button->loadScriptsAndStyles();
 	}
 
 	public function admin_init() {}
