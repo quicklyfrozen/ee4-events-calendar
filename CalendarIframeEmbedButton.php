@@ -24,7 +24,6 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
 	public function __construct() {
 		parent::__construct(
 			esc_html__( 'Events Calendar', 'event_espresso' ),
-			'calendar',
 			'calendar'
 		);
 	}
