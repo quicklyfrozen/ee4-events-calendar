@@ -3,7 +3,7 @@ namespace EventEspressoCalendar;
 
 use EventEspresso\core\libraries\iframe_display\IframeEmbedButton;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 
 
@@ -18,15 +18,17 @@ defined('ABSPATH') || exit;
 class CalendarIframeEmbedButton extends IframeEmbedButton
 {
 
-	/**
-	 * CalendarIframeEmbedButton constructor.
-	 */
-	public function __construct() {
-		parent::__construct(
-			esc_html__( 'Events Calendar', 'event_espresso' ),
-			'calendar'
-		);
-	}
+    /**
+     * CalendarIframeEmbedButton constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct(
+            esc_html__( 'Events Calendar', 'event_espresso' ),
+            'calendar'
+        );
+    }
+
 
 
     public function addEmbedButton()
@@ -39,13 +41,13 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
 
 
 
-    public function loadScriptsAndStyles()
+    public static function loadScriptsAndStyles()
     {
-	    \EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
-		    'copy and paste the following into any other site\'s content to display the event calendar:',
-		    'event_espresso'
-	    );
-	    $this->embedButtonAssets();
+        \EE_Registry::$i18n_js_strings[ 'iframe_embed_title' ] = __(
+            'copy and paste the following into any other site\'s content to display the event calendar:',
+            'event_espresso'
+        );
+        IframeEmbedButton::embedButtonAssets();
     }
 
 
@@ -57,7 +59,7 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
     public function addCalendarUsageIframeEmbedButtonSection()
     {
         return $this->addIframeEmbedButtonsSection(
-            array('calendar' => $this->embedButtonHtml())
+            array( 'calendar' => $this->embedButtonHtml() )
         );
     }
 
