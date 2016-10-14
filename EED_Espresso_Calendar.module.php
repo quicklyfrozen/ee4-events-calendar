@@ -194,12 +194,12 @@ class EED_Espresso_Calendar extends EED_Module {
 						if ( $use_bg ) {
 							echo '
 							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
-								<span class="ee-category"><a href="'. $caturl .'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span>
+								<span class="ee-category"><a href="'. $caturl .'#espresso_calendar" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span>
 							</li>';
 						} else {
 							echo '
 							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
-								<span class="ee-category"><a href="'. $caturl .'">'.$ee_term->name().'</a></span>
+								<span class="ee-category"><a href="'. $caturl .'#espresso_calendar">'.$ee_term->name().'</a></span>
 							</li>';
 						}
 					}
@@ -215,7 +215,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				?>
 				<!-- select box filters -->
 				<div class="ee-filter-form">
-				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+				<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="#espresso_calendar">
 				<?php if ( ! empty( $ee_terms )) { ?>
 					<label for="ee-category-submit"></label>
 					<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
