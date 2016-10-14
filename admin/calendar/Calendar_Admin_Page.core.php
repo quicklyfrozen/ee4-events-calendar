@@ -119,8 +119,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
         );
 	}
 	public function load_scripts_styles_usage() {
-        $iframe_embed_button = new CalendarIframeEmbedButton();
-        $iframe_embed_button->loadScriptsAndStyles();
+        CalendarIframeEmbedButton::loadScriptsAndStyles();
 	}
 
 	public function admin_init() {}
