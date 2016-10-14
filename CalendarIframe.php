@@ -67,6 +67,7 @@ class CalendarIframe extends Iframe{
 				)
 			)
 		);
+		$this->content .= \EEH_HTML::br() . \EEH_Template::powered_by_event_espresso();
 		parent::display();
 	}
 
