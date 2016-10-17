@@ -62,19 +62,6 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
     /**
-     * @return EventEspressoCalendar\CalendarIframeEmbedButton
-     */
-    public static function getIframeEmbedButton()
-    {
-        if ( ! self::$iframe_embed_button instanceof CalendarIframeEmbedButton) {
-            self::$iframe_embed_button = new CalendarIframeEmbedButton();
-        }
-        return self::$iframe_embed_button;
-    }
-
-
-
-    /**
 	  * 	set_hooks - for hooking into EE Core, other modules, etc
 	  *
 	  *  @access 	public
@@ -97,7 +84,46 @@ class EED_Espresso_Calendar extends EED_Module {
 		 // ajax hooks
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
-     }
+		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+		 // to load assets for "espresso_calendar" page on the "default" route (action)
+		 add_action(
+			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
+			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+			 10
+		 );
+		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+		 // to load assets for "espresso_calendar" page on the "usage" route (action)
+		 add_action(
+			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_calendar__usage',
+			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+			 10
+		 );
+	 }
+
+
+
+	/**
+	 * @return EventEspressoCalendar\CalendarIframeEmbedButton
+	 */
+	public static function getIframeEmbedButton() {
+		if ( ! self::$iframe_embed_button instanceof CalendarIframeEmbedButton ) {
+			self::$iframe_embed_button = new CalendarIframeEmbedButton();
+		}
+		return self::$iframe_embed_button;
+	}
+
+
+
+	/**
+	 * calendar_iframe_embed_button
+	 *
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public static function calendar_iframe_embed_button() {
+		$iframe_embed_button = \EED_Espresso_Calendar::getIframeEmbedButton();
+		$iframe_embed_button->addEmbedButton();
+	}
 
 
 
