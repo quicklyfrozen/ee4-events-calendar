@@ -1,6 +1,4 @@
 <?php
-use EventEspressoCalendar\CalendarIframeEmbedButton;
-
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allowed'); }
 /**
  * Event Espresso
@@ -118,9 +116,6 @@ class Calendar_Admin_Page extends EE_Admin_Page {
             )
         );
 	}
-	public function load_scripts_styles_usage() {
-        CalendarIframeEmbedButton::loadScriptsAndStyles();
-	}
 
 	public function admin_init() {}
 	public function admin_notices() {}
@@ -164,12 +159,12 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _usage() {
-        $iframe_embed_button = new CalendarIframeEmbedButton();
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php',
-            array(
-                'iframe_embed_buttons_section' => $iframe_embed_button->addCalendarUsageIframeEmbedButtonSection()
-            ),
+	        apply_filters(
+	            'FHEE__Calendar_Admin_Page___usage__calendar_usage_info__template_args',
+		        array()
+	        ),
             true
         );
 		$this->display_admin_page_with_no_sidebar();
