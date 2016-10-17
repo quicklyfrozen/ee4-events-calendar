@@ -33,35 +33,39 @@ class CalendarIframeEmbedButton extends IframeEmbedButton
 
     public function addEmbedButton()
     {
+	    add_filter(
+			'FHEE__Calendar_Admin_Page___usage__calendar_usage_info__template_args',
+			array( $this, 'addCalendarUsageIframeEmbedButtonSection' )
+		);
         // iframe embed buttons
         $this->addFilterIframeEmbedButton(
             'FHEE__EventEspresso_core_libraries_iframe_display_IframeEmbedButton__addIframeEmbedButtonsSection__embed_buttons'
         );
+	    \EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
+		    'copy and paste the following into any other site\'s content to display the event calendar:',
+		    'event_espresso'
+	    );
+	    add_action( 'admin_enqueue_scripts', array( $this, 'embedButtonAssets' ) );
     }
 
 
 
-    public static function loadScriptsAndStyles()
+
+	/**
+	 * Adds a template arg for adding the iframe embed code button section to the calendar admin page
+	 * return array
+	 *
+	 * @param array $template_args
+	 * @return array
+	 */
+    public function addCalendarUsageIframeEmbedButtonSection( array $template_args)
     {
-        \EE_Registry::$i18n_js_strings[ 'iframe_embed_title' ] = __(
-            'copy and paste the following into any other site\'s content to display the event calendar:',
-            'event_espresso'
-        );
-        IframeEmbedButton::embedButtonAssets();
+	    $template_args['iframe_embed_buttons_section'] = $this->addIframeEmbedButtonsSection(
+		    array( 'calendar' => $this->embedButtonHtml() )
+	    );
+	    return $template_args;
     }
 
-
-
-    /**
-     * Adds an iframe embed code button to the Event editor.
-     * return string
-     */
-    public function addCalendarUsageIframeEmbedButtonSection()
-    {
-        return $this->addIframeEmbedButtonsSection(
-            array( 'calendar' => $this->embedButtonHtml() )
-        );
-    }
 
 
 
