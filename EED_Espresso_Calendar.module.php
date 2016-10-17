@@ -105,7 +105,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	/**
 	 * @return EventEspressoCalendar\CalendarIframeEmbedButton
 	 */
-	public static function getIframeEmbedButton() {
+	public static function get_iframe_embed_button() {
 		if ( ! self::$iframe_embed_button instanceof CalendarIframeEmbedButton ) {
 			self::$iframe_embed_button = new CalendarIframeEmbedButton();
 		}
@@ -121,7 +121,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public static function calendar_iframe_embed_button() {
-		$iframe_embed_button = \EED_Espresso_Calendar::getIframeEmbedButton();
+		$iframe_embed_button = \EED_Espresso_Calendar::get_iframe_embed_button();
 		$iframe_embed_button->addEmbedButton();
 	}
 
