@@ -97,8 +97,6 @@ class EED_Espresso_Calendar extends EED_Module {
 		 // ajax hooks
 		 add_action( 'wp_ajax_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
-         $iframe_embed_button = \EED_Espresso_Calendar::getIframeEmbedButton();
-         $iframe_embed_button->addEmbedButton();
      }
 
 
