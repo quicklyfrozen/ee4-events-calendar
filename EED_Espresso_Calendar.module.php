@@ -46,6 +46,11 @@ class EED_Espresso_Calendar extends EED_Module {
 	private $_js_options = array();
 
     /**
+     * @var boolean $iframe
+     */
+    private static $iframe = false;
+
+    /**
      * @var EventEspressoCalendar\CalendarIframeEmbedButton $iframe_embed_button
      */
     private static $iframe_embed_button;
@@ -135,6 +140,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function calendar_iframe() {
+        EED_Espresso_Calendar::$iframe = true;
         $this->config()->tooltip->show = false;
         $calendar_iframe = new CalendarIframe(
             $this->get_calendar_js_options(
@@ -159,6 +165,7 @@ class EED_Espresso_Calendar extends EED_Module {
                 'month'              => date('n'),
                 'year'               => date('Y'),
                 'max_events_per_day' => null,
+                'iframe' => EED_Espresso_Calendar::$iframe,
         );
 	}
 
@@ -170,8 +177,10 @@ class EED_Espresso_Calendar extends EED_Module {
 	 * @return string
 	 */
 	public static function _get_calendar_events(){
-		$calendar = new EED_Espresso_Calendar();
-		return $calendar->get_calendar_events();
+        EED_Espresso_Calendar::$iframe = isset($_REQUEST['iframe']) && ! empty($_REQUEST['iframe'])
+                ? filter_var($_REQUEST['iframe'], FILTER_VALIDATE_BOOLEAN)
+                : false;
+		return EED_Espresso_Calendar::instance()->get_calendar_events();
 	}
 
 
