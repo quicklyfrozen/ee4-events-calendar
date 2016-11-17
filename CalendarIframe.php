@@ -48,6 +48,7 @@ class CalendarIframe extends Iframe
      *
      * @access    public
      * @return    void
+     * @throws \DomainException
      * @throws \EE_Error
      */
     public function display()
@@ -71,7 +72,7 @@ class CalendarIframe extends Iframe
                 )
             )
         );
-        parent::display();
+        parent::display('events_calendar');
     }
 
 
