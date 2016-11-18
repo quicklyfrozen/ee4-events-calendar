@@ -132,21 +132,16 @@ class EED_Espresso_Calendar extends EED_Module {
 
 
 
-	/**
-	 * ticket_selector_iframe
-	 *
-	 * @access    public
-	 * @return    void
-	 * @throws \EE_Error
-	 */
+    /**
+     * ticket_selector_iframe
+     *
+     * @return    void
+     * @throws \DomainException
+     * @throws \EE_Error
+     */
 	public function calendar_iframe() {
         EED_Espresso_Calendar::$iframe = true;
-        $this->config()->tooltip->show = false;
-        $calendar_iframe = new CalendarIframe(
-            $this->get_calendar_js_options(
-                \EED_Espresso_Calendar::getCalendarDefaults()
-            )
-        );
+        $calendar_iframe = new CalendarIframe();
 		$calendar_iframe->display();
 	}
 
