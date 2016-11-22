@@ -1,7 +1,6 @@
 <?php
 namespace EventEspressoCalendar;
 
-use EED_Espresso_Calendar;
 use EventEspresso\core\libraries\iframe_display\Iframe;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -32,17 +31,13 @@ class CalendarIframe extends Iframe
      */
     public function __construct( $ee_calendar_js_options = array() )
     {
-        global $is_espresso_calendar;
-        $is_espresso_calendar = true;
-        EED_Espresso_Calendar::instance()->config()->tooltip->show = false;
-        EED_Espresso_Calendar::instance()->calendar_scripts();
+        $this->addLocalizedVars(
+            array( 'espresso_calendar' => $ee_calendar_js_options ),
+            'eeCAL'
+        );
         parent::__construct(
             __( 'Calendar', 'event_espresso' ),
-            \EED_Espresso_Calendar::instance()->display_calendar(
-                EED_Espresso_Calendar::instance()->get_calendar_js_options(
-                    \EED_Espresso_Calendar::getCalendarDefaults()
-                )
-            )
+            \EED_Espresso_Calendar::instance()->display_calendar( array(), false )
         );
     }
 
@@ -51,12 +46,33 @@ class CalendarIframe extends Iframe
     /**
      * display
      *
-     * @param string $utm_content
+     * @access    public
+     * @return    void
      * @throws \DomainException
+     * @throws \EE_Error
      */
-    public function display($utm_content = 'events_calendar')
+    public function display()
     {
-        parent::display($utm_content);
+        $this->addStylesheets(
+            apply_filters(
+                'FHEE__CalendarIframe__display__css',
+                array(
+                    'fullcalendar'      => EE_CALENDAR_URL . 'css' . DS . 'fullcalendar.css?ver=1.6.2',
+                    'espresso_calendar' => EE_CALENDAR_URL . 'css' . DS . 'calendar.css?ver=' . EE_CALENDAR_VERSION,
+                )
+            )
+        );
+        $this->addScripts(
+            apply_filters(
+                'FHEE__CalendarIframe__display__js',
+                array(
+                    'fullcalendar-min-js' => EE_CALENDAR_URL . 'scripts' . DS . 'fullcalendar.min.js?ver=1.6.2',
+                    'espresso_calendar'   => EE_CALENDAR_URL . 'scripts' . DS
+                                             . 'espresso_calendar.js?ver=' . EE_CALENDAR_VERSION,
+                )
+            )
+        );
+        parent::display('events_calendar');
     }
 
 
