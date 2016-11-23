@@ -59,7 +59,8 @@ class CalendarIframe extends Iframe
                 array(
                     'fullcalendar'      => EE_CALENDAR_URL . 'css' . DS . 'fullcalendar.css?ver=1.6.2',
                     'espresso_calendar' => EE_CALENDAR_URL . 'css' . DS . 'calendar.css?ver=' . EE_CALENDAR_VERSION,
-                )
+                ),
+                $this
             )
         );
         $this->addScripts(
@@ -69,7 +70,8 @@ class CalendarIframe extends Iframe
                     'fullcalendar-min-js' => EE_CALENDAR_URL . 'scripts' . DS . 'fullcalendar.min.js?ver=1.6.2',
                     'espresso_calendar'   => EE_CALENDAR_URL . 'scripts' . DS
                                              . 'espresso_calendar.js?ver=' . EE_CALENDAR_VERSION,
-                )
+                ),
+                $this
             )
         );
         parent::display('events_calendar');
