@@ -47,11 +47,12 @@ class CalendarIframe extends Iframe
      * display
      *
      * @access    public
+     * @param string $utm_content
      * @return    void
      * @throws \DomainException
      * @throws \EE_Error
      */
-    public function display()
+    public function display($utm_content = 'events_calendar')
     {
         $this->addStylesheets(
             apply_filters(
@@ -74,7 +75,7 @@ class CalendarIframe extends Iframe
                 $this
             )
         );
-        parent::display('events_calendar');
+        parent::display($utm_content);
     }
 
 
