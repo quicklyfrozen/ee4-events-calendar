@@ -641,6 +641,10 @@ a.reg-now-btn {
 	top:0px !important;
 }
 
+.qtip {
+    max-width: 480px;
+}
+
 /* Media Query for screens smaller then 768px (iPad portrait)
 ---------------------------------------------------------------------------------------------------- */
 
@@ -657,6 +661,7 @@ a.reg-now-btn {
 	.qtip_info {
 		display: block;
 	}
+
 }
 
 @media only screen and (max-width: 600px) and (min-width: 481px) {
@@ -676,6 +681,10 @@ a.reg-now-btn {
 	#espresso_calendar .time-display-block {
 		font-size: 10px;
 	}
+
+    .qtip {
+        max-width: 320px;
+    }
 }
 
 @media only screen and (max-width: 540px) and (min-width: 480px) {
@@ -686,6 +695,10 @@ a.reg-now-btn {
 	#espresso_calendar .time-display-block {
 		visibility: hidden;
 	}
+
+    .qtip {
+        max-width: 280px;
+    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -703,6 +716,9 @@ a.reg-now-btn {
 	#espresso_calendar .fc-event {
 		min-height: 3em;
 		max-height: 3em;
+	}
+	.qtip {
+        max-width:240px;
 	}
 }
 
