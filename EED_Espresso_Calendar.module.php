@@ -532,12 +532,12 @@ class EED_Espresso_Calendar extends EED_Module {
 							$description = array_shift( $description );
 							$description = wp_strip_all_tags( $description );
                         }
-                        $description = function_exists('espresso_do_shortcode')
-                            ? espresso_do_shortcode($description)
-                            : do_shortcode($description);
                     } else {
 						$description = wp_strip_all_tags( $description );
 					}
+                    $description = function_exists('espresso_do_shortcode')
+                        ? espresso_do_shortcode($description)
+                        : do_shortcode($description);
                     $description = ! $pswrd_required ? $description : '';
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
