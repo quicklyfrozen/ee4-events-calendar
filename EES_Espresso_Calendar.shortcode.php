@@ -72,7 +72,12 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		// this will trigger the EED_Espresso_Calendar module's run() method during the pre_get_posts hook point,
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array, using 'calendar' as the key, so that we can retrieve it
-		add_action( 'pre_get_posts', array( EED_Espresso_Calendar::instance(), 'run' ));
+        if (! did_action('pre_get_posts')) {
+            add_action('pre_get_posts', array(EED_Espresso_Calendar::instance(), 'run'));
+        } else {
+            global $wp;
+            EED_Espresso_Calendar::instance()->run($wp);
+        }
 	}
 
 
@@ -86,7 +91,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 *
 	 * @access    public
 	 * @param array $attributes
-	 * @return    void
+	 * @return    string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		$defaults = array(
