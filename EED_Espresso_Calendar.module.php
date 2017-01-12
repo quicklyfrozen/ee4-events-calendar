@@ -1,26 +1,13 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-/*
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Event Espresso
- * @ copyright	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version	 	EE4
- *
- * ------------------------------------------------------------------------
- */
+<?php
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 /**
  * Class  EED_Espresso_Calendar
  *
  * @package			Event Espresso
  * @subpackage		espresso-calendar
- * @author			    Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson
- *
- * ------------------------------------------------------------------------
+ * @author			Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson
  */
 class EED_Espresso_Calendar extends EED_Module {
 
@@ -166,7 +153,7 @@ class EED_Espresso_Calendar extends EED_Module {
 		$output_filter = '';
 		if ( ! $ee_calendar_js_options['widget'] ) {
 			// Query for Select box filters
-			$ee_terms = EEM_Term::instance()->get_all( array( 
+			$ee_terms = EEM_Term::instance()->get_all( array(
 				'order_by' => array( 'name' => 'ASC' ),
 				array( 'Term_Taxonomy.taxonomy' => 'espresso_event_categories',
 			) ) );
@@ -384,7 +371,7 @@ class EED_Espresso_Calendar extends EED_Module {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 
-		$month = date('m' );
+        $month = date('m' );
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_datetime = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
@@ -450,8 +437,8 @@ class EED_Espresso_Calendar extends EED_Module {
 			$where_params['DTT_EVT_end*3'] = array('>=',$today );
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
-		$datetime_objs = EEM_Datetime::instance()->get_all( 
-                        apply_filters( 'FHEE__EED_Espresso_Calendar__get_calendar_events__query_params', 
+		$datetime_objs = EEM_Datetime::instance()->get_all(
+                        apply_filters( 'FHEE__EED_Espresso_Calendar__get_calendar_events__query_params',
                                 array( $where_params, 'order_by'=>array( 'DTT_EVT_start'=>'ASC' ) ),
                                 $category_id_or_slug,
                                 $venue_id_or_slug,
@@ -544,12 +531,14 @@ class EED_Espresso_Calendar extends EED_Module {
 							$description = explode( $matches[0], $description, 2 );
 							$description = array_shift( $description );
 							$description = wp_strip_all_tags( $description );
-						}
-						$description = do_shortcode( $description );
-					} else {
+                        }
+                        $description = function_exists('espresso_do_shortcode')
+                            ? espresso_do_shortcode($description)
+                            : do_shortcode($description);
+                    } else {
 						$description = wp_strip_all_tags( $description );
 					}
-					$description = ! $pswrd_required ? $description : '';
+                    $description = ! $pswrd_required ? $description : '';
 					// and just in case it's still too long, or somebody forgot to use the more tag...
 					//if word count is set to 0, set no limit
 					$calendar_datetime->set_description($description);
@@ -615,9 +604,9 @@ class EED_Espresso_Calendar extends EED_Module {
 	public function __get($a) { return FALSE; }
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-	public function __destruct() { return FALSE; }
+	public function __clone() {}
+	public function __wakeup() {}
+	public function __destruct() {}
 
  }
 // End of file EED_Espresso_Calendar.module.php
