@@ -28,7 +28,8 @@ Class  EE_Calendar extends EE_Addon {
 	 * register_addon
 	 */
 	public static function register_addon() {
-		// define the plugin directory path and URL
+        EE_Psr4AutoloaderInit::psr4_loader()->addNamespace('EventEspressoCalendar', EE_CALENDAR_PATH);
+        // define the plugin directory path and URL
 		// register addon via Plugin API
 		EE_Register_Addon::register(
 			'Calendar',

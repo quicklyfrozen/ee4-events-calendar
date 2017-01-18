@@ -36,12 +36,13 @@ class EE_Datetime_In_Calendar {
 	protected $_event_time_no_tags = '';
 	protected $_event_img_thumb = '';
 	protected $_eventType = '';
-	protected $_description = null;
-	protected $_tooltip = null;
-	protected $_tooltip_my = null;
-	protected $_tooltip_at = null;
-	protected $_tooltip_style = null;
-	protected $_show_tooltips = null;
+	protected $_description;
+	protected $_tooltip;
+	protected $_tooltip_my;
+	protected $_tooltip_at;
+	protected $_tooltip_style;
+	protected $_show_tooltips;
+	protected $_iframe = false;
 
 
 
@@ -49,7 +50,7 @@ class EE_Datetime_In_Calendar {
 		$this->_datetime = $datetime;
 		$this->_event = $datetime->event();
 	}
-	
+
 	public function get($variable_name){
 		return $this->$variable_name;
 	}
@@ -62,7 +63,7 @@ class EE_Datetime_In_Calendar {
 	 * Gets color
 	 * @return string
 	 */
-	function color() {
+	public function color() {
 		return $this->get('_color');
 	}
 
@@ -71,7 +72,7 @@ class EE_Datetime_In_Calendar {
 	 * @param string $color
 	 * @return boolean
 	 */
-	function set_color($color) {
+	public function set_color($color) {
 		return $this->set('_color', $color);
 	}
 
@@ -79,7 +80,7 @@ class EE_Datetime_In_Calendar {
 	 * Gets textColor
 	 * @return string
 	 */
-	function textColor() {
+	public function textColor() {
 		return $this->get('_textColor');
 	}
 
@@ -88,7 +89,7 @@ class EE_Datetime_In_Calendar {
 	 * @param string $textColor
 	 * @return boolean
 	 */
-	function set_textColor($textColor) {
+	public function set_textColor($textColor) {
 		return $this->set('_textColor', $textColor);
 	}
 
@@ -96,7 +97,7 @@ class EE_Datetime_In_Calendar {
 	 * Gets datetime
 	 * @return EE_Datetime
 	 */
-	function datetime() {
+	public function datetime() {
 		return $this->get('_datetime');
 	}
 
@@ -105,7 +106,7 @@ class EE_Datetime_In_Calendar {
 	 * @param EE_Datetime $datetime
 	 * @return boolean
 	 */
-	function set_datetime($datetime) {
+	public function set_datetime($datetime) {
 		return $this->set('_datetime', $datetime);
 	}
 
@@ -113,7 +114,7 @@ class EE_Datetime_In_Calendar {
 	 * Gets event
 	 * @return EE_Event
 	 */
-	function event() {
+	public function event() {
 		return $this->get('_event');
 	}
 
@@ -122,14 +123,14 @@ class EE_Datetime_In_Calendar {
 	 * @param EE_Event $event
 	 * @return boolean
 	 */
-	function set_event($event) {
+	public function set_event($event) {
 		return $this->set('_event', $event);
 	}
 	/**
 	 * Gets classname
 	 * @return string
 	 */
-	function classname() {
+	public function classname() {
 		return $this->get('_classname');
 	}
 
@@ -138,22 +139,22 @@ class EE_Datetime_In_Calendar {
 	 * @param string $classname
 	 * @return boolean
 	 */
-	function set_classname($classname) {
+	public function set_classname($classname) {
 		return $this->set('_classname', $classname);
 	}
 	/**
-	 * Just adds $classname to th eexisting classname attribute
+	 * Just adds $classname to the existing classname attribute
 	 * @param string $classname
 	 * @return string
 	 */
-	function add_classname($classname){
-		return $this->set('_classname',$this->get('_classname')." ".$classname);
+	public function add_classname($classname){
+		return $this->set('_classname', $this->get('_classname') . ' ' . $classname);
 	}
 	/**
 	 * Gets event_time html
 	 * @return string
 	 */
-	function event_time() {
+	public function event_time() {
 		return $this->get('_event_time');
 	}
 
@@ -162,15 +163,15 @@ class EE_Datetime_In_Calendar {
 	 * @param string $event_time
 	 * @return boolean
 	 */
-	function set_event_time($event_time) {
+	public function set_event_time($event_time) {
 		$this->set('_event_time_no_tags',strip_tags($event_time));
 		return $this->set('_event_time', $event_time);
 	}
 	/**
-	 * Gets event_time_no_tags 
+	 * Gets event_time_no_tags
 	 * @return string
 	 */
-	function event_time_no_tags() {
+	public function event_time_no_tags() {
 		return $this->get('_event_time_no_tags');
 	}
 
@@ -178,7 +179,7 @@ class EE_Datetime_In_Calendar {
 	 * Gets event_img_thumb HTML
 	 * @return string
 	 */
-	function event_img_thumb() {
+	public function event_img_thumb() {
 		return $this->get('_event_img_thumb');
 	}
 
@@ -187,14 +188,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $event_img_thumb
 	 * @return boolean
 	 */
-	function set_event_img_thumb($event_img_thumb) {
+	public function set_event_img_thumb($event_img_thumb) {
 		return $this->set('_event_img_thumb', $event_img_thumb);
 	}
 	/**
 	 * Gets eventType
 	 * @return string
 	 */
-	function eventType() {
+	public function eventType() {
 		return $this->get('_eventType');
 	}
 
@@ -203,15 +204,15 @@ class EE_Datetime_In_Calendar {
 	 * @param string $eventType
 	 * @return boolean
 	 */
-	function set_eventType($eventType) {
+	public function set_eventType($eventType) {
 		return $this->set('_eventType', $eventType);
 	}
-	
+
 	/**
 	 * Gets description
 	 * @return string
 	 */
-	function description() {
+	public function description() {
 		return $this->get('_description');
 	}
 
@@ -220,14 +221,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $description
 	 * @return boolean
 	 */
-	function set_description($description) {
+	public function set_description($description) {
 		return $this->set('_description', $description);
 	}
 	/**
 	 * Gets tooltip
 	 * @return string
 	 */
-	function tooltip() {
+	public function tooltip() {
 		return $this->get('_tooltip');
 	}
 
@@ -236,14 +237,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $tooltip
 	 * @return boolean
 	 */
-	function set_tooltip($tooltip) {
+	public function set_tooltip($tooltip) {
 		return $this->set('_tooltip', $tooltip);
 	}
 	/**
 	 * Gets tooltip_my
 	 * @return string
 	 */
-	function tooltip_my() {
+	public function tooltip_my() {
 		return $this->get('_tooltip_my');
 	}
 
@@ -252,14 +253,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $tooltip_my
 	 * @return boolean
 	 */
-	function set_tooltip_my($tooltip_my) {
+	public function set_tooltip_my($tooltip_my) {
 		return $this->set('_tooltip_my', $tooltip_my);
 	}
 	/**
 	 * Gets tooltip_at
 	 * @return string
 	 */
-	function tooltip_at() {
+	public function tooltip_at() {
 		return $this->get('_tooltip_at');
 	}
 
@@ -268,14 +269,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $tooltip_at
 	 * @return boolean
 	 */
-	function set_tooltip_at($tooltip_at) {
+	public function set_tooltip_at($tooltip_at) {
 		return $this->set('_tooltip_at', $tooltip_at);
 	}
 	/**
 	 * Gets tooltip_style
 	 * @return string
 	 */
-	function tooltip_style() {
+	public function tooltip_style() {
 		return $this->get('_tooltip_style');
 	}
 
@@ -284,14 +285,14 @@ class EE_Datetime_In_Calendar {
 	 * @param string $tooltip_style
 	 * @return boolean
 	 */
-	function set_tooltip_style($tooltip_style) {
+	public function set_tooltip_style($tooltip_style) {
 		return $this->set('_tooltip_style', $tooltip_style);
 	}
 	/**
 	 * Gets show_tooltips
 	 * @return boolean
 	 */
-	function show_tooltips() {
+	public function show_tooltips() {
 		return $this->get('_show_tooltips');
 	}
 
@@ -300,17 +301,29 @@ class EE_Datetime_In_Calendar {
 	 * @param boolean $show_tooltips
 	 * @return boolean
 	 */
-	function set_show_tooltips($show_tooltips) {
+	public function set_show_tooltips($show_tooltips) {
 		return $this->set('_show_tooltips', $show_tooltips);
 	}
 
-	
-	/**
-	 * 
-	 * @return array which can be used for converting to json
-	 */
-	function to_array_for_json() {
-		$title = $this->_datetime->name() != ''
+
+
+    /**
+     * @param boolean $iframe
+     */
+    public function set_iframe($iframe)
+    {
+        $this->_iframe = filter_var($iframe, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+
+
+    /**
+     * @return array which can be used for converting to json
+     * @throws \EE_Error
+     */
+	public function to_array_for_json() {
+		$title = $this->_datetime->name() !== ''
 			? $this->_event->name() . ': ' . $this->_datetime->name()
 			: $this->_event->name();
 		return array(
@@ -324,9 +337,9 @@ class EE_Datetime_In_Calendar {
 			'event_img_thumb'=>$this->event_img_thumb(),
 			'eventType'=>$this->eventType(),
 			'description'=>apply_filters(
-				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__description', 
-				$this->description(), 
-				$this 
+				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__description',
+				$this->description(),
+				$this
 			),
 			'id'=>$this->_event->ID(),
 			'show_tooltips'=>$this->show_tooltips(),
@@ -337,12 +350,13 @@ class EE_Datetime_In_Calendar {
 			'tooltip_my'=>$this->tooltip_my(),
 			'tooltip_at'=>$this->tooltip_at(),
 			'tooltip_style'=>$this->tooltip_style(),
-			'title'=>apply_filters( 
-				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__title', 
+			'title'=>apply_filters(
+				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__title',
 				$title,
 				$this
-			),			
-			'url'=>$this->_event->get_permalink(),
+			),
+			'url' => $this->_event->get_permalink(),
+			'iframe'=>$this->_iframe,
 		);
 	}
 

@@ -1,14 +1,62 @@
 jQuery(document).ready(function($) {
-	
-	eeCAL.max_events_per_day = parseInt(eeCAL.max_events_per_day);
+
+    /**
+     *  @namespace eeCAL
+     *  @type  {{
+	 *     max_events_per_day: number,
+	 *     time_weekends: boolean,
+	 *     display_use_pickers: boolean,
+	 *     display_event_background: string,
+	 *     display_event_text_color: string,
+	 *     header_left: string,
+	 *     header_center: string,
+	 *     header_right: string,
+	 *     time_first_day: string,
+	 *     time_week_mode: string,
+	 *     display_calendar_height: number,
+	 *     cal_view: string,
+	 *     column_format_month: string,
+	 *     column_format_week: string,
+	 *     column_format_day: string,
+	 *     title_format_month: string,
+	 *     title_format_week: string,
+	 *     title_format_day: string,
+	 *     button_text_next: string,
+	 *     button_text_prev: string,
+	 *     button_text_prevYear: string,
+	 *     button_text_nextYear: string,
+	 *     button_text_today: string,
+	 *     button_text_month: string,
+	 *     button_text_week: string,
+	 *     button_text_day: string,
+	 *     month_names: string,
+	 *     month_names_short: string,
+	 *     day_names: string,
+	 *     day_names_short: string,
+	 *     view_more_text: string,
+	 *     event_time: string,
+	 *     event_days: number,
+	 *     thumbnail_size_h: number,
+	 *     tooltip_show: boolean,
+	 *     tooltip_my: string,
+	 *     tooltip_at: string,
+	 *     tooltip_style: string,
+	 *     event_time_no_tags: string,
+	 * }}
+
+     */
+
+    var $espresso_calendar = $('#espresso_calendar');
+
+    eeCAL.max_events_per_day = parseInt(eeCAL.max_events_per_day);
 	eeCAL.events_per_day = {};
 
 	// fix this one boolean
-	if ( eeCAL.time_weekends === undefined || eeCAL.time_weekends === '' ) {
+	if ( typeof eeCAL.time_weekends === 'undefined' ) {
 		eeCAL.time_weekends = false;
 	}
 
-	var calendar_width = $('#espresso_calendar').width();
+	var calendar_width = $espresso_calendar.width();
 	var day_width = 0;
 	var ee_eventColor = '';
 	var ee_eventTextColor = '';
@@ -28,7 +76,7 @@ jQuery(document).ready(function($) {
 		ee_eventTextColor = eeCAL.display_event_text_color;
 	}
 
-	$('#espresso_calendar').fullCalendar({
+	$espresso_calendar.fullCalendar({
 
 		// General Display - http://arshaw.com/fullcalendar/docs/display/
 		// Defines the buttons and title at the top of the calendar.
@@ -49,7 +97,7 @@ jQuery(document).ready(function($) {
 		height: !eeCAL.widget ? eeCAL.display_calendar_height:'',
 		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
-		viewDisplay: function(view) {
+		viewDisplay: function() { // view
 			// remove ui styling from tool tips
 			$('.qtip-close .ui-icon').each( function() {
 				$(this).removeClass('ui-icon');
@@ -107,11 +155,11 @@ jQuery(document).ready(function($) {
 		year: eeCAL.year,
 		month: eeCAL.month,
 
-		//Load the events into json srrsy
+		//Load the events into json array
 		events: function(start, end, callback) {
-			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
+			eeCAL.view = $espresso_calendar.fullCalendar('getView').name;
 			//eeCAL.prev_view = eeCAL.view;
-			
+
 			var cal_data = {
 				action: 'get_calendar_events',
 				noheader : 'true',
@@ -119,7 +167,8 @@ jQuery(document).ready(function($) {
 				end_date: Math.round(end.getTime() / 1000),
 				show_expired: eeCAL.show_expired,
 				event_category_id: eeCAL.event_category_id,
-				event_venue_id: eeCAL.event_venue_id
+				event_venue_id: eeCAL.event_venue_id,
+                iframe: eeCAL.iframe
 			};
 //			console.log( cal_data );
 			$.ajax({
@@ -130,18 +179,24 @@ jQuery(document).ready(function($) {
 					// because FullCalendar won't wait for images to load fully before positioning events in the table grid...
 					// loop through response data
 					$.each( response, function( index, element ){
-						
+                        /**
+                         *  @namespace element
+                         *  @type  {{
+                         *      target_date : string,
+                         *      event_img_thumb : string,
+                         *  }}
+                         */
 						if ( eeCAL.view == 'month' ) {
-							if ( typeof eeCAL.events_per_day[ element.target_date ] == 'undefined' ) {
+							if ( typeof eeCAL.events_per_day[ element.target_date ] === 'undefined' ) {
 								eeCAL.events_per_day[ element.target_date ] = 1;
 							} else {
 								eeCAL.events_per_day[ element.target_date ] = eeCAL.events_per_day[ element.target_date ] + 1;
 							}
 							if ( parseInt( eeCAL.events_per_day[ element.target_date ] ) > parseInt( eeCAL.max_events_per_day )) {
 								element.className = element.className + ' ee-extra-day-events hidden';
-							}	
+							}
 						}
-						
+
 						// look for event thumbnail
 						var thumb = $(element.event_img_thumb).find('img');
 						// attempt to load image
@@ -167,8 +222,8 @@ jQuery(document).ready(function($) {
 		},
 		// Triggered while an event is being rendered.
 		eventRender: function( event, element ) {
-			
-			eeCAL.view = $('#espresso_calendar').fullCalendar('getView').name;
+
+			eeCAL.view = $espresso_calendar.fullCalendar('getView').name;
 //			console.log( event );
 //			console.log( element );
 //			console.log( JSON.stringify( 'event.target_date: ' + event.target_date, null, 4 ));
@@ -178,17 +233,15 @@ jQuery(document).ready(function($) {
 			event_target_date_td.addClass('event-day');
 			// if this is a month view and this event is tagged as hidden...
 			if ( eeCAL.view == 'month' && event.className.indexOf('ee-extra-day-events') != -1 ) {
-				if ( ! event_target_date_td.find('.events-view-more').length ) {
-                        		viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>' + eeCAL.view_more_text + '</a></div>').appendTo( event_target_date_td )
-                        	}
+				// if ( ! event_target_date_td.find('.events-view-more').length ) {
+                 //    var viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>' + eeCAL.view_more_text + '</a></div>').appendTo( event_target_date_td )
+				// }
 //				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
-				return false 
-//			} else {
-//				console.log( JSON.stringify( 'eventRender event: ' + event.title, null, 4 ));
+				return false;
 			}
 
-			// calculate the width for this event based on number of days x one day event width - 
+			// calculate the width for this event based on number of days x one day event width -
 			var event_width = ( day_width * event.event_days ) - day_padding;
 			// set element to correct width
 			element.width( event_width );
@@ -223,7 +276,7 @@ jQuery(document).ready(function($) {
 					if ( event.event_days > 1 ) {
 						// can usually display the full thumbnail size becuz of their width
 						img_height = parseInt( event.thumbnail_size_h );
-						// but in case thumbnail is still wider than multiday table cell
+						// but in case thumbnail is still wider than multi-day table cell
 						if ( parseInt( event.thumbnail_size_h ) > event_width ) {
 							// use that as the height
 							img_height = event_width - day_padding;
@@ -276,29 +329,35 @@ jQuery(document).ready(function($) {
 			}
 
 		},
-		viewRender  : function( view, element  ) {
+		viewRender  : function( view ) { // view, element
 //			 console.log( ' ' );
 //			 console.log( 'viewRender ' );
 //			console.log( JSON.stringify( 'view.name: ' + view.name, null, 4 ));
 			if ( view.name != eeCAL.prev_view ) {
 //				console.log( JSON.stringify( 'eeCAL.prev_view: ' + eeCAL.prev_view, null, 4 ));
 //				console.log( JSON.stringify( 'eeCAL.refetchEvents', null, 4 ));
-				$('#espresso_calendar').fullCalendar( 'refetchEvents' );
+				$espresso_calendar.fullCalendar( 'refetchEvents' );
 				eeCAL.events_per_day = {};
-			}			 		
+			}
 		},
-		viewDestroy : function( view, element  ) {
+		// viewDestroy : function( view, element ) {
 //			console.log( ' ' );
 //			console.log( 'viewDestroy' );
 //			console.log( JSON.stringify( 'view.name: ' + view.name, null, 4 ));
-		},
+// 		},
 		// Triggered after an event has been placed on the calendar in its final position.
-		eventAfterRender : function( event, element, view ) {
-		},
+		// eventAfterRender : function( event, element, view ) {
+		// },
 		// Triggered after all events have finished rendering.
-		eventAfterAllRender : function( view ) {
-		},
-		// Triggered when event fetching starts/stops.
+		// eventAfterAllRender : function( view ) {
+		// },
+        eventClick: function (event) {
+            if (event.url && eeCAL.iframe) {
+                window.open(event.url);
+                return false;
+            }
+        },
+        // Triggered when event fetching starts/stops.
 		loading: function( bool ) {
 			if ( bool ) {
 				$( '#espresso-ajax-loading' ).show();
@@ -317,12 +376,12 @@ jQuery(document).ready(function($) {
 	$('.submit-this').on( 'change', function() {
 		$(this).closest('form').submit();
 	});
-	
-	$('#espresso_calendar').on( 'click', '.events-view-more-link', function() {
-		target_date = $(this).attr('rel');
+
+	$espresso_calendar.on( 'click', '.events-view-more-link', function() {
+		var target_date = $(this).attr('rel');
 		target_date = $.fullCalendar.parseDate( target_date );
-		$('#espresso_calendar').fullCalendar( 'changeView', 'agendaDay' );	
-		$('#espresso_calendar').fullCalendar( 'gotoDate', target_date );
+		$espresso_calendar.fullCalendar( 'changeView', 'agendaDay' );
+		$espresso_calendar.fullCalendar( 'gotoDate', target_date );
 	});
 
 	$('.fc-button-today').on( 'click', function() {

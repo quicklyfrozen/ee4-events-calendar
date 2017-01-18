@@ -1,4 +1,5 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allowed'); }
+<?php
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allowed'); }
 /**
  * Event Espresso
  *
@@ -106,7 +107,14 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		wp_register_script('ee-calendar-admin-js', EE_CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','wp-color-picker'), EE_CALENDAR_VERSION, TRUE );
 		wp_enqueue_script('ee-calendar-admin-js');
 		wp_enqueue_style( 'wp-color-picker' );
-		wp_localize_script('ee-calendar-admin-js','ee_calendar',array('confirm_reset_text'=>  __("Are you sure you want to reset ALL your Event Espresso Calendar Information? This cannot be undone.", 'event_espresso')));
+        wp_localize_script(
+            'ee-calendar-admin-js',
+            'ee_calendar',
+            array(
+                'confirm_reset_text' => __("Are you sure you want to reset ALL your Event Espresso Calendar Information? This cannot be undone.",
+                'event_espresso'),
+            )
+        );
 	}
 
 	public function admin_init() {}
@@ -151,9 +159,19 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _usage() {
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php', array(), TRUE );
+        $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+            EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php',
+	        apply_filters(
+	            'FHEE__Calendar_Admin_Page___usage__calendar_usage_info__template_args',
+		        array()
+	        ),
+            true
+        );
 		$this->display_admin_page_with_no_sidebar();
 	}
+
+
+
 	protected function _update_settings(){
 		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
 			$config = new EE_Calendar_Config();
@@ -161,7 +179,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		}else{
 			$config = EE_Config::instance()->get_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config' );
 			$count=0;
-                        //WP adds slashes by default, so remove them. 
+                        //WP adds slashes by default, so remove them.
                         //see https://wordpress.org/support/topic/does-wordpress-escapeadd-slashes-to-_request-fields-in-a-plugin
                         $calendar_req_data = stripslashes_deep( $this->_req_data[ 'calendar'] );
 			//otherwise we assume you want to allow full html
