@@ -700,6 +700,12 @@ class EED_Espresso_Calendar extends EED_Module {
 					$event_time_html = '<span class="time-display-block">' . $startTime;
 					$event_time_html .= $endTime ? ' - ' . $endTime : '';
 					$event_time_html .= '</span>';
+					$event_time_html = apply_filters( 
+						'FHEE__EE_Calendar__get_calendar_events__event_time_html', 
+						$event_time_html, 
+						$datetime,
+						$event
+					);
 				} else {
 					$event_time_html = FALSE;
 				}
