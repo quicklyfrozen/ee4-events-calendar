@@ -514,7 +514,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
-		if ( ! EED_Espresso_Calendar::$iframe ) {
+		if ( ! EED_Espresso_Calendar::$iframe && ! method_exists( 'EEH_Template', 'powered_by_event_espresso' ) ) {
             $html .= \EEH_Template::powered_by_event_espresso(
                 '',
                 '',
