@@ -358,6 +358,7 @@ class EE_Datetime_In_Calendar {
 			'url' => apply_filters(
 				'FHEE__EE_Datetime_In_Calendar__to_array_for_json__url',
 				$this->_event->get_permalink(),
+				$this->event(),
 				$this
 			),
 			'iframe'=>$this->_iframe,
