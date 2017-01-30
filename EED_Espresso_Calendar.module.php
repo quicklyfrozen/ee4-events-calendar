@@ -778,7 +778,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					} else if($event->is_cancelled()){
 						$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
 					} else {
-						$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
+						$tooltip_html .= '<a class="reg-now-btn" href="' . apply_filters( 'FHEE__EE_Calendar__tooltip_event_permalink', $event->get_permalink(), $event, $datetime ) . '">' . $regButtonText . '</a>';
 					}
 
 					$tooltip_html .= '<div class="clear"></div>';
