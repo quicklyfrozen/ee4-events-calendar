@@ -91,18 +91,20 @@ class EED_Espresso_Calendar extends EED_Module {
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
 		 // to load assets for "espresso_calendar" page on the "default" route (action)
-		 add_action(
-			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
-			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
-			 10
-		 );
-		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
-		 // to load assets for "espresso_calendar" page on the "usage" route (action)
-		 add_action(
-			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_calendar__usage',
-			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
-			 10
-		 );
+		 if ( class_exists( '\EventEspresso\core\libraries\iframe_display\IframeEmbedButton' ) ) {
+			 add_action(
+				 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
+				 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+				 10
+			 );
+			 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+			 // to load assets for "espresso_calendar" page on the "usage" route (action)
+			 add_action(
+				 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_calendar__usage',
+				 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+				 10
+			 );
+		 }
 	 }
 
 
