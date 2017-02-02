@@ -91,7 +91,8 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	public function process_shortcode( $attributes = array() ) {
         // make sure $attributes is an array
 		$attributes = array_merge(\EED_Espresso_Calendar::getCalendarDefaults(), (array)$attributes );
-		return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
+        $attributes = \EES_Shortcode::sanitize_attributes($attributes);
+        return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
 	}
 
 
