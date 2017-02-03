@@ -91,9 +91,48 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	public function process_shortcode( $attributes = array() ) {
         // make sure $attributes is an array
 		$attributes = array_merge(\EED_Espresso_Calendar::getCalendarDefaults(), (array)$attributes );
-        $attributes = \EES_Shortcode::sanitize_attributes($attributes);
+		if (method_exists('\EES_Shortcode', 'sanitize_attributes')) {
+            $attributes = \EES_Shortcode::sanitize_attributes($attributes);
+        } else {
+            $attributes = $this->sanitize_the_attributes($attributes);
+        }
         return EED_Espresso_Calendar::instance()->display_calendar( $attributes );
 	}
+
+
+
+    /**
+     * temporary copy of \EES_Shortcode::sanitize_attributes()
+     * for backwards compatibility sake
+     *
+     * @param array $attributes
+     * @return array
+     */
+    private function sanitize_the_attributes(array $attributes)
+    {
+        foreach ($attributes as $key => $value) {switch (true) {
+                case $value === null :
+                case is_int($value) :
+                case is_float($value) :
+                    // typical booleans
+                case in_array($value, array(true, 'true', '1', 'on', 'yes', false, 'false', '0', 'off', 'no'), true) :
+                    $attributes[$key] = $value;
+                    break;
+                case is_string($value) :
+                    $attributes[$key] = sanitize_text_field($value);
+                    break;
+                case is_array($value) :
+                    $attributes[$key] = $this->sanitize_the_attributes($attributes);
+                    break;
+                default :
+                    // only remaining data types are Object and Resource
+                    // which are not allowed as shortcode attributes
+                    $attributes[$key] = null;
+                    break;
+            }
+        }
+        return $attributes;
+    }
 
 
 }
