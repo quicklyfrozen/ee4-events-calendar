@@ -91,18 +91,20 @@ class EED_Espresso_Calendar extends EED_Module {
 		 add_action( 'wp_ajax_nopriv_get_calendar_events', array( 'EED_Espresso_Calendar', '_get_calendar_events' ));
 		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
 		 // to load assets for "espresso_calendar" page on the "default" route (action)
-		 add_action(
-			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
-			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
-			 10
-		 );
-		 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
-		 // to load assets for "espresso_calendar" page on the "usage" route (action)
-		 add_action(
-			 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_calendar__usage',
-			 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
-			 10
-		 );
+		 if ( class_exists( '\EventEspresso\core\libraries\iframe_display\IframeEmbedButton' ) ) {
+			 add_action(
+				 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_events__default',
+				 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+				 10
+			 );
+			 // hook into the end of the \EE_Admin_Page::_load_page_dependencies()
+			 // to load assets for "espresso_calendar" page on the "usage" route (action)
+			 add_action(
+				 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_calendar__usage',
+				 array( 'EED_Espresso_Calendar', 'calendar_iframe_embed_button' ),
+				 10
+			 );
+		 }
 	 }
 
 
@@ -514,7 +516,13 @@ class EED_Espresso_Calendar extends EED_Module {
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
-		if ( ! EED_Espresso_Calendar::$iframe ) {
+		if ( 
+			// this is not an iframe
+			! EED_Espresso_Calendar::$iframe 
+			// and \EEH_Template::powered_by_event_espresso() is available
+			&& method_exists( 'EEH_Template', 'powered_by_event_espresso' ) 
+		) {
+			// add powered by EE attribution link
             $html .= \EEH_Template::powered_by_event_espresso(
                 '',
                 '',
@@ -694,6 +702,12 @@ class EED_Espresso_Calendar extends EED_Module {
 					$event_time_html = '<span class="time-display-block">' . $startTime;
 					$event_time_html .= $endTime ? ' - ' . $endTime : '';
 					$event_time_html .= '</span>';
+					$event_time_html = apply_filters( 
+						'FHEE__EE_Calendar__get_calendar_events__event_time_html', 
+						$event_time_html, 
+						$datetime,
+						$event
+					);
 				} else {
 					$event_time_html = FALSE;
 				}
@@ -766,7 +780,7 @@ class EED_Espresso_Calendar extends EED_Module {
 					} else if($event->is_cancelled()){
 						$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
 					} else {
-						$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
+						$tooltip_html .= '<a class="reg-now-btn" href="' . apply_filters( 'FHEE__EE_Calendar__tooltip_event_permalink', $event->get_permalink(), $event, $datetime ) . '">' . $regButtonText . '</a>';
 					}
 
 					$tooltip_html .= '<div class="clear"></div>';
