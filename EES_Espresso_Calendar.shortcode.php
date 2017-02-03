@@ -106,11 +106,24 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
      * for backwards compatibility sake
      *
      * @param array $attributes
+     * @param array $custom_sanitization
      * @return array
      */
-    private function sanitize_the_attributes(array $attributes)
+    private function sanitize_the_attributes(array $attributes, $custom_sanitization = array())
     {
-        foreach ($attributes as $key => $value) {switch (true) {
+        foreach ($attributes as $key => $value) {
+            // is a custom sanitization callback specified ?
+            if (isset($custom_sanitization[$key])) {
+                $callback = $custom_sanitization[$key];
+                if ($callback === 'skip_sanitization') {
+                    $attributes[$key] = $value;
+                    continue;
+                } else if (function_exists($callback)) {
+                    $attributes[$key] = $callback($value);
+                    continue;
+                }
+            }
+            switch (true) {
                 case $value === null :
                 case is_int($value) :
                 case is_float($value) :
