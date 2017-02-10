@@ -233,9 +233,9 @@ jQuery(document).ready(function($) {
 			event_target_date_td.addClass('event-day');
 			// if this is a month view and this event is tagged as hidden...
 			if ( eeCAL.view == 'month' && event.className.indexOf('ee-extra-day-events') != -1 ) {
-				// if ( ! event_target_date_td.find('.events-view-more').length ) {
-                 //    var viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>' + eeCAL.view_more_text + '</a></div>').appendTo( event_target_date_td )
-				// }
+				if ( ! event_target_date_td.find('.events-view-more').length ) {
+                	var viewMoreButton = $('<div class="events-view-more"><a rel="' + event.target_date + '" class="events-view-more-link click-this"><span class="dashicons dashicons-plus"></span>' + eeCAL.view_more_text + '</a></div>').appendTo( event_target_date_td )
+				}
 //				console.log( JSON.stringify( 'NO eventRender event: ' + event.title, null, 4 ));
 				// prevents event from being rendered
 				return false;
