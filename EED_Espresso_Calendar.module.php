@@ -157,7 +157,7 @@ class EED_Espresso_Calendar extends EED_Module {
 	/**
 	 *    _get_calendar_events
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public static function getCalendarDefaults(){
         return array(
