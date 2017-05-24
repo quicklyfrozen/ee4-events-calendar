@@ -691,9 +691,9 @@ class EED_Espresso_Calendar extends EED_Module {
 
 					}
 
-					if ( $datetime->is_expired() ) {
-						$calendar_datetime->add_classname('expired');
-					}
+				if ( $datetime->is_expired() ) {
+					$calendar_datetime->add_classname('expired');
+				}
 
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
