@@ -691,6 +691,14 @@ class EED_Espresso_Calendar extends EED_Module {
 
 					}
 
+				if (
+					$event->is_sold_out() ||
+					$datetime->sold_out() ||
+					$datetime->total_tickets_available_at_this_datetime() === 0
+				) {
+					$calendar_datetime->add_classname('sold-out');
+				}
+
 				if ( $datetime->is_expired() ) {
 					$calendar_datetime->add_classname('expired');
 				}
