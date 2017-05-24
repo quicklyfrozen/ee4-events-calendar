@@ -686,10 +686,10 @@ class EED_Espresso_Calendar extends EED_Module {
 							}
 						} else {
 							$calendar_datetime->add_classname($primary_cat->slug());
-							}
 						}
-
 					}
+
+				}
 
 					if ( $datetime->is_expired() ) {
 						$calendar_datetime->add_classname('expired');
