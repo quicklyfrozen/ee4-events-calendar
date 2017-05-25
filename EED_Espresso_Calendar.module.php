@@ -691,9 +691,17 @@ class EED_Espresso_Calendar extends EED_Module {
 
 				}
 
-					if ( $datetime->is_expired() ) {
-						$calendar_datetime->add_classname('expired');
-					}
+				if (
+					$event->is_sold_out() ||
+					$datetime->sold_out() ||
+					$datetime->total_tickets_available_at_this_datetime() === 0
+				) {
+					$calendar_datetime->add_classname('sold-out');
+				}
+
+				if ( $datetime->is_expired() ) {
+					$calendar_datetime->add_classname('expired');
+				}
 
 				$startTime =  '<span class="event-start-time">' . $datetime->start_time($this->config()->time->format) . '</span>';
 				$endTime = '<span class="event-end-time">' . $datetime->end_time($this->config()->time->format) . '</span>';
