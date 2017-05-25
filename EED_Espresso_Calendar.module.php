@@ -686,10 +686,10 @@ class EED_Espresso_Calendar extends EED_Module {
 							}
 						} else {
 							$calendar_datetime->add_classname($primary_cat->slug());
-							}
 						}
-
 					}
+
+				}
 
 					if ( $datetime->is_expired() ) {
 						$calendar_datetime->add_classname('expired');
@@ -801,6 +801,9 @@ class EED_Espresso_Calendar extends EED_Module {
 				} else {
 					$calendar_datetime->set_show_tooltips( FALSE );
 				}
+
+				$calendar_datetime = apply_filters( 'FHEE__EE_Calendar__get_calendar_events__calendar_datetime', $calendar_datetime, $datetime );
+
 				$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 
 				//			$this->timer->stop();
