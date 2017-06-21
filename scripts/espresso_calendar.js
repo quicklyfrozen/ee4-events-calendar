@@ -52,7 +52,7 @@ jQuery(document).ready(function($) {
 	eeCAL.events_per_day = {};
 
 	// fix this one boolean
-	if ( typeof eeCAL.time_weekends === 'undefined' ) {
+	if ( Boolean(eeCAL.time_weekends) === false ) {
 		eeCAL.time_weekends = false;
 	}
 
