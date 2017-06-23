@@ -565,9 +565,9 @@ class EED_Espresso_Calendar extends EED_Module {
 		if ( $category_id_or_slug ) {
 			//Allow for multiple categories	
 			$category_id_or_slug = explode( ',', $category_id_or_slug );
-			foreach ($category_id_or_slug as $value) {
+			foreach ($category_id_or_slug as $key => $value) {
 				//sanitize all of the values
-				$value = sanitize_key($value);
+				$category_id_or_slug[$key] = sanitize_key($value);
 			}
 
 			//Set the category (or categories) within the query
