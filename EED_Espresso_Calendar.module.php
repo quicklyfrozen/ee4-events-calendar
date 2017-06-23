@@ -554,12 +554,14 @@ class EED_Espresso_Calendar extends EED_Module {
 		$show_expired = isset( $_REQUEST['show_expired'] )
 			? sanitize_key( $_REQUEST['show_expired'] )
 			: 'true';
-		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
-			? sanitize_key( $_REQUEST['event_category_id'] )
-			: $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] )
 			? sanitize_key( $_REQUEST['event_venue_id'] )
 			: null;
+
+		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
+			? $_REQUEST['event_category_id']
+			: $this->_event_category_id;
+		
 		if ( $category_id_or_slug ) {
 			$where_params['OR*category'] = array(
 				'Event.Term_Taxonomy.Term.slug'    => $category_id_or_slug,
