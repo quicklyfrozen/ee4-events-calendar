@@ -575,6 +575,18 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Term_Taxonomy.Term.slug'    => array( 'IN', $category_id_or_slug),
 				'Event.Term_Taxonomy.Term.term_id' => array( 'IN', $category_id_or_slug)
 			);
+			
+			if( count($category_id_or_slug) == 1 ){
+
+				if( is_int($category_id_or_slug[0]) ) {
+					$ee_term_id = $category_id_or_slug[0];
+				} else {
+					$ee_term = get_term_by('slug', $category_id_or_slug[0], 'espresso_event_categories');
+					$ee_term_id = $ee_term ? $ee_term->term_id : null;
+				}
+				//write_log($ee_term->term_id);
+				$where_params['OR*category']['Event.Term_Taxonomy.parent'] = $ee_term->term_id;
+			}
 		}
 		
 		if ( $venue_id_or_slug ) {
