@@ -554,18 +554,29 @@ class EED_Espresso_Calendar extends EED_Module {
 		$show_expired = isset( $_REQUEST['show_expired'] )
 			? sanitize_key( $_REQUEST['show_expired'] )
 			: 'true';
-		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
-			? sanitize_key( $_REQUEST['event_category_id'] )
-			: $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] )
 			? sanitize_key( $_REQUEST['event_venue_id'] )
 			: null;
+
+		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
+			? $_REQUEST['event_category_id']
+			: $this->_event_category_id;
+		
 		if ( $category_id_or_slug ) {
+			//Allow for multiple categories	
+			$category_id_or_slug = explode( ',', $category_id_or_slug );
+			foreach ($category_id_or_slug as $key => $value) {
+				//sanitize all of the values
+				$category_id_or_slug[$key] = sanitize_key($value);
+			}
+
+			//Set the category (or categories) within the query
 			$where_params['OR*category'] = array(
-				'Event.Term_Taxonomy.Term.slug'    => $category_id_or_slug,
-				'Event.Term_Taxonomy.Term.term_id' => $category_id_or_slug
+				'Event.Term_Taxonomy.Term.slug'    => array( 'IN', $category_id_or_slug),
+				'Event.Term_Taxonomy.Term.term_id' => array( 'IN', $category_id_or_slug)
 			);
 		}
+		
 		if ( $venue_id_or_slug ) {
 			$where_params['OR*venue'] = array(
 				'Event.Venue.VNU_ID'         => $venue_id_or_slug,
