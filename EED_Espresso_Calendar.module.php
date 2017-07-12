@@ -575,17 +575,25 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Term_Taxonomy.Term.slug'    => array( 'IN', $category_id_or_slug),
 				'Event.Term_Taxonomy.Term.term_id' => array( 'IN', $category_id_or_slug)
 			);
-			
+
+			//Single cateogry passed to the calendar?
 			if( count($category_id_or_slug) == 1 ){
 
-				if( is_int($category_id_or_slug[0]) ) {
-					$ee_term_id = $category_id_or_slug[0];
+				//Pull the category id or slug from the array
+				$category_id_or_slug = array_shift($category_id_or_slug);
+
+				//Check if we have an ID or a slug
+				if( is_int($category_id_or_slug) ) {
+					$ee_term_id = $category_id_or_slug;
 				} else {
-					$ee_term = get_term_by('slug', $category_id_or_slug[0], 'espresso_event_categories');
-					$ee_term_id = $ee_term ? $ee_term->term_id : null;
+					$ee_term = get_term_by('slug', $category_id_or_slug, 'espresso_event_categories');
+					$ee_term_id = $ee_term instanceof WP_Term ? $ee_term->term_id : null;
 				}
-				//write_log($ee_term->term_id);
-				$where_params['OR*category']['Event.Term_Taxonomy.parent'] = $ee_term->term_id;
+
+				//Check we have a term_id to use before addind to the where_params
+				if( $ee_term_id ) {
+					$where_params['OR*category']['Event.Term_Taxonomy.parent'] = $ee_term_id;
+				}
 			}
 		}
 		
