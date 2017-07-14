@@ -381,7 +381,6 @@ class EED_Espresso_Calendar extends EED_Module {
 	 */
 	public function get_calendar_js_options( $ee_calendar_js_options ) {
         if (empty($this->_js_options)){
-            // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
             // get calendar options
             $calendar_config = $this->config()->to_flat_array();
             // merge incoming shortcode attributes with calendar config
@@ -516,11 +515,11 @@ class EED_Espresso_Calendar extends EED_Module {
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
-		if ( 
+		if (
 			// this is not an iframe
-			! EED_Espresso_Calendar::$iframe 
+			! EED_Espresso_Calendar::$iframe
 			// and \EEH_Template::powered_by_event_espresso() is available
-			&& method_exists( 'EEH_Template', 'powered_by_event_espresso' ) 
+			&& method_exists( 'EEH_Template', 'powered_by_event_espresso' )
 		) {
 			// add powered by EE attribution link
             $html .= \EEH_Template::powered_by_event_espresso(
@@ -561,9 +560,9 @@ class EED_Espresso_Calendar extends EED_Module {
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] )
 			? $_REQUEST['event_category_id']
 			: $this->_event_category_id;
-		
+
 		if ( $category_id_or_slug ) {
-			//Allow for multiple categories	
+			//Allow for multiple categories
 			$category_id_or_slug = explode( ',', $category_id_or_slug );
 			foreach ($category_id_or_slug as $key => $value) {
 				//sanitize all of the values
@@ -576,7 +575,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Term_Taxonomy.Term.term_id' => array( 'IN', $category_id_or_slug)
 			);
 		}
-		
+
 		if ( $venue_id_or_slug ) {
 			$where_params['OR*venue'] = array(
 				'Event.Venue.VNU_ID'         => $venue_id_or_slug,
@@ -656,8 +655,14 @@ class EED_Espresso_Calendar extends EED_Module {
 		//	$this->timer->stop();
 		//	echo $this->timer->get_elapse( __LINE__ );
 
+        // in case there are any shortcodes in the event descriptions,
+        // we need to temporarily swap out the global $post object
+        // and replace it with the current event object
+        // but don't worry, we'll reset the global $post when we are done
+        global $post;
+        $original_global_post = $post;
 		$calendar_datetimes_for_json = array();
-		foreach ( $datetime_objs as $datetime ) {
+        foreach ( $datetime_objs as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				/* @var $datetime EE_Datetime */
 				$calendar_datetime = new EE_Datetime_In_Calendar($datetime);
@@ -676,7 +681,9 @@ class EED_Espresso_Calendar extends EED_Module {
 					);
 					continue;
 				}
-				//Check for password protected post content
+				// replace global $post
+                $post = $event;
+                //Check for password protected post content
 				$pswrd_required = post_password_required( $event->ID() );
 				//Get details about the category of the event
 				if ( ! $this->config()->display->disable_categories) {
@@ -725,9 +732,9 @@ class EED_Espresso_Calendar extends EED_Module {
 					$event_time_html = FALSE;
 				}
 
-				$event_time_html = apply_filters( 
-					'FHEE__EE_Calendar__get_calendar_events__event_time_html', 
-					$event_time_html, 
+				$event_time_html = apply_filters(
+					'FHEE__EE_Calendar__get_calendar_events__event_time_html',
+					$event_time_html,
 					$datetime,
 					$event
 				);
@@ -749,8 +756,7 @@ class EED_Espresso_Calendar extends EED_Module {
 				// $this->timer->stop();
 				// echo $this->timer->get_elapse( __LINE__ );
 				// $this->timer->start();
-
-				if ( $this->config()->tooltip->show ) {
+                if ( $this->config()->tooltip->show ) {
 					//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 					$description = $event->short_description( 55, NULL, TRUE );
 					if ( empty( $description )) {
@@ -761,7 +767,7 @@ class EED_Espresso_Calendar extends EED_Module {
 							$description = array_shift( $description );
 							$description = wp_strip_all_tags( $description );
 						}
-						$description = do_shortcode( $description );
+                        $description = do_shortcode( $description );
 					} else {
 						$description = wp_strip_all_tags( $description );
 					}
@@ -828,10 +834,11 @@ class EED_Espresso_Calendar extends EED_Module {
 				//			$this->timer->stop();
 				//			echo $this->timer->get_elapse( __LINE__ );
 
-			}
-		}
-
-		echo json_encode( $calendar_datetimes_for_json );
+                // reset global post back to original
+                $post = $original_global_post;
+            }
+        }
+        echo json_encode( $calendar_datetimes_for_json );
 		die();
 
 	}
