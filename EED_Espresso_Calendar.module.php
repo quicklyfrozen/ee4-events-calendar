@@ -574,6 +574,27 @@ class EED_Espresso_Calendar extends EED_Module {
 				'Event.Term_Taxonomy.Term.slug'    => array( 'IN', $category_id_or_slug),
 				'Event.Term_Taxonomy.Term.term_id' => array( 'IN', $category_id_or_slug)
 			);
+
+			//Single cateogry passed to the calendar?
+			if( count($category_id_or_slug) == 1 ){
+
+				//Pull the category id or slug from the array
+				$ee_term_id = $category_id_or_slug[0];
+
+				//Check if we have an ID or a slug
+				if(! is_int($ee_term_id) ) {
+					//Not an int so must be the slug
+					$ee_term = get_term_by('slug', $ee_term_id, 'espresso_event_categories');
+					$ee_term_id = $ee_term instanceof WP_Term 
+						? $ee_term->term_id 
+						: null;
+				}
+
+				//Check we have a term_id to use before adding to the where_params
+				if( $ee_term_id ) {
+					$where_params['OR*category']['Event.Term_Taxonomy.parent'] = $ee_term_id;
+				}
+			}
 		}
 
 		if ( $venue_id_or_slug ) {
