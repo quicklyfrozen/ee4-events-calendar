@@ -824,12 +824,14 @@ class EED_Espresso_Calendar extends EED_Module {
 						|| $datetime->sold_out()
 						|| $datetime->total_tickets_available_at_this_datetime() === 0
 					) {
-						$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
+						$tooltip_reg_btn_html = '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
 					} else if($event->is_cancelled()){
-						$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
+						$tooltip_reg_btn_html = '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
 					} else {
-						$tooltip_html .= '<a class="reg-now-btn" href="' . apply_filters( 'FHEE__EE_Calendar__tooltip_event_permalink', $event->get_permalink(), $event, $datetime ) . '">' . $regButtonText . '</a>';
+						$tooltip_reg_btn_html = '<a class="reg-now-btn" href="' . apply_filters( 'FHEE__EE_Calendar__tooltip_event_permalink', $event->get_permalink(), $event, $datetime ) . '">' . $regButtonText . '</a>';
 					}
+
+					$tooltip_html .= apply_filters( 'FHEE__EE_Calendar__get_calendar_events__tooltip_reg_btn_html', $tooltip_reg_btn_html, $event, $datetime);
 
 					$tooltip_html .= '<div class="clear"></div>';
 					$tooltip_html .= '</div>';
