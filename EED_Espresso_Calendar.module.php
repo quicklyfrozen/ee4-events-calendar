@@ -585,8 +585,8 @@ class EED_Espresso_Calendar extends EED_Module {
 				if(! is_int($ee_term_id) ) {
 					//Not an int so must be the slug
 					$ee_term = get_term_by('slug', $ee_term_id, 'espresso_event_categories');
-					$ee_term_id = $ee_term instanceof WP_Term 
-						? $ee_term->term_id 
+					$ee_term_id = $ee_term instanceof WP_Term
+						? $ee_term->term_id
 						: null;
 				}
 
@@ -814,24 +814,40 @@ class EED_Espresso_Calendar extends EED_Module {
 						$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
 					}
 
-					//add link
-					$regButtonText = $event->display_ticket_selector() && ! $event->is_expired()
-						?  __('Register Now', 'event_espresso')
-						:  __('View Details', 'event_espresso');
 					// reg open
 					if (
 						$event->is_sold_out()
 						|| $datetime->sold_out()
 						|| $datetime->total_tickets_available_at_this_datetime() === 0
 					) {
-						$tooltip_reg_btn_html = '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
+						$tooltip_reg_btn_html = '<div class="sold-out-dv">';
+                        $tooltip_reg_btn_html .= esc_html__('Sold Out', 'event_espresso');
+                        $tooltip_reg_btn_html .= '</div>';
 					} else if($event->is_cancelled()){
-						$tooltip_reg_btn_html = '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
+                        $tooltip_reg_btn_html = '<div class="sold-out-dv">';
+                        $tooltip_reg_btn_html .= esc_html__('Registration Closed', 'event_espresso');
+                        $tooltip_reg_btn_html .= '</div>';
 					} else {
-						$tooltip_reg_btn_html = '<a class="reg-now-btn" href="' . apply_filters( 'FHEE__EE_Calendar__tooltip_event_permalink', $event->get_permalink(), $event, $datetime ) . '">' . $regButtonText . '</a>';
+                        $tooltip_reg_btn_html = '<a class="reg-now-btn" href="';
+                        $tooltip_reg_btn_html .= apply_filters(
+                            'FHEE__EE_Calendar__tooltip_event_permalink',
+                            $event->get_permalink(),
+                            $event,
+                            $datetime
+                        );
+                        $tooltip_reg_btn_html .= '">';
+                        $tooltip_reg_btn_html .=  $event->display_ticket_selector() && ! $event->is_expired()
+                            ? esc_html__('Register Now', 'event_espresso')
+                            : esc_html__('View Details', 'event_espresso');
+                        $tooltip_reg_btn_html .= '</a>';
 					}
-
-					$tooltip_html .= apply_filters( 'FHEE__EE_Calendar__get_calendar_events__tooltip_reg_btn_html', $tooltip_reg_btn_html, $event, $datetime);
+                    // allow users to show a reg now button (or whatever they want) regardless of event status
+					$tooltip_html .= apply_filters(
+                        'FHEE__EE_Calendar__get_calendar_events__tooltip_reg_btn_html',
+                        $tooltip_reg_btn_html,
+                        $event,
+                        $datetime
+                    );
 
 					$tooltip_html .= '<div class="clear"></div>';
 					$tooltip_html .= '</div>';
